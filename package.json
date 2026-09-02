@@ -1,0 +1,15 @@
+{
+  "name": "sahaibat-mapping",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=web",
+    "dev:wa-bridge": "npm run dev --workspace=@sahaibat/wa-bridge",
+    "db:migrate": "npm run prisma:migrate --workspace=web",
+    "db:generate": "npm run prisma:generate --workspace=web"
+  }
+}

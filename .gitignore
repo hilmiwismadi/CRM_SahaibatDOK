@@ -1,0 +1,36 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+
+# production
+dist/
+build/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# wa-bridge session state (never commit auth keys)
+apps/wa-bridge/auth_state/
+wa-session/
+
+# logs
+npm-debug.log*
+*.log
+
+# misc
+.DS_Store
+*.pem
+.vscode/*.log
+
+# prisma
+apps/web/prisma/dev.db
+
+# typescript
+*.tsbuildinfo

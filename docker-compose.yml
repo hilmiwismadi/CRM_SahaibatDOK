@@ -1,0 +1,81 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sahaibat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sahaibat}
+      POSTGRES_DB: ${POSTGRES_DB:-sahaibat_mapping}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      # Host port 5433, not 5432 — avoids clashing with a native Postgres
+      # install some machines already have listening on 5432.
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sahaibat}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sahaibat-net
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sahaibat}:${POSTGRES_PASSWORD:-sahaibat}@db:5432/${POSTGRES_DB:-sahaibat_mapping}
+      WA_BRIDGE_INTERNAL_URL: http://wa-bridge:3001
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    networks:
+      - sahaibat-net
+
+  wa-bridge:
+    build:
+      context: .
+      dockerfile: apps/wa-bridge/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sahaibat}:${POSTGRES_PASSWORD:-sahaibat}@db:5432/${POSTGRES_DB:-sahaibat_mapping}
+      PORT: 3001
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - wa-session:/repo/apps/wa-bridge/auth_state
+    networks:
+      - sahaibat-net
+    # Internal only — never publish this port. `web` reaches it over sahaibat-net.
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    profiles: ["prod"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    networks:
+      - sahaibat-net
+
+networks:
+  sahaibat-net:
+    driver: bridge
+
+volumes:
+  db-data:
+  wa-session:
+  caddy-data:
+  caddy-config:

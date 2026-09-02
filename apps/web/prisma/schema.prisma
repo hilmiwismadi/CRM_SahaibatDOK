@@ -1,0 +1,192 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// --- Canonical lead record -------------------------------------------------
+// Scraped columns are safe to overwrite on re-import; CRM-owned columns
+// (pipelineStage, notes, assignedTo, isLost, lostReason, customTags, trial*)
+// must NEVER be touched by the staging-import upsert. See
+// src/lib/upsertLeadsFromStaging.ts and docs/ARCHITECTURE.md.
+model Lead {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  googlePlaceId   String   @unique @map("google_place_id")
+
+  // scraped fields
+  name            String
+  category        String?
+  address         String?
+  phoneRaw        String?  @map("phone_raw")
+  phoneNormalized String?  @map("phone_normalized")
+  website         String?
+  email           String?
+  rating          Decimal? @db.Decimal(2, 1)
+  reviewCount     Int?     @map("review_count")
+  priceRange      String?  @map("price_range")
+  openHours       Json?    @map("open_hours")
+  googleMapsUrl   String?  @map("google_maps_url")
+
+  /// geometry(Point, 4326) — queried via raw SQL (bbox filtering); GiST index added in migration SQL
+  geom Unsupported("geometry(Point, 4326)")?
+  lat  Float
+  lng  Float
+
+  firstScrapedAt DateTime  @default(now()) @map("first_scraped_at")
+  lastScrapedAt  DateTime? @map("last_scraped_at")
+
+  // CRM-owned fields — excluded from the staging-import upsert's DO UPDATE SET
+  pipelineStage    String            @default("new") @map("pipeline_stage")
+  pipelineStageDef PipelineStageDef  @relation(fields: [pipelineStage], references: [key])
+  notes            String?
+  assignedTo       String?           @map("assigned_to")
+  isLost           Boolean           @default(false) @map("is_lost")
+  lostReason       String?           @map("lost_reason")
+  customTags       String[]          @default([]) @map("custom_tags")
+
+  // Trial sub-state — only meaningful while pipelineStage = "trial_accepted".
+  // See docs/ARCHITECTURE.md "Pipeline stages" for the full state machine.
+  trialStartedAt       DateTime? @map("trial_started_at")
+  trialHealthStatus    String?   @map("trial_health_status") // actively_using | need_checkup | not_actively_using
+  trialHealthUpdatedAt DateTime? @map("trial_health_updated_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  activities LeadActivity[]
+  waContacts WaContact[]
+
+  @@index([phoneNormalized], map: "leads_phone_idx")
+  @@index([pipelineStage], map: "leads_stage_idx")
+  @@index([trialStartedAt], map: "leads_trial_started_idx")
+  @@map("leads")
+}
+
+/// Configurable pipeline stage catalog — NOT a hardcoded enum. New stages
+/// (e.g. whatever comes after "offer_payment") are added by inserting a row
+/// here, no code migration required. `leads.pipeline_stage` is a real FK
+/// into this table, so a lead can never reference an undefined stage.
+model PipelineStageDef {
+  key        String   @id
+  label      String
+  color      String // hex, used for map pins / kanban / legend
+  sortOrder  Int      @map("sort_order")
+  isTerminal Boolean  @default(false) @map("is_terminal") // pipeline effectively ends here (won/rejected)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  leads             Lead[]
+  transitionsFrom   PipelineTransitionDef[] @relation("TransitionFrom")
+  transitionsTo     PipelineTransitionDef[] @relation("TransitionTo")
+
+  @@map("pipeline_stage_defs")
+}
+
+/// Valid next-stage moves, used to drive "what buttons can I press on this
+/// lead right now" in the UI instead of hardcoding the flow in components.
+/// Add a row here to open up a new transition — e.g. once the stages that
+/// follow "offer_payment" are decided.
+model PipelineTransitionDef {
+  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  fromKey String @map("from_key")
+  toKey   String @map("to_key")
+  label   String // button label, e.g. "Accept Trial" / "Reject Trial"
+
+  fromStage PipelineStageDef @relation("TransitionFrom", fields: [fromKey], references: [key])
+  toStage   PipelineStageDef @relation("TransitionTo", fields: [toKey], references: [key])
+
+  @@unique([fromKey, toKey])
+  @@map("pipeline_transition_defs")
+}
+
+/// Timeline: stage changes, notes, WA send/receive events, scrape updates.
+model LeadActivity {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId    String   @map("lead_id") @db.Uuid
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type      String // stage_change | note | wa_message_sent | wa_message_received | scrape_update | manual_edit
+  payload   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([leadId, createdAt(sort: Desc)], map: "lead_activities_lead_idx")
+  @@map("lead_activities")
+}
+
+/// Bridges WhatsApp JIDs to leads via normalized phone number. lead_id is
+/// nullable — a WA contact may not (yet) match a scraped lead.
+model WaContact {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  jid             String    @unique
+  phoneNormalized String    @map("phone_normalized")
+  leadId          String?   @map("lead_id") @db.Uuid
+  lead            Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  displayName     String?   @map("display_name")
+  linkedAt        DateTime? @map("linked_at")
+
+  messages WaMessage[]
+
+  @@index([phoneNormalized], map: "wa_contacts_phone_idx")
+  @@map("wa_contacts")
+}
+
+model WaMessage {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  waContactId String    @map("wa_contact_id") @db.Uuid
+  waContact   WaContact @relation(fields: [waContactId], references: [id], onDelete: Cascade)
+  waMessageId String    @unique @map("wa_message_id") // Baileys message key id, dedupe on ingest
+  direction   String // inbound | outbound
+  body        String?
+  messageType String    @default("text") @map("message_type")
+  rawPayload  Json?     @map("raw_payload") // full Baileys message object, future-proofing
+  sentAt      DateTime  @map("sent_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([waContactId, sentAt], map: "wa_messages_contact_idx")
+  @@map("wa_messages")
+}
+
+model ScrapeJob {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  queryText        String    @map("query_text")
+  geoParams        Json?     @map("geo_params")
+  status           String    @default("running") // running | completed | failed | imported
+  startedAt        DateTime  @default(now()) @map("started_at")
+  finishedAt       DateTime? @map("finished_at")
+  rawResultCount   Int?      @map("raw_result_count")
+  newLeadCount     Int?      @map("new_lead_count")
+  updatedLeadCount Int?      @map("updated_lead_count")
+  notes            String?
+
+  stagingResults StgScrapeResult[]
+
+  @@map("scrape_jobs")
+}
+
+/// Raw landing table for gosom/google-maps-scraper's native Postgres writer.
+/// Never read directly by the UI — only by the staging-import upsert job.
+model StgScrapeResult {
+  id            BigInt     @id @default(autoincrement())
+  scrapeJobId   String?    @map("scrape_job_id") @db.Uuid
+  scrapeJob     ScrapeJob? @relation(fields: [scrapeJobId], references: [id])
+  googlePlaceId String?    @map("google_place_id")
+  name          String?
+  category      String?
+  address       String?
+  phone         String?
+  website       String?
+  email         String?
+  lat           Float?
+  lng           Float?
+  rating        Decimal?   @db.Decimal(2, 1)
+  reviewCount   Int?       @map("review_count")
+  priceRange    String?    @map("price_range")
+  openHours     Json?      @map("open_hours")
+  rawJson       Json?      @map("raw_json") // catch-all for anything not mapped to a column
+  importedAt    DateTime?  @map("imported_at") // null until merged into `leads`
+
+  @@map("stg_scrape_results")
+}
