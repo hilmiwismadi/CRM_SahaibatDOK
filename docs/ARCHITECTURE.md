@@ -10,7 +10,7 @@ rationale: `../../Context/SahaibatExplanation/1.SalesJobDesc.md`.
 | `web` | Next.js (TypeScript, App Router) | Map UI, lead panel, pipeline editing, scrape-job admin. Stateless — all state in Postgres. |
 | `wa-bridge` | Node.js + Baileys, own container | Owns the one persistent WhatsApp WebSocket + session files. Kept out of `web` so app rebuilds/restarts never drop the WA session or force re-pairing. Exposes an internal-only HTTP API (`/send`, `/status`, `/qr`) that `web` calls. |
 | `db` | Postgres 16 + PostGIS | Canonical store for both `web` and `wa-bridge`. |
-| `scraper` | gosom/google-maps-scraper, run on-demand via `docker run --rm` | Not an always-on service. Writes results straight into `stg_scrape_results` via its native Postgres output writer. |
+| `scraper` | gosom/google-maps-scraper, run on-demand via `docker run --rm` | Not an always-on service. Writes NDJSON to a file (`-json`); `web` imports that file into `stg_scrape_results`. (Originally planned to use gosom's `-dsn` Postgres flag directly — verified against the real `--help` output and a test run that `-dsn`/`-produce` is gosom's own internal job queue, not a way to land rows in a table we define, so we corrected to file + import instead. See `docs/SCRAPER_GUIDE.md`.) |
 | `caddy` | Reverse proxy, `prod` Compose profile only | TLS + Basic Auth in front of `web` on a VPS. Not run locally. |
 
 Only `web` is exposed publicly (directly on `:3000` locally, via Caddy `:443`
@@ -19,17 +19,24 @@ in prod). `db` and `wa-bridge`'s API stay on the internal Docker network
 
 ## Scraper → leads pipeline
 
-1. Start a `scrape_jobs` row (query + geo params) from the admin page.
-2. Run `scripts/run-scrape.ps1` / `.sh` — points gosom's `-dburl` at `db`,
-   lands rows in `stg_scrape_results`.
-3. Admin "Import" action runs the upsert merge into `leads`, keyed on
+1. Run `scripts/run-scrape.ps1` / `.sh` — writes NDJSON to
+   `scrape-output/<name>.json` (one JSON object per result).
+2. `POST /api/admin/import-staging` (from the `/admin/scrapes` page, or
+   directly) creates a `scrape_jobs` row, parses the file, and inserts every
+   row into `stg_scrape_results` tagged with that job.
+3. The same request runs the upsert merge into `leads`, keyed on
    `google_place_id` (see `apps/web/src/lib/upsertLeadsFromStaging.ts`).
 4. **The merge never touches CRM-owned columns** (`pipeline_stage`, `notes`,
-   `assigned_to`, `is_lost`, `lost_reason`, `custom_tags`) — only
-   scrape-sourced columns are in the `DO UPDATE SET` clause. Re-scraping an
-   area never clobbers work already done on a lead.
+   `assigned_to`, `is_lost`, `lost_reason`, `custom_tags`, trial fields) —
+   only scrape-sourced columns are in the `DO UPDATE SET` clause.
+   **Verified with a real re-scrape**: a lead manually moved to `contacted`
+   with notes stayed exactly as edited after re-importing the same source
+   file (which re-touched every other column).
+5. `leads.phone_normalized` is computed at import time via
+   `packages/shared/src/phone.ts`, ready for WhatsApp linking (Milestone 4).
 
-Full flag reference and block-risk notes: `docs/SCRAPER_GUIDE.md`.
+Full flag reference, verified field mapping, and block-risk notes:
+`docs/SCRAPER_GUIDE.md`.
 
 ## WhatsApp linking
 

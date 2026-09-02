@@ -32,5 +32,8 @@ npm-debug.log*
 # prisma
 apps/web/prisma/dev.db
 
+# scrape output — contains real (scraped, PII-adjacent) data, regenerable
+scrape-output/
+
 # typescript
 *.tsbuildinfo

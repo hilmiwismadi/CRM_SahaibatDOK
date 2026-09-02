@@ -40,7 +40,12 @@ docker compose up --build
 
 ## Running a scrape
 
-See `docs/SCRAPER_GUIDE.md` (Milestone 2).
+```powershell
+.\scripts\run-scrape.ps1 -QueriesFile .\scrape-queries\<name>.txt -Name <name>
+```
+
+Then import the result at `/admin/scrapes` (or `POST
+/api/admin/import-staging`). Full guide: `docs/SCRAPER_GUIDE.md`.
 
 ## Deploying to a VPS
 
