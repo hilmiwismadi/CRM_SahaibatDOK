@@ -80,7 +80,8 @@ export type LeadActivityType =
   | "wa_message_received"
   | "scrape_update"
   | "manual_edit"
-  | "trial_health_update";
+  | "trial_health_update"
+  | "contact_chain_updated";
 
 export type WaMessageDirection = "inbound" | "outbound";
 

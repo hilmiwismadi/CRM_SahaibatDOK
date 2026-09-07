@@ -35,5 +35,9 @@ apps/web/prisma/dev.db
 # scrape output — contains real (scraped, PII-adjacent) data, regenerable
 scrape-output/
 
+# JSON DB backups (scripts/backup-json.ts) — real lead/contact/message data,
+# never commit. Copy this off-machine yourself; git is not the backup.
+apps/web/backups/
+
 # typescript
 *.tsbuildinfo

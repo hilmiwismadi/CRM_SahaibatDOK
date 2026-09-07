@@ -1,0 +1,584 @@
+[
+  {
+    "name": "Klinik Pratama Rahmatika",
+    "leadId": "734d3728-ddd3-411c-8590-e64570da707a",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Hutama Medika",
+    "leadId": "d20698ee-da10-4613-a48e-c55d40aaeb13",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Parma",
+    "leadId": "1ca084df-cb84-48f4-b930-b7c8da71e3a9",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik SAT Brimob Semarang",
+    "leadId": "7ef08de8-e83d-46b7-8053-e197951d3ce4",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama UIN Walisongo Semarang",
+    "leadId": "5d9a0414-186f-4b28-9d7c-3a917bfa9a98",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Makmur Jaya",
+    "leadId": "0fc19ebd-8cd4-40ec-a6a3-895ca328c678",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Sandjojo Sehat",
+    "leadId": "a57b26e0-8063-46b0-bad7-ceca114b4426",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama SWA",
+    "leadId": "661da2a2-458c-4a6f-8188-a94dc696ae93",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Soegijopranoto Bongsari",
+    "leadId": "6972fb3b-3fd5-4a11-979a-d1fd18997e29",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Makmur Jaya 3",
+    "leadId": "c02458f6-f9c8-41bc-83d6-05e63fbab3db",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Mardi Santoso",
+    "leadId": "d9658cfd-cea9-4311-aba7-3742348b269e",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Makmur Jaya",
+    "leadId": "39673959-220b-4fae-a260-c255a8d82d15",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Puslakes UNNES",
+    "leadId": "e145c28b-8439-42cf-a4d5-dc9e32f0fd3c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Makmur Jaya 1",
+    "leadId": "8ed65929-32d7-4287-a33b-c14c7bf69b02",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Makmur Jaya 2",
+    "leadId": "c296380e-c9c0-49bf-a6bc-7c2a741e8af7",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama PMI Kota Yogyakarta",
+    "leadId": "312a83fb-8e7b-4515-8d91-03066e122c43",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Gombel",
+    "leadId": "cead828a-6e07-4515-b28e-e5f8934bae65",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Pertamina",
+    "leadId": "0d5dc38f-f9e3-4603-831c-e73ec1662fd1",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Intibios Lab, Klinik & Farmasi Semarang",
+    "leadId": "b32a4da5-41eb-47e3-8aa2-e731cb40a0b4",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Chandra Brata 24 Jam",
+    "leadId": "13555c83-89d7-47b0-a6fb-43390df2b202",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Puri Saras",
+    "leadId": "e28c3e8c-7dd4-4df5-9aa6-f1f1af5c2c93",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama UIN Walisongo",
+    "leadId": "469781aa-8b94-4f1d-8aac-fbbee6082f11",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Diponegoro I",
+    "leadId": "24d38d94-1012-4237-a463-008787fd2b13",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Nadi Medika Gunungpati",
+    "leadId": "f1ed1b1f-84ac-4566-8210-0ad9e7b93a45",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Satmoko",
+    "leadId": "069c45a5-edb6-4a6c-a056-371b57f1a816",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Rawat Inap Unimus",
+    "leadId": "71a84e5e-1dbf-402d-950f-ddd1652445c7",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Sentosa",
+    "leadId": "298c7609-e466-410d-b4c0-46df054fe1ef",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Rawat Inap Unimus",
+    "leadId": "384d06d7-43eb-4729-b899-f63edbe9ac34",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama UPN Veteran Yogyakarta",
+    "leadId": "2625ec4e-4d56-4037-a6a7-f7c184051cb6",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Istiazah",
+    "leadId": "aa3a8ca6-1bf0-4145-8a37-189a78a71df3",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Kartika Husada",
+    "leadId": "f74701d0-15c4-443e-be99-4737047af906",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Jamii Husada",
+    "leadId": "15f0ac5c-b07e-49d8-b481-5e1e816f6536",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Patalan",
+    "leadId": "a1e27a93-aefe-47c8-aa04-cce1430303d7",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Polres Bantul",
+    "leadId": "17783b70-c56a-4f2e-8389-dfe6b7277d6c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Laras Hati",
+    "leadId": "b17b0c08-01bd-4625-82c0-434095d3c5ba",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Bina Sehat",
+    "leadId": "ef34cef1-5552-4f97-b851-6445f1f33c1c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Mitra Sehat",
+    "leadId": "d65aadfb-9b1c-4c76-8018-2c41fad0156c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Anugerah",
+    "leadId": "f7cace10-1493-4d31-9e2d-9146837c82f4",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Madukismo",
+    "leadId": "2a831987-23ff-4cf2-80a5-c8e382ec5d03",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Pelita Hati",
+    "leadId": "862e2150-21fa-425c-b492-96cdbe4ebadc",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Basuki Amalia",
+    "leadId": "9494a37f-6dae-4746-84ca-4dd633809e47",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Bunga Arsari",
+    "leadId": "16a18b5b-d40d-48e5-87e6-d54dddae768e",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama As Syifa",
+    "leadId": "eed03e85-efda-4afb-86ea-93e157e8ffcd",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Kedaton",
+    "leadId": "50f0ba5c-797f-4d41-9604-748cc578b574",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Ibnu Abbas",
+    "leadId": "6fb30f07-8fdb-4f0c-8b30-df940e581977",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Nur Hidayah",
+    "leadId": "744d0752-8bba-440d-8a74-a088964a160c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Avicena",
+    "leadId": "2ac38262-9810-4027-ac9b-7b6eb382cf75",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Cita Sehat Yogyakarta",
+    "leadId": "1ce82cc7-14db-4a7d-aa32-3144e4024bb7",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Rahmat Medika",
+    "leadId": "b97d1243-7b89-4048-82e1-5bbaa2798816",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pertamina IHC Semarang",
+    "leadId": "ad90c721-cc5f-4007-8388-d30f22dd8c64",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Karunia Husada",
+    "leadId": "1fa4a16c-d446-425e-afc9-f0e45f78ee4d",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Bina Sehat Semarang",
+    "leadId": "ddaa2a0e-cc1f-443e-9296-45d78f10e3d2",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Cahaya Husada",
+    "leadId": "5248c7f9-e548-4ee6-90f6-9d243acc6d48",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama & Apotek TelkoMedika Yogyakarta",
+    "leadId": "c71a7f09-ebea-4575-aff8-05bfb2535ec4",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Pulowatu Sisma Medikal",
+    "leadId": "fe61e187-9010-4a18-a017-21e9dc4c580a",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Sandjojo Sehat",
+    "leadId": "2ff0c655-6ff7-49d6-aedd-064e9f6b4ffd",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama UPN Veteran Yogyakarta",
+    "leadId": "c0c97113-749d-4994-b07f-ce9e97590cc1",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama PMI Daerah Istimewa Yogyakarta",
+    "leadId": "a50000c0-a066-469e-bb19-ae912e73eeed",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama PMI DIY",
+    "leadId": "491114a6-86bb-4e60-be28-c9caf0cca539",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama PKU Muhammadiyah Pakem",
+    "leadId": "457273ff-6271-46c1-8826-7680a7866c24",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Eny",
+    "leadId": "46d9ff2d-a32a-4f48-b8b3-71bcd86c0b07",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Pulowatu Sisma Medikal",
+    "leadId": "07a78bd0-7b29-4ede-8c47-fa663e5926af",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Poltekkes Kemenkes Semarang",
+    "leadId": "d6615b14-0821-4580-8ccc-0dbe2062a8ba",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Cahya Medika",
+    "leadId": "f0445cd1-478a-43f2-a617-bf7d0585de02",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Praktik Mandiri Dokter Fuad Habibi",
+    "leadId": "e033075e-17fc-4324-8ae2-dc05b236f382",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama FIA",
+    "leadId": "1db4fa6a-bd23-4457-8a0a-5a65f3a8f8cc",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Gadjah Mada Medical Center",
+    "leadId": "9a681752-019d-40c3-bfa3-3539d84b3b57",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Darma Bakti Medika",
+    "leadId": "5a72350f-b8b4-43f0-868c-d99050c5bd91",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama At-Turots Al-Islamy",
+    "leadId": "9923d92d-3232-48eb-bfa6-2bc5c70d678c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Mutiara Bunda Ngaliyan",
+    "leadId": "1d709557-576f-4a6c-a34e-2192512f4bc2",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik & Apotek Bina Sehat Semarang",
+    "leadId": "5cbf4b69-716e-43c0-bece-3de91bb193e9",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama UPN Veteran Yogyakarta",
+    "leadId": "735c42b9-d238-4b34-91e3-56f43af5e098",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Praktik Mandiri dr. Erika Dian Puspitasari",
+    "leadId": "cf8676d4-d625-4fee-aa95-69c515ea1531",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Parama Satwika Polres Sleman",
+    "leadId": "fe3ad520-cd99-4e14-9250-dcef8a6d0fd3",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Delima",
+    "leadId": "9f5e2f0c-5f07-4285-b7e4-4737c4d6edd7",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Aisya",
+    "leadId": "da060eba-ceb3-4ece-93ac-f9ab1f2851ef",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Jisdan Bambang Y HM Dr",
+    "leadId": "0098c38a-c7fb-4c0a-8e88-4ea9eb45e1d0",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "UIN Sunan Kalijaga Health Center",
+    "leadId": "a8c50c89-e6ac-4f95-a695-41bb7d134c57",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "dr. Fajar Waskito, Sp.KK (K), M.Kes",
+    "leadId": "1dd4c2b6-1470-486f-994d-6cf65f59286f",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Superindo Cahaya Mandiri PT",
+    "leadId": "95183988-30a7-483e-b88a-4e7664edd802",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Mitrakita Clinic Semarang",
+    "leadId": "28ac53b1-f604-4acb-aa00-05754d650261",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Sehat Mandiri (Dokter Umum, Dokter Gigi, Apotek)",
+    "leadId": "83a1978e-6f3e-4eac-8099-341069d37952",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Derwati",
+    "leadId": "788d9edf-1308-42af-a36c-b949881e8ef9",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Cita Sehat Semarang",
+    "leadId": "7a078d78-4156-494d-9e23-c12da019caae",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Faskes 1 BPJS Klinik Pratama OPTIMA 2",
+    "leadId": "d370f35b-8b29-4fcd-8fbd-8f073b68948a",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Mutiara Bunda",
+    "leadId": "bfe09f04-b5fe-41c7-85da-84c9b57bbc66",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pandawa Jakarta Barat",
+    "leadId": "aeac8aee-fc71-4204-a26c-c8b2458b3636",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Amalia",
+    "leadId": "f0592b78-5da3-42d2-92f0-c5d847b1d074",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Dokter Umum Teddy Karli",
+    "leadId": "7131a3a9-9b89-4e33-8dee-297e99a1c9a5",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Praktik Dokter Umum Al-Jairy",
+    "leadId": "1c64e02e-a70d-4a92-bcef-79e7499538cc",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Bina Sehat",
+    "leadId": "b712a1c2-b585-4684-8068-b4555fc7461c",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Rumah Sakit YPK Mandiri",
+    "leadId": "21cc7dcd-70ca-4702-95ed-d29ab736fb4d",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Rahmat Medika",
+    "leadId": "132ea541-bff1-4da1-877c-0b151d87a4c3",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Cita Sehat Foundation",
+    "leadId": "67e2ecfb-0e29-4c30-842a-8e5380c96d5e",
+    "error": null,
+    "hasIG": true
+  },
+  {
+    "name": "Klinik Pratama Semanan",
+    "leadId": "9af12575-e748-44fc-8307-a92db25f47ff",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Veteran",
+    "leadId": "960fe0e9-fef0-49f9-9348-74ddf913fe4b",
+    "error": null,
+    "hasIG": false
+  },
+  {
+    "name": "Klinik Pratama Bakti Sejahtera",
+    "leadId": "8f16db90-1351-4e8a-8499-134cbb5996e1",
+    "error": null,
+    "hasIG": false
+  }
+]

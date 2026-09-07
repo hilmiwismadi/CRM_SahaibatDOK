@@ -22,20 +22,38 @@ model Lead {
   name            String
   category        String?
   address         String?
+  // Mobile/WA-capable number — the one used for WhatsApp matching
+  // (packages/shared/src/phone.ts, apps/wa-bridge). Distinct from the
+  // office/landline number below, which is display-only.
   phoneRaw        String?  @map("phone_raw")
   phoneNormalized String?  @map("phone_normalized")
+  // Office/landline number, stored as-typed (not E.164-normalized — that
+  // format assumes a mobile number shape and would mangle a landline).
+  // Never used for WhatsApp matching.
+  phoneOffice     String?  @map("phone_office")
   website         String?
   email           String?
+  instagramUrl    String?  @map("instagram_url")
+  // Derived from `address` (or, failing that, googleMapsUrl / a web
+  // search) — see src/lib/provinceExtract.ts. Backs the dashboard's
+  // group-by-province view.
+  province        String?
   rating          Decimal? @db.Decimal(2, 1)
   reviewCount     Int?     @map("review_count")
   priceRange      String?  @map("price_range")
   openHours       Json?    @map("open_hours")
   googleMapsUrl   String?  @map("google_maps_url")
 
+  // Internal sales classification — free text like pipeline_stage_defs'
+  // philosophy (not a hardcoded enum), e.g. "solo_doctor" | "klinik_pratama".
+  businessType    String?  @map("business_type")
+
   /// geometry(Point, 4326) — queried via raw SQL (bbox filtering); GiST index added in migration SQL
   geom Unsupported("geometry(Point, 4326)")?
-  lat  Float
-  lng  Float
+  // Nullable: manually-added leads (dashboard "+ Add Lead") have no
+  // geocoded coordinates. /map already defensively filters these out.
+  lat  Float?
+  lng  Float?
 
   firstScrapedAt DateTime  @default(now()) @map("first_scraped_at")
   lastScrapedAt  DateTime? @map("last_scraped_at")
@@ -60,6 +78,15 @@ model Lead {
 
   activities LeadActivity[]
   waContacts WaContact[]
+
+  // Contact chain — CRM-owned pointer to whichever LeadContactNode is
+  // currently "active" for chat purposes. Deliberately NOT phoneNormalized
+  // (a scraped field the staging-import upsert overwrites on every
+  // re-scrape) — null means "use the auto-seeded root node". See
+  // src/lib/contactChain.ts and docs/ARCHITECTURE.md.
+  activeContactNodeId String?           @map("active_contact_node_id") @db.Uuid
+  activeContactNode   LeadContactNode?  @relation("LeadActiveContact", fields: [activeContactNodeId], references: [id], onDelete: SetNull)
+  contactNodes        LeadContactNode[] @relation("LeadContactNodes")
 
   @@index([phoneNormalized], map: "leads_phone_idx")
   @@index([pipelineStage], map: "leads_stage_idx")
@@ -121,13 +148,36 @@ model LeadActivity {
 model WaContact {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   jid             String    @unique
-  phoneNormalized String    @map("phone_normalized")
+  // Nullable: some @lid (phone-number-privacy) senders never resolve to a
+  // real phone number via Baileys' lidMapping store — see apps/wa-bridge's
+  // inbound handler. Absence of a phone means "unknown", not empty string.
+  phoneNormalized String?   @map("phone_normalized")
   leadId          String?   @map("lead_id") @db.Uuid
   lead            Lead?     @relation(fields: [leadId], references: [id], onDelete: SetNull)
   displayName     String?   @map("display_name")
   linkedAt        DateTime? @map("linked_at")
+  // Manual "mark as replied" override — for replies that happened outside
+  // this CRM's visibility (e.g. answered directly from the paired phone,
+  // or by an external bot) so wa_messages has no record of them. When this
+  // is newer than the last inbound message, the conversation no longer
+  // shows as needing a reply. Automatically stops applying (reverts to
+  // needing a reply) the moment a newer inbound message arrives — a lead
+  // following up after a bot reply usually means they want a human, so
+  // this is deliberately not a permanent "resolved" flag. Cleared (set
+  // back to null) to un-mark early.
+  repliedOverrideAt   DateTime? @map("replied_override_at")
+  // "manual" (a person replied outside this CRM) or "bot" (an automated
+  // reply) — display-only distinction; both expire the same way above.
+  repliedOverrideKind String?   @map("replied_override_kind")
+  // Manual flag: WhatsApp isn't working for this lead (no response, wrong
+  // number, etc.) and they need to be reached another way (email, phone
+  // call, etc). Unlike repliedOverrideAt, this does NOT auto-expire on a
+  // new inbound message — it's a standing note about the channel, not a
+  // reply-status snapshot, so it stays until manually cleared.
+  needsOtherContact Boolean @default(false) @map("needs_other_contact")
 
-  messages WaMessage[]
+  messages    WaMessage[]
+  contactNode LeadContactNode?
 
   @@index([phoneNormalized], map: "wa_contacts_phone_idx")
   @@map("wa_contacts")
@@ -147,6 +197,55 @@ model WaMessage {
 
   @@index([waContactId, sentAt], map: "wa_messages_contact_idx")
   @@map("wa_messages")
+}
+
+/// A node in a lead's "who gave us this contact" chain. One node = one
+/// person we've dealt with for this lead. `isRoot` marks the auto-seeded
+/// node representing the originally-scraped contact (see
+/// src/lib/contactChain.ts); every other node has a parent recording a
+/// handoff (e.g. doctor -> administrative/marketing staff). `phoneNormalized`
+/// is a frozen snapshot taken at node-creation time — NOT kept in sync with
+/// re-scrapes — so it never drifts out from under messages already sent to
+/// that number. `waContactId` links to the actual WaContact/conversation
+/// once one exists for that phone (may lag behind creation, or never
+/// resolve for @lid-only contacts — see apps/wa-bridge's LID handling).
+model LeadContactNode {
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId String @map("lead_id") @db.Uuid
+  lead   Lead   @relation("LeadContactNodes", fields: [leadId], references: [id], onDelete: Cascade)
+
+  parentId String?           @map("parent_id") @db.Uuid
+  parent   LeadContactNode?  @relation("ContactChainParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children LeadContactNode[] @relation("ContactChainParent")
+
+  waContactId String?    @unique @map("wa_contact_id") @db.Uuid
+  waContact   WaContact? @relation(fields: [waContactId], references: [id], onDelete: SetNull)
+
+  phoneNormalized String? @map("phone_normalized")
+  displayName     String? @map("display_name")
+  role            String? // free text, e.g. "doctor" | "admin_staff" | "marketing" — same philosophy as pipeline_stage_defs, not a hardcoded enum
+  handoffNote     String? @map("handoff_note")
+  isRoot          Boolean  @default(false) @map("is_root")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  activeForLeads Lead[] @relation("LeadActiveContact")
+
+  @@index([leadId], map: "lead_contact_nodes_lead_idx")
+  @@index([phoneNormalized], map: "lead_contact_nodes_phone_idx")
+  @@map("lead_contact_nodes")
+}
+
+/// A reusable outbound message template — plain CRUD, no LLM generation
+/// (deferred). Selected manually in the chat Composer to fill the textarea.
+model MessageTemplate {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String   @unique
+  category  String   @default("general")
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("message_templates")
 }
 
 model ScrapeJob {

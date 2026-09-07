@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:migrate": "prisma migrate dev",
+    "backup": "tsx scripts/backup-json.ts",
+    "restore-backup": "tsx scripts/restore-json.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

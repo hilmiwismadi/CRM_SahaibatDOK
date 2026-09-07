@@ -1,0 +1,328 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .app { font-family: 'IBM Plex Sans', system-ui, sans-serif; }
+    .app h1, .app h2, .app .heading { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+    a { color: #0891b2; text-decoration: none; }
+    a:hover { color: #0e7490; }
+    .nav-item { transition: background 120ms ease; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); }
+    .list-row { transition: background 100ms ease; cursor: pointer; }
+    .list-row:hover { background: #f8fafc; }
+    .pill-btn { transition: filter 100ms ease; cursor: pointer; border: none; }
+    .pill-btn:hover { filter: brightness(0.96); }
+    .icon-btn { transition: background 120ms ease; cursor: pointer; }
+    .icon-btn:hover { background: #f1f5f9; }
+    .search-input:focus { outline: none; border-color: #0891b2 !important; box-shadow: 0 0 0 3px rgba(8,145,178,0.12); }
+    .pin { transition: transform 120ms ease; cursor: pointer; }
+    .pin:hover { transform: translate(-50%,-100%) scale(1.12); }
+    .list-scroll::-webkit-scrollbar { width: 8px; }
+    .list-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+    .drawer-scroll::-webkit-scrollbar { width: 8px; }
+    .drawer-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+  </style>
+</helmet>
+
+<div class="app" style="width:1440px; height:960px; display:flex; background:#f7f8fa; color:#0f172a; overflow:hidden; position:relative;">
+
+  <!-- Sidebar -->
+  <div style="width:232px; flex-shrink:0; background:#111827; display:flex; flex-direction:column; padding:20px 12px;">
+    <div style="display:flex; align-items:center; gap:10px; padding:8px 10px 24px 10px;">
+      <div style="width:32px; height:32px; border-radius:9px; background:{{accent}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 21V9l8-6 8 6v12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21v-7h6v7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:#f8fafc; line-height:1.1;">SahAIbat DOK</div>
+        <div style="font-size:11px; color:#94a3b8; line-height:1.1; margin-top:2px;">Lead CRM</div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:2px;">
+      <div class="nav-item" style="display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="9" rx="1.5" stroke="#94a3b8" stroke-width="2"/><rect x="14" y="3" width="7" height="5" rx="1.5" stroke="#94a3b8" stroke-width="2"/><rect x="14" y="12" width="7" height="9" rx="1.5" stroke="#94a3b8" stroke-width="2"/><rect x="3" y="16" width="7" height="5" rx="1.5" stroke="#94a3b8" stroke-width="2"/></svg>
+        <span style="font-size:13.5px; font-weight:500; color:#cbd5e1;">Dashboard</span>
+      </div>
+      <div class="nav-item" style="display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; background:rgba(255,255,255,0.09);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z" stroke="#f8fafc" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.4" stroke="#f8fafc" stroke-width="2"/></svg>
+        <span style="font-size:13.5px; font-weight:600; color:#f8fafc;">Map</span>
+      </div>
+      <div class="nav-item" style="display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 4h11l3 3v13H5V4Z" stroke="#94a3b8" stroke-width="2" stroke-linejoin="round"/><path d="M9 11h6M9 15h6" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg>
+        <span style="font-size:13.5px; font-weight:500; color:#cbd5e1;">Scrape Jobs</span>
+      </div>
+    </div>
+
+    <div style="margin-top:auto; padding:12px; border-radius:10px; background:rgba(255,255,255,0.05);">
+      <div style="font-size:11px; color:#94a3b8; margin-bottom:2px;">Signed in as</div>
+      <div style="font-size:12.5px; color:#e2e8f0; font-weight:600;">Business Development</div>
+    </div>
+  </div>
+
+  <!-- Lead list panel -->
+  <div style="width:320px; flex-shrink:0; display:flex; flex-direction:column; border-right:1px solid #eef0f2; background:#fff;">
+    <div style="padding:20px 18px 14px 18px; border-bottom:1px solid #f1f5f9;">
+      <h1 style="margin:0 0 10px 0; font-size:18px; font-weight:700; color:#0f172a;">Map</h1>
+      <div style="position:relative;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);"><circle cx="11" cy="11" r="7" stroke="#94a3b8" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg>
+        <input class="search-input" type="text" placeholder="Search leads" value="{{query}}" onChange="{{onSearch}}" style="width:100%; padding:8px 10px 8px 30px; border-radius:8px; border:1px solid #e2e8f0; font-size:13px; font-family:inherit;" />
+      </div>
+      <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+        <sc-for list="{{filterPills}}" as="p" hint-placeholder-count="9">
+          <button class="pill-btn" onClick="{{p.onClick}}" style="background:{{p.style_bg}}; color:{{p.style_color}}; font-size:11.5px; font-weight:600; padding:5px 9px; border-radius:999px;">{{p.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div class="list-scroll" style="flex:1; overflow-y:auto;">
+      <sc-for list="{{rows}}" as="lead" hint-placeholder-count="10">
+        <div class="list-row" onClick="{{lead.onClick}}" style="display:flex; align-items:center; gap:10px; padding:11px 18px; border-bottom:1px solid #f6f7f8; background:{{lead.rowBg}};">
+          <div style="width:9px; height:9px; border-radius:50%; background:{{lead.stageColor}}; flex-shrink:0;"></div>
+          <div style="min-width:0;">
+            <div style="font-size:12.5px; font-weight:600; color:#0f172a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{lead.name}}</div>
+            <div style="font-size:11.5px; color:#94a3b8; margin-top:1px;">{{lead.category}}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Map area -->
+  <div style="flex:1; position:relative; overflow:hidden; background:#eef1f0;">
+    <!-- decorative abstract map backdrop -->
+    <div style="position:absolute; inset:0; background-image:linear-gradient(0deg, rgba(148,163,184,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.16) 1px, transparent 1px); background-size:56px 56px; background-color:#eef2f1;"></div>
+    <div style="position:absolute; width:340px; height:260px; left:8%; top:12%; background:radial-gradient(circle, rgba(134,197,150,0.35), rgba(134,197,150,0) 70%);"></div>
+    <div style="position:absolute; width:260px; height:220px; right:14%; bottom:16%; background:radial-gradient(circle, rgba(134,197,150,0.3), rgba(134,197,150,0) 70%);"></div>
+    <svg style="position:absolute; inset:0; width:100%; height:100%;" viewBox="0 0 1000 780" preserveAspectRatio="none">
+      <path d="M -20 620 C 220 560, 340 700, 560 520 S 900 420, 1040 470" stroke="#bcd6e8" stroke-width="26" fill="none" opacity="0.55"/>
+      <path d="M -20 620 C 220 560, 340 700, 560 520 S 900 420, 1040 470" stroke="#ffffff" stroke-width="3" stroke-dasharray="2 10" fill="none" opacity="0.6"/>
+    </svg>
+
+    <!-- pins -->
+    <sc-for list="{{pins}}" as="pin" hint-placeholder-count="10">
+      <div class="pin" onClick="{{pin.onClick}}" style="position:absolute; left:{{pin.xPct}}%; top:{{pin.yPct}}%; transform:translate(-50%,-100%); z-index:{{pin.z}};">
+        <svg width="{{pin.size}}" height="{{pin.size}}" viewBox="0 0 32 40" style="filter:drop-shadow(0 2px 3px rgba(15,23,42,0.28));">
+          <path d="M16 39C16 39 30 24.5 30 15A14 14 0 0 0 2 15C2 24.5 16 39 16 39Z" fill="{{pin.color}}" stroke="{{pin.ring}}" stroke-width="{{pin.ringWidth}}"/>
+          <circle cx="16" cy="15" r="6" fill="#fff"/>
+        </svg>
+      </div>
+    </sc-for>
+
+    <!-- legend -->
+    <div style="position:absolute; left:18px; bottom:18px; background:#fff; border:1px solid #eef0f2; border-radius:10px; padding:12px 14px; box-shadow:0 4px 14px rgba(15,23,42,0.08);">
+      <div style="font-size:10.5px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px;">Pipeline stage</div>
+      <div style="display:grid; grid-template-columns:repeat(2, auto); gap:6px 16px;">
+        <sc-for list="{{legend}}" as="item" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <div style="width:8px; height:8px; border-radius:50%; background:{{item.color}}; flex-shrink:0;"></div>
+            <div style="font-size:11.5px; color:#334155; white-space:nowrap;">{{item.label}}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail drawer -->
+  <sc-if value="{{hasSelected}}" hint-placeholder-val="{{false}}">
+    <div class="drawer-scroll" style="position:absolute; top:0; right:0; bottom:0; width:380px; background:#fff; box-shadow:-8px 0 24px rgba(15,23,42,0.14); overflow-y:auto; padding:24px;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px;">
+        <div style="padding-right:12px;">
+          <div style="font-size:17px; font-weight:700; color:#0f172a; font-family:'Plus Jakarta Sans',sans-serif; line-height:1.3;">{{selected.name}}</div>
+          <div style="font-size:13px; color:#94a3b8; margin-top:2px;">{{selected.category}}</div>
+        </div>
+        <div class="icon-btn" onClick="{{closeDrawer}}" style="width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="#64748b" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+
+      <span style="background:{{selected.stageColor}}; color:{{selected.stageText}}; font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px;">{{selected.stageLabel}}</span>
+
+      <div style="margin-top:18px; padding-top:18px; border-top:1px solid #f1f5f9; display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-top:2px; flex-shrink:0;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.99.36 1.96.68 2.9a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.18-1.27a2 2 0 0 1 2.11-.45c.94.32 1.91.55 2.9.68A2 2 0 0 1 22 16.92Z" stroke="#0891b2" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <div style="font-size:13.5px; color:#0f172a; font-weight:500;">{{selected.phone}}</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-top:2px; flex-shrink:0;"><path d="M20 10c0 5.5-8 12-8 12s-8-6.5-8-12a8 8 0 0 1 16 0Z" stroke="#94a3b8" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.8" stroke="#94a3b8" stroke-width="1.8"/></svg>
+          <div style="font-size:13.5px; color:#334155; line-height:1.5;">{{selected.address}}</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="m12 17.27 5.4 3.27-1.44-6.16 4.78-4.14-6.3-.54L12 3.5 9.56 9.7l-6.3.54 4.78 4.14L6.6 20.54 12 17.27Z" stroke="#f59e0b" stroke-width="1.8" fill="#fef9c3" stroke-linejoin="round"/></svg>
+          <div style="font-size:13.5px; color:#334155;">{{selected.ratingDisplay}}</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px; padding-top:18px; border-top:1px solid #f1f5f9;">
+        <div style="font-size:11.5px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px;">Move to next stage</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <sc-for list="{{transitions}}" as="t" hint-placeholder-count="1">
+            <button class="pill-btn" onClick="{{t.onClick}}" style="background:{{accent}}; color:#fff; font-size:13px; font-weight:600; padding:9px 14px; border-radius:8px; text-align:left;">{{t.label}}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-dc-script data-props='{"accent":{"editor":"color","default":"#0891b2","options":["#0891b2","#0e7490","#4f46e5","#059669"]}}'>
+const STAGES = {
+  new: { label: "New", color: "#94a3b8", text: "#ffffff" },
+  contacted: { label: "Contacted", color: "#38bdf8", text: "#ffffff" },
+  responded: { label: "Responded", color: "#22d3ee", text: "#083344" },
+  meeting_aligned: { label: "Meeting Aligned", color: "#facc15", text: "#3f2d03" },
+  client_deciding_trial: { label: "Deciding on Trial", color: "#fb923c", text: "#431407" },
+  trial_rejected: { label: "Trial Rejected", color: "#64748b", text: "#ffffff" },
+  trial_accepted: { label: "Trial Accepted", color: "#f472b6", text: "#500724" },
+  offer_payment: { label: "Offer Payment", color: "#818cf8", text: "#ffffff" }
+};
+
+const TRANSITIONS = [
+  { from: "new", to: "contacted", label: "Mark Contacted" },
+  { from: "contacted", to: "responded", label: "Mark Responded" },
+  { from: "responded", to: "meeting_aligned", label: "Align Meeting" },
+  { from: "meeting_aligned", to: "client_deciding_trial", label: "Demo Done — Awaiting Decision" },
+  { from: "client_deciding_trial", to: "trial_accepted", label: "Accept Trial" },
+  { from: "client_deciding_trial", to: "trial_rejected", label: "Reject Trial" },
+  { from: "trial_accepted", to: "offer_payment", label: "Move to Offer Payment" }
+];
+
+const RAW_LEADS = [
+  { name: "Dr Shinta P, SpOG", category: "Dokter Kandungan", phone: "+62 274-582115", stage: "contacted", rating: 4.6, reviews: 63, address: "Jl. Pangeran Diponegoro No.6, Gowongan, Kec. Jetis, Kota Yogyakarta", lat: -7.7827828, lng: 110.3666154 },
+  { name: "Praktik Mandiri drg. Nanik Ismawati", category: "Klinik Gigi", phone: "+62 857-4707-1538", stage: "new", rating: 4.4, reviews: 19, address: "Jl. Wonocatur, Karang Bendo, Banguntapan, Bantul", lat: -7.8026245, lng: 110.4146155 },
+  { name: "Praktik Mandiri dr. Diah Prasetyorini", category: "Dokter", phone: null, stage: "new", rating: 3.0, reviews: 2, address: "Ngajeg, Tirtomartani, Kec. Kalasan, Sleman", lat: -7.7593879, lng: 110.4707761 },
+  { name: "Praktik Mandiri Dokter Umum dr. Vanya Lisian", category: "Rumah Sakit", phone: null, stage: "new", rating: 0, reviews: 0, address: "Pencar Sari, Sardonoharjo, Kec. Ngaglik, Sleman", lat: -7.6966086, lng: 110.3987398 },
+  { name: "Praktek Dokter Bambang Suryadi", category: "Dokter Umum", phone: null, stage: "new", rating: 4.9, reviews: 233, address: "Jl. Bantul, Suryodiningratan, Kec. Mantrijeron, Kota Yogyakarta", lat: -7.8173059, lng: 110.35605 },
+  { name: "Praktek Dokter Nyeri dr. Alim, Sp.An", category: "Dokter", phone: "+62 813-7700-2218", stage: "new", rating: 4.8, reviews: 76, address: "Jl. Jambon No.30, Nusupan, Trihanggo, Kec. Gamping, Sleman", lat: -7.7576572, lng: 110.3426077 },
+  { name: "Praktek dr. Donytra A.W", category: "Dokter", phone: "+62 813-2821-2156", stage: "new", rating: 0, reviews: 0, address: "Jl. Godean Km.4 No.28E, Kwarasan, Nogotirto, Sleman", lat: -7.7798231, lng: 110.3444175 },
+  { name: "Tempat Praktik Mandiri Dokter dr. Titin Widiawati, MMR", category: "Dokter", phone: "+62 822-6133-8337", stage: "new", rating: 5.0, reviews: 7, address: "Jl. Bantulan, Kauman, Gilangharjo, Pandak, Bantul", lat: -7.9196752, lng: 110.3109324 },
+  { name: "Praktek Dokter Umum Yuliaty Iskak S", category: "Klinik Kesehatan", phone: null, stage: "new", rating: 5.0, reviews: 31, address: "Jl. Jawa No.10, Dabag, Condongcatur, Kec. Depok, Sleman", lat: -7.7662349, lng: 110.4015409 },
+  { name: "Praktik Mandiri Dokter Hasto", category: "Dokter", phone: null, stage: "new", rating: 0, reviews: 0, address: "Jl. Pakel Baru Selatan No.28, Sorosutan, Umbulharjo, Yogyakarta", lat: -7.8212821, lng: 110.3794614 },
+  { name: "Praktek dr Ni Luh Putu Padmawati, Sp.KJ", category: "Konsultan Kesehatan", phone: "+62 877-7551-472", stage: "new", rating: 5.0, reviews: 13, address: "Jl. Kesehatan No.B49, Sendowo, Sinduadi, Mlati, Sleman", lat: -7.7701918, lng: 110.3733351 },
+  { name: "Praktek Dokter Mandiri dr. Loury Priskila", category: "Dokter", phone: null, stage: "new", rating: 4.9, reviews: 45, address: "Juwangen, Cupuwatu I, Purwomartani, Kec. Kalasan, Sleman", lat: -7.7795009, lng: 110.4469797 },
+  { name: "Praktik Mandiri Dokter dr. Mulia Suryandari", category: "Dokter", phone: "+62 881-5883-288", stage: "new", rating: 5.0, reviews: 4, address: "Jl. Margo Mulyo No.4, Mejing Lor, Ambarketawang, Gamping, Sleman", lat: -7.7850702, lng: 110.3229939 },
+  { name: "dr. Lisa Linda Sari (praktik pindah lokasi)", category: "Dokter", phone: "+62 813-2681-3850", stage: "new", rating: 4.7, reviews: 18, address: "Palem Sewu RT 3, Panggungharjo, Kec. Sewon, Bantul", lat: -7.8362628, lng: 110.3600571 },
+  { name: "Praktik Mandiri Dokter Sari", category: "Dokter Umum", phone: "+62 895-4143-87204", stage: "new", rating: 5.0, reviews: 21, address: "Jl. Pleret - Pathuk, Kedungpring, Bawuran, Kec. Pleret, Bantul", lat: -7.8826935, lng: 110.4264175 },
+  { name: "Praktik Mandiri dr. Dwi Astuti", category: "Dokter", phone: null, stage: "new", rating: 0, reviews: 0, address: "Jl. Purbaya, Warak Kidul, Sumberadi, Mlati, Sleman", lat: -7.7190449, lng: 110.3353242 },
+  { name: "Praktek Dokter Mandiri dr. Kumalatus Sa'dea", category: "Konsultan Kesehatan", phone: "+62 822-6402-9997", stage: "new", rating: 5.0, reviews: 4, address: "Kepatihan, Tamanmartani, Kec. Kalasan, Sleman", lat: -7.7644633, lng: 110.478744 },
+  { name: "Praktek Dokter Mandiri dr Dede Candra Permanda", category: "Dokter Keluarga", phone: null, stage: "new", rating: 4.9, reviews: 60, address: "Jl. Pakem - Turi, Jambalangan, Purwobinangun, Kec. Pakem, Sleman", lat: -7.6512456, lng: 110.3966214 },
+  { name: "Praktek Dokter Umum V. Ida Widayati", category: "Dokter Umum", phone: "+62 274-513575", stage: "new", rating: 4.2, reviews: 51, address: "Jl. Komp. Colombo No.23, Mrican, Caturtunggal, Kec. Depok, Sleman", lat: -7.7787568, lng: 110.3891885 },
+  { name: "Praktik Mandiri Dokter Gigi drg. Cukup Rosyida Fathni", category: "Dokter Gigi", phone: "+62 821-3430-0518", stage: "new", rating: 5.0, reviews: 7, address: "Jl. Agrowisata No.KM 1, Triharjo, Kec. Sleman, Sleman", lat: -7.6833963, lng: 110.3492088 }
+];
+
+const LEADS = RAW_LEADS.map((l, i) => Object.assign({ id: "l" + i }, l));
+const LATS = LEADS.map((l) => l.lat);
+const LNGS = LEADS.map((l) => l.lng);
+const MIN_LAT = Math.min.apply(null, LATS);
+const MAX_LAT = Math.max.apply(null, LATS);
+const MIN_LNG = Math.min.apply(null, LNGS);
+const MAX_LNG = Math.max.apply(null, LNGS);
+
+function project(lat, lng) {
+  const xPct = 8 + ((lng - MIN_LNG) / (MAX_LNG - MIN_LNG)) * 84;
+  const yPct = 8 + ((MAX_LAT - lat) / (MAX_LAT - MIN_LAT)) * 84;
+  return { xPct: xPct, yPct: yPct };
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { query: "", filter: "all", selectedId: null };
+    this.advanceStage = (leadId, toKey) => {
+      const lead = LEADS.find((l) => l.id === leadId);
+      if (lead) lead.stage = toKey;
+      this.setState({});
+    };
+  }
+
+  renderVals() {
+    const query = this.state.query.toLowerCase();
+    const stageCounts = {};
+    LEADS.forEach((l) => { stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1; });
+
+    const filterPills = ["all"].concat(Object.keys(STAGES)).map((key) => {
+      const active = this.state.filter === key;
+      const def = key === "all" ? { label: "All", color: "#0f172a", text: "#fff" } : STAGES[key];
+      const count = key === "all" ? LEADS.length : (stageCounts[key] || 0);
+      return {
+        key: key,
+        label: def.label + " (" + count + ")",
+        onClick: () => this.setState({ filter: key }),
+        style_bg: active ? def.color : "#f1f5f9",
+        style_color: active ? def.text : "#475569"
+      };
+    });
+
+    const visible = LEADS.filter((l) => {
+      const matchesFilter = this.state.filter === "all" || l.stage === this.state.filter;
+      const matchesQuery = query === "" || l.name.toLowerCase().indexOf(query) !== -1 || l.category.toLowerCase().indexOf(query) !== -1;
+      return matchesFilter && matchesQuery;
+    });
+
+    const rows = visible.map((l) => {
+      const def = STAGES[l.stage];
+      return Object.assign({}, l, {
+        stageColor: def.color,
+        rowBg: this.state.selectedId === l.id ? "#f0f9fb" : "#ffffff",
+        onClick: () => this.setState({ selectedId: l.id })
+      });
+    });
+
+    const pins = visible.map((l) => {
+      const def = STAGES[l.stage];
+      const pos = project(l.lat, l.lng);
+      const isSelected = this.state.selectedId === l.id;
+      return Object.assign({}, l, {
+        xPct: pos.xPct.toFixed(2),
+        yPct: pos.yPct.toFixed(2),
+        color: def.color,
+        size: isSelected ? 40 : 30,
+        ring: isSelected ? "#0f172a" : "#ffffff",
+        ringWidth: isSelected ? 2 : 1.5,
+        z: isSelected ? 20 : 10,
+        onClick: () => this.setState({ selectedId: l.id })
+      });
+    });
+
+    const legend = Object.keys(STAGES).map((key) => ({ label: STAGES[key].label, color: STAGES[key].color }));
+
+    const selectedRaw = LEADS.find((l) => l.id === this.state.selectedId) || null;
+    const selected = selectedRaw ? Object.assign({}, selectedRaw, {
+      stageLabel: STAGES[selectedRaw.stage].label,
+      stageColor: STAGES[selectedRaw.stage].color,
+      stageText: STAGES[selectedRaw.stage].text,
+      phone: selectedRaw.phone || "No phone number scraped",
+      ratingDisplay: selectedRaw.rating > 0 ? selectedRaw.rating.toFixed(1) + " (" + selectedRaw.reviews + " reviews)" : "No ratings yet"
+    }) : null;
+
+    const transitions = selected ? TRANSITIONS.filter((t) => t.from === selected.stage).map((t) => ({
+      label: t.label,
+      onClick: () => this.advanceStage(selected.id, t.to)
+    })) : [];
+
+    return {
+      accent: this.props.accent || "#0891b2",
+      query: this.state.query,
+      onSearch: (e) => this.setState({ query: e.target.value }),
+      filterPills: filterPills,
+      rows: rows,
+      pins: pins,
+      legend: legend,
+      hasSelected: !!selected,
+      selected: selected || {},
+      transitions: transitions,
+      closeDrawer: () => this.setState({ selectedId: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
