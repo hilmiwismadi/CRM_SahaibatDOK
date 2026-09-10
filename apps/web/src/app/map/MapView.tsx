@@ -2,6 +2,7 @@
 
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import AppSidebar from "@/app/components/AppSidebar";
@@ -22,10 +23,52 @@ interface Lead {
   phoneNormalized: string | null;
   rating: string | null;
   reviewCount: number | null;
-  lat: number;
-  lng: number;
+  // Nullable: manually-added or not-yet-geocoded leads have no coordinates
+  // and can't be plotted as a pin — but they still belong in the lead list,
+  // stage counts, and are still selectable/chattable from this page. Only
+  // the map-rendering code (mappableLeads below) filters these out.
+  lat: number | null;
+  lng: number | null;
   pipelineStage: string;
   pipelineStageDef: StageDef;
+  // True if any WA contact linked to this lead has been confirmed (via
+  // apps/wa-bridge's sock.onWhatsApp() check — manual tag or automatic on
+  // a failed send) to have no WhatsApp account at all. Takes visual
+  // priority over the pipeline-stage color everywhere on this page — see
+  // NO_WA_COLOR/pinColor below — since "can't be reached on WA" is a more
+  // urgent fact than whatever stage the lead happens to be in.
+  noWaAccount: boolean;
+}
+
+function hasCoords(l: Lead): l is Lead & { lat: number; lng: number } {
+  return l.lat != null && l.lng != null;
+}
+
+const NO_WA_COLOR = "#8B4513"; // brown
+
+// Brown pin covers two distinct "can't be WA-chatted" cases, both equally
+// worth spotting at a glance across the whole map: (1) noWaAccount — an
+// actual number exists but is confirmed (via sock.onWhatsApp()) to have no
+// WhatsApp account; (2) no phoneNormalized at all — nothing was ever
+// scraped to even attempt a chat with. A rep scanning the map shouldn't
+// have to click into each pin to tell "not contacted yet" (still has a
+// real chance) apart from "can't be reached at all" (a dead end for WA).
+function pinColor(lead: Lead): string {
+  return lead.noWaAccount || !lead.phoneNormalized ? NO_WA_COLOR : lead.pipelineStageDef.color;
+}
+
+// Indonesian mobile (WhatsApp-capable) numbers always take the form
+// +628xxxxxxxxx. Anything else after +62 (e.g. +62274... — Yogyakarta's
+// 0274 landline area code) is a landline/office number with no WhatsApp
+// account. Real case that surfaced this: Puskesmas Tegalrejo's only
+// scraped phone was "(0274) 586841" -> normalized to "+62274586841" and
+// treated as WA-capable — the CRM reported the message as "sent" even
+// though nothing ever reached a real phone (see apps/wa-bridge's
+// sendText(), which now rejects these via sock.onWhatsApp() before
+// sending). This is the same check, applied proactively in the UI so a
+// rep sees it before even trying to send.
+function isLikelyLandline(phoneNormalized: string | null): boolean {
+  return !!phoneNormalized && /^\+62(?!8)/.test(phoneNormalized);
 }
 
 interface Activity {
@@ -53,7 +96,7 @@ function pinIcon(color: string, selected: boolean) {
   });
 }
 
-function FitBounds({ leads }: { leads: Lead[] }) {
+function FitBounds({ leads }: { leads: (Lead & { lat: number; lng: number })[] }) {
   const map = useMap();
   useEffect(() => {
     if (leads.length === 0) return;
@@ -67,7 +110,7 @@ function FitBounds({ leads }: { leads: Lead[] }) {
 function FlyToSelected({ lead }: { lead: Lead | null }) {
   const map = useMap();
   useEffect(() => {
-    if (lead) map.flyTo([lead.lat, lead.lng], Math.max(map.getZoom(), 14), { duration: 0.6 });
+    if (lead && hasCoords(lead)) map.flyTo([lead.lat, lead.lng], Math.max(map.getZoom(), 14), { duration: 0.6 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lead?.id]);
   return null;
@@ -94,7 +137,12 @@ export default function MapView() {
       ])
         .then(([leadsData, stagesData]) => {
           if (cancelled) return;
-          setLeads((leadsData.leads ?? []).filter((l: Lead) => l.lat != null && l.lng != null));
+          // Every lead, not just ones with coordinates — stage counts and
+          // the lead list must reflect the real database, not just what
+          // happens to be plottable. See hasCoords()/mappableLeads below
+          // for where the coordinate filter actually belongs (map pins
+          // only).
+          setLeads(leadsData.leads ?? []);
           setStages(stagesData.stages ?? []);
           setLoading(false);
         })
@@ -162,6 +210,12 @@ export default function MapView() {
       return matchesFilter && matchesQuery;
     });
   }, [leads, query, filter]);
+
+  // Map pins can only plot leads with coordinates — kept separate from
+  // filteredLeads (which drives the sidebar list, search, and stage
+  // counts) so a lead missing coordinates still shows up everywhere else.
+  const mappableLeads = useMemo(() => leads.filter(hasCoords), [leads]);
+  const filteredMappableLeads = useMemo(() => filteredLeads.filter(hasCoords), [filteredLeads]);
 
   const selected = useMemo(() => leads.find((l) => l.id === selectedId) ?? null, [leads, selectedId]);
 
@@ -244,12 +298,18 @@ export default function MapView() {
                 cursor: "pointer",
               }}
             >
-              <div style={{ width: 9, height: 9, borderRadius: "50%", background: lead.pipelineStageDef.color, flexShrink: 0 }} />
+              <div style={{ width: 9, height: 9, borderRadius: "50%", background: pinColor(lead), flexShrink: 0 }} />
               <div style={{ minWidth: 0 }}>
                 <div style={{ fontSize: 12.5, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {lead.name}
                 </div>
-                <div style={{ fontSize: 11.5, color: "#94a3b8", marginTop: 1 }}>{lead.category ?? "—"}</div>
+                <div style={{ fontSize: 11.5, color: "#94a3b8", marginTop: 1 }}>
+                  {lead.category ?? "—"}
+                  {!hasCoords(lead) && <span style={{ color: "#f59e0b" }}> · no location</span>}
+                  {isLikelyLandline(lead.phoneNormalized) && (
+                    <span style={{ color: "#dc2626" }}> · bukan nomor WA</span>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -258,19 +318,19 @@ export default function MapView() {
 
       {/* Map area */}
       <div style={{ flex: 1, position: "relative" }}>
-        {!loading && leads.length > 0 && (
-          <MapContainer style={{ width: "100%", height: "100%" }} center={[leads[0].lat, leads[0].lng]} zoom={12} scrollWheelZoom>
+        {!loading && mappableLeads.length > 0 && (
+          <MapContainer style={{ width: "100%", height: "100%" }} center={[mappableLeads[0].lat, mappableLeads[0].lng]} zoom={12} scrollWheelZoom>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <FitBounds leads={leads} />
+            <FitBounds leads={mappableLeads} />
             <FlyToSelected lead={selected} />
-            {filteredLeads.map((lead) => (
+            {filteredMappableLeads.map((lead) => (
               <Marker
                 key={lead.id}
                 position={[lead.lat, lead.lng]}
-                icon={pinIcon(lead.pipelineStageDef.color, lead.id === selectedId)}
+                icon={pinIcon(pinColor(lead), lead.id === selectedId)}
                 zIndexOffset={lead.id === selectedId ? 1000 : 0}
                 eventHandlers={{ click: () => setSelectedId(lead.id) }}
               />
@@ -302,6 +362,10 @@ export default function MapView() {
                 <div style={{ fontSize: 11.5, color: "#334155", whiteSpace: "nowrap" }}>{s.label}</div>
               </div>
             ))}
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: NO_WA_COLOR, flexShrink: 0 }} />
+              <div style={{ fontSize: 11.5, color: "#334155", whiteSpace: "nowrap" }}>Tidak Ada Kontak WA</div>
+            </div>
           </div>
         </div>
       </div>
@@ -337,6 +401,7 @@ export default function MapView() {
             </button>
           </div>
 
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           <span
             style={{
               background: selected.pipelineStageDef.color,
@@ -349,13 +414,41 @@ export default function MapView() {
           >
             {selected.pipelineStageDef.label}
           </span>
+          {selected.noWaAccount && (
+            <span
+              style={{
+                background: NO_WA_COLOR,
+                color: "#fff",
+                fontSize: 12,
+                fontWeight: 600,
+                padding: "5px 12px",
+                borderRadius: 999,
+              }}
+            >
+              🚫 Tidak Ada Kontak WA
+            </span>
+          )}
+          </div>
 
           <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 500 }}>{selected.phoneNormalized ?? "No phone number scraped"}</div>
+            <div style={{ fontSize: 13.5, fontWeight: 500, color: selected.phoneNormalized ? undefined : NO_WA_COLOR }}>
+              {selected.phoneNormalized ?? "No phone number scraped"}
+            </div>
             <div style={{ fontSize: 13.5, color: "#334155", lineHeight: 1.5 }}>{selected.address ?? "—"}</div>
             <div style={{ fontSize: 13.5, color: "#334155" }}>
               {selected.rating ? `${selected.rating} (${selected.reviewCount ?? 0} reviews)` : "No ratings yet"}
             </div>
+            <Link
+              href={`/chat?leadId=${selected.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 600, color: "#0891b2", textDecoration: "none" }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+                <path d="M4 4h16v12H8l-4 4V4Z" stroke="#0891b2" strokeWidth="1.8" strokeLinejoin="round" />
+              </svg>
+              Open Chat
+            </Link>
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.name)}&query_place_id=${selected.googlePlaceId}`}
               target="_blank"

@@ -88,7 +88,10 @@ export default function Composer({
   return (
     <div className="border-t border-slate-100 bg-white p-3">
       {disabled && disabledReason && (
-        <div className="mb-2 rounded-md bg-amber-50 px-3 py-1.5 text-xs text-amber-700">{disabledReason}</div>
+        // Brown — same color used on /map for confirmed "no WA contact"
+        // leads, since this banner shows for the same underlying reason
+        // (no phone number to send to).
+        <div className="mb-2 rounded-md bg-[#8B4513]/10 px-3 py-1.5 text-xs text-[#8B4513]">{disabledReason}</div>
       )}
       {templates.length > 0 && (
         <div className="mb-2">

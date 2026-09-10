@@ -81,6 +81,36 @@ export default function ChatPage() {
     await loadConversations();
   }
 
+  async function handleToggleFollowUp(item: ConversationListItem, needsFollowUp: boolean) {
+    await fetch(`/api/conversations/${item.id}/flag`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ needsFollowUp }),
+    });
+    setContextMenu(null);
+    await loadConversations();
+  }
+
+  async function handleToggleNoWaAccount(item: ConversationListItem, noWaAccount: boolean) {
+    await fetch(`/api/conversations/${item.id}/flag`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ noWaAccount }),
+    });
+    setContextMenu(null);
+    await loadConversations();
+  }
+
+  async function handleToggleAppointment(item: ConversationListItem, appointment: boolean) {
+    await fetch(`/api/conversations/${item.id}/flag`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ appointment }),
+    });
+    setContextMenu(null);
+    await loadConversations();
+  }
+
   // Passive notification: a lead replying while you're on a different tab
   // (or a different page in the app) still shows up as a badge on the
   // browser tab title, since there's no OS-level push notification wired
@@ -375,6 +405,36 @@ export default function ChatPage() {
               <path d="M3 7l9 6 9-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             {contextMenu.item.needsOtherContact ? "Hapus Tandai Perlu Kontak Lain" : "Perlu Kontak Email/Lainnya"}
+          </button>
+          <button
+            onClick={() => handleToggleFollowUp(contextMenu.item, !contextMenu.item.needsFollowUp)}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-sky-500">
+              <path d="M12 8v4l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            {contextMenu.item.needsFollowUp ? "Hapus Tandai Butuh Follow Up" : "Butuh Follow Up"}
+          </button>
+          <button
+            onClick={() => handleToggleNoWaAccount(contextMenu.item, !contextMenu.item.noWaAccount)}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-gray-500">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+              <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            {contextMenu.item.noWaAccount ? "Hapus Tandai Tidak Ada Kontak WA" : "Tidak Ada Kontak WA"}
+          </button>
+          <button
+            onClick={() => handleToggleAppointment(contextMenu.item, !contextMenu.item.appointment)}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-emerald-500">
+              <rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
+              <path d="M4 10h16M8 3v4M16 3v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            {contextMenu.item.appointment ? "Hapus Tandai Appointment" : "Appointment"}
           </button>
         </div>
       )}

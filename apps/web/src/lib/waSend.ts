@@ -4,9 +4,11 @@ import type { WaContact, WaMessage } from "@prisma/client";
 
 export class WaSendError extends Error {
   status: number;
-  constructor(message: string, status: number) {
+  code?: string;
+  constructor(message: string, status: number, code?: string) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -43,11 +45,39 @@ export async function sendOutboundToPhone(
     });
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new WaSendError(payload.error ?? `WA bridge returned ${res.status}`, res.status === 503 ? 503 : 502);
+      // 422 = wa-bridge confirmed via sock.onWhatsApp() that this number has
+      // no WhatsApp account (e.g. a landline miscategorized as WA-capable
+      // during scrape import) — pass the status through as-is so this is a
+      // distinct, clear client error rather than a generic upstream failure.
+      const status = res.status === 503 ? 503 : res.status === 422 ? 422 : 502;
+      throw new WaSendError(payload.error ?? `WA bridge returned ${res.status}`, status, payload.code);
     }
     sendResult = payload as { waMessageId: string; sentAt: string };
   } catch (err) {
-    if (err instanceof WaSendError) throw err;
+    if (err instanceof WaSendError) {
+      if (err.code === "not_on_whatsapp") {
+        // Confirmed dead end (not a transient failure) — auto-tag the
+        // conversation right here rather than relying on someone noticing
+        // and tagging it manually. Upserts a wa_contacts row even though
+        // no message was ever actually sent, purely to hold this flag and
+        // surface it in /chat's inbox — see the conversations route's
+        // OR-widened filter that lets a zero-message, tagged contact show
+        // up there.
+        const jid = phoneToJid(params.phoneNormalized);
+        await db.waContact.upsert({
+          where: { jid },
+          create: {
+            jid,
+            phoneNormalized: params.phoneNormalized,
+            leadId: params.leadId ?? undefined,
+            linkedAt: params.leadId ? new Date() : undefined,
+            noWaAccount: true,
+          },
+          update: { noWaAccount: true, ...(params.leadId ? { leadId: params.leadId, linkedAt: new Date() } : {}) },
+        });
+      }
+      throw err;
+    }
     throw new WaSendError("Could not reach the WhatsApp bridge", 503);
   }
 

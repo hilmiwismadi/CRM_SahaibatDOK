@@ -39,5 +39,9 @@ scrape-output/
 # never commit. Copy this off-machine yourself; git is not the backup.
 apps/web/backups/
 
+# ad-hoc pg_dump / auth_state backups made before local dev restarts —
+# real lead/message data + WA session keys, never commit.
+/backups/
+
 # typescript
 *.tsbuildinfo

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { normalizePhoneNumber } from "@sahaibat/shared";
 import { db } from "@/lib/db";
 import { extractProvince } from "@/lib/provinceExtract";
+import { classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -17,6 +18,10 @@ export async function GET(req: NextRequest) {
   const city = searchParams.get("city") ?? "";
   const province = searchParams.get("province") ?? "";
   const businessType = searchParams.get("businessType") ?? "";
+  // Values are LeadCategory keys (untouched/no_wa_account/appointment/...)
+  // — same classification /api/reports/segmentation and /reports/kanban
+  // use, so this filter can never disagree with what those pages show.
+  const tag = searchParams.get("tag") ?? "";
 
   const leads = await db.lead.findMany({
     where: {
@@ -37,7 +42,20 @@ export async function GET(req: NextRequest) {
         : {}),
     },
     orderBy: { firstScrapedAt: "desc" },
-    include: { pipelineStageDef: true },
+    include: {
+      pipelineStageDef: true,
+      waContacts: {
+        select: {
+          noWaAccount: true,
+          appointment: true,
+          needsOtherContact: true,
+          needsFollowUp: true,
+          repliedOverrideAt: true,
+          repliedOverrideKind: true,
+          messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
+        },
+      },
+    },
   });
 
   // Display-only fallback: derive from `address` for any row the bulk
@@ -45,7 +63,33 @@ export async function GET(req: NextRequest) {
   // useful immediately rather than waiting on that job. Doesn't persist —
   // the stored column (used for the WHERE filter above) fills in for real
   // once PUT /api/leads/[id] sets it.
-  const enriched = leads.map((l) => (l.province ? l : { ...l, province: extractProvince(l.address) }));
+  let enriched = leads.map((l) => {
+    const { waContacts, ...rest } = l;
+    return {
+      ...rest,
+      province: l.province ?? extractProvince(l.address),
+      // True if any WA contact linked to this lead has been confirmed (via
+      // apps/wa-bridge's sock.onWhatsApp() check, manual or automatic on a
+      // failed send) to have no WhatsApp account — drives /map's brown pin.
+      noWaAccount: waContacts.some((wc) => wc.noWaAccount),
+      tagCategory: classifyLead({
+        pipelineStage: l.pipelineStage,
+        contacts: waContacts.map((c) => ({
+          noWaAccount: c.noWaAccount,
+          appointment: c.appointment,
+          needsOtherContact: c.needsOtherContact,
+          needsFollowUp: c.needsFollowUp,
+          repliedOverrideAt: c.repliedOverrideAt,
+          repliedOverrideKind: c.repliedOverrideKind,
+          lastMessage: c.messages[0] ?? null,
+        })),
+      }),
+    };
+  });
+
+  if (tag) {
+    enriched = enriched.filter((l) => l.tagCategory === (tag as LeadCategory));
+  }
 
   return NextResponse.json({ leads: enriched });
 }

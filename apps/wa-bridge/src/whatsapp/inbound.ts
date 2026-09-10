@@ -8,6 +8,7 @@ import {
   insertLeadActivity,
   insertWaMessage,
   linkContactToLead,
+  maybeAdvanceToResponded,
   upsertWaContact,
 } from "./db-writer.js";
 
@@ -90,6 +91,7 @@ export async function handleIncomingMessages(
             waContactId,
             waMessageId,
           });
+          await maybeAdvanceToResponded(leadId, waContactId);
         }
       }
     } catch (err) {

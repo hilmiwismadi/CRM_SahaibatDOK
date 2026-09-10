@@ -17,6 +17,11 @@ const schema = z.object({
  * a newer inbound message arrives (see schema.prisma's WaContact doc
  * comment) — a lead following up after a bot reply usually means they
  * want a human. `replied: false` clears the override early.
+ *
+ * Logs to lead_activities (type "replied_marked") since
+ * wa_contacts.replied_override_at only ever holds the *latest* value, not
+ * a history — this log is what lets /reports/kanban-history count
+ * "Dijawab Bot" per date/week accurately going forward.
  */
 export async function PATCH(
   req: NextRequest,
@@ -29,11 +34,27 @@ export async function PATCH(
   }
 
   try {
-    const contact = await db.waContact.update({
-      where: { id },
-      data: parsed.data.replied
-        ? { repliedOverrideAt: new Date(), repliedOverrideKind: parsed.data.kind ?? "manual" }
-        : { repliedOverrideAt: null, repliedOverrideKind: null },
+    const contact = await db.$transaction(async (tx) => {
+      const updated = await tx.waContact.update({
+        where: { id },
+        data: parsed.data.replied
+          ? { repliedOverrideAt: new Date(), repliedOverrideKind: parsed.data.kind ?? "manual" }
+          : { repliedOverrideAt: null, repliedOverrideKind: null },
+      });
+
+      if (updated.leadId) {
+        await tx.leadActivity.create({
+          data: {
+            leadId: updated.leadId,
+            type: "replied_marked",
+            payload: parsed.data.replied
+              ? { kind: parsed.data.kind ?? "manual", waContactId: updated.id }
+              : { cleared: true, waContactId: updated.id },
+          },
+        });
+      }
+
+      return updated;
     });
     return NextResponse.json({ contact });
   } catch {

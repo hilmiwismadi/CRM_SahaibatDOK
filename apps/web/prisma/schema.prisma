@@ -175,6 +175,25 @@ model WaContact {
   // new inbound message — it's a standing note about the channel, not a
   // reply-status snapshot, so it stays until manually cleared.
   needsOtherContact Boolean @default(false) @map("needs_other_contact")
+  // Manual flag: this lead needs a proactive follow-up (e.g. went quiet,
+  // said "call me later", waiting on something from them). Same standing
+  // semantics as needsOtherContact above — does not auto-expire on a new
+  // inbound message, cleared manually when no longer relevant.
+  needsFollowUp Boolean @default(false) @map("needs_follow_up")
+  // Manual flag: confirmed this phone number has no WhatsApp account (e.g.
+  // a landline scraped as the lead's only phone, or the number was
+  // mistyped) — distinct from needsOtherContact ("WA isn't working, try
+  // something else") in that this is a factual dead-end, not a
+  // still-worth-retrying channel problem. Same standing semantics: no
+  // auto-expiry, cleared manually. See apps/wa-bridge's sendText() —
+  // NotOnWhatsAppError is the automated signal this same fact can also be
+  // detected from (not auto-applied to this flag yet, kept manual for now).
+  noWaAccount Boolean @default(false) @map("no_wa_account")
+  // Manual flag: a meeting/appointment has been scheduled with this lead —
+  // a positive milestone, distinct from the other standing flags above
+  // (which all mark problems). Same no-auto-expiry semantics; cleared
+  // manually once the appointment has passed or fallen through.
+  appointment Boolean @default(false)
 
   messages    WaMessage[]
   contactNode LeadContactNode?

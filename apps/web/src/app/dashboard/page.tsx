@@ -5,6 +5,7 @@ import AppSidebar from "@/app/components/AppSidebar";
 import LeadModal, { type LeadEditData } from "./LeadModal";
 import AddLeadModal from "./AddLeadModal";
 import { BUSINESS_TYPES, businessTypeLabel, type Lead, type StageDef } from "./types";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "@/lib/leadSegmentation";
 
 /**
  * Opens a URL in a new tab without stealing focus from the dashboard — a
@@ -38,6 +39,7 @@ export default function DashboardPage() {
   const [cityFilter, setCityFilter] = useState("all");
   const [provinceFilter, setProvinceFilter] = useState("all");
   const [businessTypeFilter, setBusinessTypeFilter] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
   const [groupByProvince, setGroupByProvince] = useState(false);
   const [selected, setSelected] = useState<Lead | null>(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -67,11 +69,12 @@ export default function DashboardPage() {
     if (cityFilter !== "all") qs.set("city", cityFilter);
     if (provinceFilter !== "all") qs.set("province", provinceFilter);
     if (businessTypeFilter !== "all") qs.set("businessType", businessTypeFilter);
+    if (tagFilter !== "all") qs.set("tag", tagFilter);
     const res = await fetch(`/api/leads?${qs.toString()}`);
     const data = await res.json();
     setLeads(data.leads ?? []);
     setLoading(false);
-  }, [search, stageFilter, categoryFilter, cityFilter, provinceFilter, businessTypeFilter]);
+  }, [search, stageFilter, categoryFilter, cityFilter, provinceFilter, businessTypeFilter, tagFilter]);
 
   useEffect(() => {
     load();
@@ -231,6 +234,18 @@ export default function DashboardPage() {
             {provinces.map((p) => (
               <option key={p} value={p}>
                 {p}
+              </option>
+            ))}
+          </select>
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
+            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+          >
+            <option value="all">All tags</option>
+            {CATEGORY_ORDER.map((key) => (
+              <option key={key} value={key}>
+                {CATEGORY_LABELS[key]}
               </option>
             ))}
           </select>

@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { sendText } from "../whatsapp/socket.js";
+import { sendText, NotOnWhatsAppError } from "../whatsapp/socket.js";
 
 interface SendBody {
   phoneNormalized?: string;
@@ -27,6 +27,9 @@ export function registerSendRoute(app: FastifyInstance) {
         sentAt: result.sentAt.toISOString(),
       });
     } catch (err) {
+      if (err instanceof NotOnWhatsAppError) {
+        return reply.status(422).send({ error: err.message, code: "not_on_whatsapp" });
+      }
       const message = err instanceof Error ? err.message : "Unknown error";
       const status = message.includes("not connected") ? 503 : 500;
       return reply.status(status).send({ error: message });

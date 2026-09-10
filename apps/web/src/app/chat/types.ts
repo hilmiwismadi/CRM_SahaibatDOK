@@ -32,6 +32,9 @@ export interface ConversationListItem {
   needsReply: boolean;
   repliedByBot: boolean;
   needsOtherContact: boolean;
+  needsFollowUp: boolean;
+  noWaAccount: boolean;
+  appointment: boolean;
 }
 
 export type Selected = { kind: "lead"; leadId: string } | { kind: "conversation"; conversationId: string };

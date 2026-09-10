@@ -152,6 +152,34 @@ export async function getAllLeadPhoneNumbers(): Promise<string[]> {
   return result.rows.map((r) => r.phone_normalized);
 }
 
+/**
+ * Auto-advances a lead from "contacted" to "responded" on their first-ever
+ * inbound reply — mirrors the existing "new"->"contacted" rule in
+ * apps/web/src/lib/waSend.ts (fires on the first outbound message), just
+ * for the inbound direction. Guarded two ways: only fires when this is
+ * genuinely the first inbound message ever recorded for this wa_contact
+ * (so a second reply doesn't re-trigger it), and only when the lead is
+ * currently exactly "contacted" (so it never overrides a rep who already
+ * manually moved the lead further along, or already responded once
+ * before). See Context/SahaibatExplanation/6.ReportsDashboardPlan.md §5.1.
+ */
+export async function maybeAdvanceToResponded(leadId: string, waContactId: string): Promise<void> {
+  const inboundCount = await pool.query<{ count: string }>(
+    `SELECT COUNT(*)::text as count FROM "wa_messages" WHERE "wa_contact_id" = $1 AND "direction" = 'inbound'`,
+    [waContactId],
+  );
+  if (Number(inboundCount.rows[0]?.count ?? 0) !== 1) return; // not the first inbound message
+
+  const lead = await pool.query<{ pipeline_stage: string }>(
+    `SELECT "pipeline_stage" FROM "leads" WHERE "id" = $1`,
+    [leadId],
+  );
+  if (lead.rows[0]?.pipeline_stage !== "contacted") return;
+
+  await pool.query(`UPDATE "leads" SET "pipeline_stage" = 'responded' WHERE "id" = $1`, [leadId]);
+  await insertLeadActivity(leadId, "stage_change", { from: "contacted", to: "responded" });
+}
+
 export async function insertLeadActivity(
   leadId: string,
   type: string,

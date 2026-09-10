@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { ConversationListItem, Selected } from "./types";
 
 function timeLabel(iso: string) {
@@ -10,6 +11,18 @@ function timeLabel(iso: string) {
     ? d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })
     : d.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
 }
+
+type TagFilter = "all" | "needsReply" | "repliedByBot" | "appointment" | "needsOtherContact" | "needsFollowUp" | "noWaAccount";
+
+const TAG_FILTERS: { key: TagFilter; label: string }[] = [
+  { key: "all", label: "Semua" },
+  { key: "needsReply", label: "Belum Dibalas" },
+  { key: "repliedByBot", label: "Dibalas Bot" },
+  { key: "appointment", label: "Appointment" },
+  { key: "needsOtherContact", label: "Perlu Kontak Lain" },
+  { key: "needsFollowUp", label: "Butuh Follow Up" },
+  { key: "noWaAccount", label: "Tidak Ada Kontak WA" },
+];
 
 export default function ConversationList({
   conversations,
@@ -28,8 +41,11 @@ export default function ConversationList({
   onSelect: (item: ConversationListItem) => void;
   onContextMenu: (e: React.MouseEvent, item: ConversationListItem) => void;
 }) {
+  const [tagFilter, setTagFilter] = useState<TagFilter>("all");
+
   const q = search.trim().toLowerCase();
   const filtered = conversations.filter((c) => {
+    if (tagFilter !== "all" && !c[tagFilter]) return false;
     if (!q) return true;
     return (
       (c.lead?.name ?? "").toLowerCase().includes(q) ||
@@ -59,14 +75,29 @@ export default function ConversationList({
           placeholder="Search conversations"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
+          className="mb-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
         />
+        <div className="flex flex-wrap gap-1.5">
+          {TAG_FILTERS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTagFilter(t.key)}
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                tagFilter === t.key
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {loading && <div className="p-4 text-sm text-slate-400">Loading conversations…</div>}
         {!loading && filtered.length === 0 && (
-          <div className="p-4 text-sm text-slate-400">No conversations yet.</div>
+          <div className="p-4 text-sm text-slate-400">No conversations match.</div>
         )}
         {filtered.map((c) => {
           const isSelected =
@@ -93,9 +124,15 @@ export default function ConversationList({
                     ? "bg-red-50/60 hover:bg-red-50"
                     : c.repliedByBot
                       ? "bg-violet-50/60 hover:bg-violet-50"
-                      : c.needsOtherContact
-                        ? "bg-amber-50/60 hover:bg-amber-50"
-                        : "bg-white hover:bg-slate-50"
+                      : c.appointment
+                        ? "bg-emerald-50/60 hover:bg-emerald-50"
+                        : c.noWaAccount
+                          ? "bg-gray-100/70 hover:bg-gray-100"
+                          : c.needsOtherContact
+                            ? "bg-amber-50/60 hover:bg-amber-50"
+                            : c.needsFollowUp
+                              ? "bg-sky-50/60 hover:bg-sky-50"
+                              : "bg-white hover:bg-slate-50"
               }`}
             >
               <div className="flex items-center justify-between gap-2">
@@ -109,8 +146,17 @@ export default function ConversationList({
                   {c.repliedByBot && (
                     <span title="Dibalas oleh bot" className="h-2 w-2 shrink-0 rounded-full bg-violet-500" />
                   )}
+                  {c.appointment && (
+                    <span title="Appointment" className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
+                  )}
+                  {c.noWaAccount && (
+                    <span title="Tidak ada kontak WA" className="h-2 w-2 shrink-0 rounded-full bg-gray-500" />
+                  )}
                   {c.needsOtherContact && (
                     <span title="Perlu kontak email/lainnya" className="h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                  )}
+                  {c.needsFollowUp && (
+                    <span title="Butuh follow up" className="h-2 w-2 shrink-0 rounded-full bg-sky-500" />
                   )}
                   <span className="truncate text-sm font-semibold text-slate-900">{title}</span>
                 </div>
@@ -137,9 +183,24 @@ export default function ConversationList({
                     🤖 Dibalas bot
                   </span>
                 )}
+                {c.appointment && (
+                  <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                    📅 Appointment
+                  </span>
+                )}
+                {c.noWaAccount && (
+                  <span className="shrink-0 rounded-full bg-gray-200 px-2 py-0.5 text-[10px] font-semibold text-gray-700">
+                    🚫 Tidak ada kontak WA
+                  </span>
+                )}
                 {c.needsOtherContact && (
                   <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
                     📧 Perlu kontak lain
+                  </span>
+                )}
+                {c.needsFollowUp && (
+                  <span className="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-sky-700">
+                    🔔 Butuh follow up
                   </span>
                 )}
                 <span className="truncate text-xs text-slate-500">{preview}</span>
