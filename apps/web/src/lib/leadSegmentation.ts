@@ -40,6 +40,7 @@ export type LeadCategory =
   | "replied_by_bot"
   | "needs_other_contact"
   | "needs_follow_up"
+  | "no_reply_after_pitch"
   | "active";
 
 export const CATEGORY_ORDER: LeadCategory[] = [
@@ -50,6 +51,7 @@ export const CATEGORY_ORDER: LeadCategory[] = [
   "replied_by_bot",
   "needs_other_contact",
   "needs_follow_up",
+  "no_reply_after_pitch",
   "active",
 ];
 
@@ -61,6 +63,7 @@ export const CATEGORY_LABELS: Record<LeadCategory, string> = {
   replied_by_bot: "Dijawab Bot",
   needs_other_contact: "Perlu Kontak Lain",
   needs_follow_up: "Butuh Follow Up",
+  no_reply_after_pitch: "Tidak Reply Lagi",
   active: "Aktif",
 };
 
@@ -72,7 +75,16 @@ export const CATEGORY_COLORS: Record<LeadCategory, string> = {
   replied_by_bot: "#8b5cf6", // violet-500
   needs_other_contact: "#f59e0b", // amber-500
   needs_follow_up: "#0ea5e9", // sky-500
+  no_reply_after_pitch: "#dc2626", // red-600 — solid fallback where a single color is needed
   active: "#0891b2", // cyan-600
+};
+
+// Two-stop gradient for categories that want the richer treatment (currently
+// just no_reply_after_pitch, per the user's explicit "orange to red" ask) —
+// CATEGORY_COLORS above stays the solid fallback for spots that only take
+// one color (small dots, plain borders).
+export const CATEGORY_GRADIENTS: Partial<Record<LeadCategory, [string, string]>> = {
+  no_reply_after_pitch: ["#f97316", "#dc2626"],
 };
 
 export interface ContactTagInput {
@@ -83,6 +95,14 @@ export interface ContactTagInput {
   repliedOverrideAt: Date | string | null;
   repliedOverrideKind: string | null;
   lastMessage: { direction: string; sentAt: Date | string } | null;
+  // True when this contact matches the "sent the pitch, they'd replied
+  // before it, nothing since" pattern — computed via a DB query
+  // (getNoReplyAfterPitchContactIds in noReplyAfterPitch.ts) since it needs
+  // full message history, not just the fields above. Lowest classification
+  // priority among the "something's off" categories — deliberately checked
+  // after needs_follow_up so a lead you've manually tagged Butuh Follow Up
+  // keeps showing there rather than being silently reclassified.
+  noReplyAfterPitch: boolean;
 }
 
 export interface ClassifyLeadInput {
@@ -99,12 +119,14 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
   let anyRepliedBot = false;
   let anyOtherContact = false;
   let anyFollowUp = false;
+  let anyNoReplyAfterPitch = false;
 
   for (const c of input.contacts) {
     if (c.noWaAccount) anyNoWa = true;
     if (c.appointment) anyAppointment = true;
     if (c.needsOtherContact) anyOtherContact = true;
     if (c.needsFollowUp) anyFollowUp = true;
+    if (c.noReplyAfterPitch) anyNoReplyAfterPitch = true;
 
     const lastMessage = c.lastMessage;
     const overrideActive =
@@ -119,5 +141,6 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
   if (anyRepliedBot) return "replied_by_bot";
   if (anyOtherContact) return "needs_other_contact";
   if (anyFollowUp) return "needs_follow_up";
+  if (anyNoReplyAfterPitch) return "no_reply_after_pitch";
   return "active";
 }

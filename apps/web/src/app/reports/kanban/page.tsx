@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../ReportsTabs";
-import { CATEGORY_COLORS, CATEGORY_LABELS, CATEGORY_ORDER, type LeadCategory } from "@/lib/leadSegmentation";
+import { CATEGORY_COLORS, CATEGORY_GRADIENTS, CATEGORY_LABELS, CATEGORY_ORDER, type LeadCategory } from "@/lib/leadSegmentation";
 
 // The 6 real "move a lead" actions — everything /api/leads/[id]/quick-tag
 // accepts. Two Kanban categories (untouched, needs_reply) have no
@@ -480,7 +480,7 @@ export default function KanbanPage() {
         <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
         <p className="mb-4 text-sm text-slate-500">
           Kanban lead per status — klik kartu untuk lihat ringkasan &amp; pindahkan tag, atau drag ke kolom lain.
-          &ldquo;Belum Disentuh&rdquo; dan &ldquo;Belum Dijawab&rdquo; tidak bisa dipindah manual — itu status otomatis, bukan tag.
+          &ldquo;Belum Disentuh&rdquo;, &ldquo;Belum Dijawab&rdquo;, dan &ldquo;Tidak Reply Lagi&rdquo; tidak bisa dipindah manual — itu status otomatis, bukan tag.
         </p>
         <ReportsTabs />
 
@@ -537,7 +537,11 @@ export default function KanbanPage() {
                       <div className="mb-3 flex items-center gap-2 px-1">
                         <span
                           className="h-2.5 w-2.5 shrink-0 rounded-full"
-                          style={{ backgroundColor: CATEGORY_COLORS[col.key] }}
+                          style={
+                            CATEGORY_GRADIENTS[col.key]
+                              ? { backgroundImage: `linear-gradient(135deg, ${CATEGORY_GRADIENTS[col.key]![0]}, ${CATEGORY_GRADIENTS[col.key]![1]})` }
+                              : { backgroundColor: CATEGORY_COLORS[col.key] }
+                          }
                         />
                         <span className="text-sm font-semibold text-slate-700">{col.label}</span>
                         <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-500">

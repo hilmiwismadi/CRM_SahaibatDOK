@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CATEGORY_LABELS, CATEGORY_ORDER, classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
+import { getNoReplyAfterPitchContactIds } from "@/lib/noReplyAfterPitch";
 
 interface CardLead {
   id: string;
@@ -19,26 +20,30 @@ interface CardLead {
  * disagree. See that file's doc comment for the full classification rules.
  */
 export async function GET() {
-  const leads = await db.lead.findMany({
-    select: {
-      id: true,
-      name: true,
-      phoneNormalized: true,
-      pipelineStage: true,
-      pipelineStageDef: { select: { label: true, color: true } },
-      waContacts: {
-        select: {
-          noWaAccount: true,
-          appointment: true,
-          needsOtherContact: true,
-          needsFollowUp: true,
-          repliedOverrideAt: true,
-          repliedOverrideKind: true,
-          messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
+  const [leads, noReplyAfterPitchIds] = await Promise.all([
+    db.lead.findMany({
+      select: {
+        id: true,
+        name: true,
+        phoneNormalized: true,
+        pipelineStage: true,
+        pipelineStageDef: { select: { label: true, color: true } },
+        waContacts: {
+          select: {
+            id: true,
+            noWaAccount: true,
+            appointment: true,
+            needsOtherContact: true,
+            needsFollowUp: true,
+            repliedOverrideAt: true,
+            repliedOverrideKind: true,
+            messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    getNoReplyAfterPitchContactIds(),
+  ]);
 
   const buckets = Object.fromEntries(CATEGORY_ORDER.map((k) => [k, [] as CardLead[]])) as Record<
     LeadCategory,
@@ -56,6 +61,7 @@ export async function GET() {
         repliedOverrideAt: c.repliedOverrideAt,
         repliedOverrideKind: c.repliedOverrideKind,
         lastMessage: c.messages[0] ?? null,
+        noReplyAfterPitch: noReplyAfterPitchIds.has(c.id),
       })),
     });
 

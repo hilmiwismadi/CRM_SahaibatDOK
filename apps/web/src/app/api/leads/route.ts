@@ -5,6 +5,7 @@ import { normalizePhoneNumber } from "@sahaibat/shared";
 import { db } from "@/lib/db";
 import { extractProvince } from "@/lib/provinceExtract";
 import { classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
+import { getNoReplyAfterPitchContactIds } from "@/lib/noReplyAfterPitch";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -23,40 +24,44 @@ export async function GET(req: NextRequest) {
   // use, so this filter can never disagree with what those pages show.
   const tag = searchParams.get("tag") ?? "";
 
-  const leads = await db.lead.findMany({
-    where: {
-      ...(stage && stage !== "all" ? { pipelineStage: stage } : {}),
-      ...(category && category !== "all" ? { category } : {}),
-      ...(businessType && businessType !== "all" ? { businessType } : {}),
-      ...(city && city !== "all" ? { address: { contains: city, mode: "insensitive" } } : {}),
-      ...(province && province !== "all" ? { province } : {}),
-      ...(search
-        ? {
-            OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { category: { contains: search, mode: "insensitive" } },
-              { address: { contains: search, mode: "insensitive" } },
-              { phoneNormalized: { contains: search, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-    },
-    orderBy: { firstScrapedAt: "desc" },
-    include: {
-      pipelineStageDef: true,
-      waContacts: {
-        select: {
-          noWaAccount: true,
-          appointment: true,
-          needsOtherContact: true,
-          needsFollowUp: true,
-          repliedOverrideAt: true,
-          repliedOverrideKind: true,
-          messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
+  const [leads, noReplyAfterPitchIds] = await Promise.all([
+    db.lead.findMany({
+      where: {
+        ...(stage && stage !== "all" ? { pipelineStage: stage } : {}),
+        ...(category && category !== "all" ? { category } : {}),
+        ...(businessType && businessType !== "all" ? { businessType } : {}),
+        ...(city && city !== "all" ? { address: { contains: city, mode: "insensitive" } } : {}),
+        ...(province && province !== "all" ? { province } : {}),
+        ...(search
+          ? {
+              OR: [
+                { name: { contains: search, mode: "insensitive" } },
+                { category: { contains: search, mode: "insensitive" } },
+                { address: { contains: search, mode: "insensitive" } },
+                { phoneNormalized: { contains: search, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
+      orderBy: { firstScrapedAt: "desc" },
+      include: {
+        pipelineStageDef: true,
+        waContacts: {
+          select: {
+            id: true,
+            noWaAccount: true,
+            appointment: true,
+            needsOtherContact: true,
+            needsFollowUp: true,
+            repliedOverrideAt: true,
+            repliedOverrideKind: true,
+            messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
+          },
         },
       },
-    },
-  });
+    }),
+    getNoReplyAfterPitchContactIds(),
+  ]);
 
   // Display-only fallback: derive from `address` for any row the bulk
   // backfill hasn't reached yet, so grouping/filtering by province is
@@ -82,6 +87,7 @@ export async function GET(req: NextRequest) {
           repliedOverrideAt: c.repliedOverrideAt,
           repliedOverrideKind: c.repliedOverrideKind,
           lastMessage: c.messages[0] ?? null,
+          noReplyAfterPitch: noReplyAfterPitchIds.has(c.id),
         })),
       }),
     };

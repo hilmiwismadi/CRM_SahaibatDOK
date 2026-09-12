@@ -241,7 +241,7 @@ export default function ReportsPage() {
                 <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
                   Breakdown dari yang Sudah Disentuh
                 </div>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
                   {segmentation.touched.categories.map((c) => (
                     <div key={c.key} className="rounded-lg border border-slate-100 p-3">
                       <div className="text-lg font-bold text-slate-900">{c.count}</div>
