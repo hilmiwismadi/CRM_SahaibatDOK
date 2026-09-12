@@ -1,3 +1,5 @@
+import type { LeadCategory } from "@/lib/leadSegmentation";
+
 export interface StageDefBrief {
   key: string;
   label: string;
@@ -35,6 +37,14 @@ export interface ConversationListItem {
   needsFollowUp: boolean;
   noWaAccount: boolean;
   appointment: boolean;
+  declined: boolean;
+  // Computed, read-only — never toggled from the context menu, see
+  // leadSegmentation.ts's nonResponsive/noReplyAfterPitch fields.
+  nonResponsive: boolean;
+  noReplyAfterPitch: boolean;
+  // Single canonical classification (see @/lib/leadSegmentation's
+  // classifyLead) — null only for the (rare) contact with no linked lead.
+  tagCategory: LeadCategory | null;
 }
 
 export type Selected = { kind: "lead"; leadId: string } | { kind: "conversation"; conversationId: string };

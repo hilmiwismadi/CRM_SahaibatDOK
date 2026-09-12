@@ -66,19 +66,44 @@ export const CATEGORY_ORDER: LeadCategory[] = [
   "active",
 ];
 
+// One name per category, everywhere — /chat's inbox badges, its filter
+// chips, its context menu, /reports' funnel, and /reports/kanban's columns
+// all import these same strings. Before 2026-09-12 the "Reply" branch had
+// two parallel names in play (e.g. "Butuh Follow Up" here vs "Follow Up"
+// in ad-hoc report copy) which is exactly the "Menolak vs Reject, which is
+// it" confusion that prompted this file's rename — see the tree diagram in
+// the "Peta Triase 82 Lead" artifact, whose leaf labels are the ones kept.
 export const CATEGORY_LABELS: Record<LeadCategory, string> = {
   untouched: "Belum Disentuh",
   no_wa_account: "Tidak Ada Kontak WA",
   appointment: "Appointment",
-  declined: "Menolak",
+  declined: "Reject",
   needs_reply: "Belum Dijawab",
   replied_by_bot: "Dijawab Bot",
-  needs_other_contact: "Perlu Kontak Lain",
-  needs_follow_up: "Butuh Follow Up",
-  no_reply_after_pitch: "Tidak Reply Lagi",
+  needs_other_contact: "Further Contact",
+  needs_follow_up: "Follow Up",
+  no_reply_after_pitch: "Not-Interested",
   non_responsive: "Non-Responsive",
   active: "Perlu Diklasifikasi",
 };
+
+/**
+ * The two-level grouping the triase diagram draws — Bisa Dihubungi splits
+ * into "Tidak Reply" vs "Reply", each with its own leaf categories. Drives
+ * /chat's cascading context menu and any other UI that wants to render the
+ * funnel as a tree instead of a flat list. `no_wa_account` sits outside
+ * both branches (it's the "Tidak Bisa Dihubungi" split, one level up) and
+ * `untouched`/`needs_reply`/`replied_by_bot`/`active` aren't part of the
+ * Reply/Tidak-Reply split at all, so none of those appear here.
+ */
+export const REPLY_BRANCH_GROUPS: {
+  key: "no_reply" | "reply";
+  label: string;
+  categories: LeadCategory[];
+}[] = [
+  { key: "no_reply", label: "Tidak Reply", categories: ["non_responsive", "no_reply_after_pitch"] },
+  { key: "reply", label: "Reply", categories: ["needs_follow_up", "needs_other_contact", "declined", "appointment"] },
+];
 
 export const CATEGORY_COLORS: Record<LeadCategory, string> = {
   untouched: "#94a3b8", // slate-400

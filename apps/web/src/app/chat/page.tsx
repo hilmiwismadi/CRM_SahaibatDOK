@@ -8,6 +8,7 @@ import MessageThread from "./MessageThread";
 import Composer from "./Composer";
 import WaStatusBadge from "./WaStatusBadge";
 import type { ConversationListItem, LeadBrief, Selected, WaMessageItem } from "./types";
+import { CATEGORY_COLORS, CATEGORY_LABELS, REPLY_BRANCH_GROUPS } from "@/lib/leadSegmentation";
 
 const POLL_MS = 4000;
 
@@ -15,6 +16,14 @@ export default function ChatPage() {
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
   const [convLoading, setConvLoading] = useState(true);
   const [search, setSearch] = useState("");
+  // Debounced (250ms) so typing doesn't fire a request per keystroke — a
+  // search hits the DB across full message history (see /api/conversations'
+  // `?q=` handling), not just the in-memory list the plain poll below uses.
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedSearch(search.trim()), 250);
+    return () => clearTimeout(id);
+  }, [search]);
   // Starts null to match SSR (no `window` on the server) — reading the URL
   // synchronously in a lazy useState initializer caused a hydration
   // mismatch, since the client's first render would differ from the
@@ -44,6 +53,9 @@ export default function ChatPage() {
   const [infoOpen, setInfoOpen] = useState(false);
 
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; item: ConversationListItem } | null>(null);
+  // Which Reply/Tidak-Reply branch is expanded in the context menu — reset
+  // to collapsed every time a fresh menu opens (see onContextMenu below).
+  const [expandedBranch, setExpandedBranch] = useState<"no_reply" | "reply" | null>(null);
 
   useEffect(() => {
     if (!contextMenu) return;
@@ -111,6 +123,16 @@ export default function ChatPage() {
     await loadConversations();
   }
 
+  async function handleToggleDeclined(item: ConversationListItem, declined: boolean) {
+    await fetch(`/api/conversations/${item.id}/flag`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ declined }),
+    });
+    setContextMenu(null);
+    await loadConversations();
+  }
+
   // Passive notification: a lead replying while you're on a different tab
   // (or a different page in the app) still shows up as a badge on the
   // browser tab title, since there's no OS-level push notification wired
@@ -125,7 +147,10 @@ export default function ChatPage() {
 
   const loadConversations = useCallback(async () => {
     try {
-      const res = await fetch("/api/conversations");
+      const url = debouncedSearch
+        ? `/api/conversations?q=${encodeURIComponent(debouncedSearch)}`
+        : "/api/conversations";
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to load conversations (HTTP ${res.status})`);
       const data = await res.json();
       setConversations(data.conversations ?? []);
@@ -134,7 +159,7 @@ export default function ChatPage() {
     } finally {
       setConvLoading(false);
     }
-  }, []);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     loadConversations();
@@ -297,7 +322,10 @@ export default function ChatPage() {
               loading={convLoading}
               search={search}
               onSearchChange={setSearch}
-              onContextMenu={(e, item) => setContextMenu({ x: e.clientX, y: e.clientY, item })}
+              onContextMenu={(e, item) => {
+                setExpandedBranch(null);
+                setContextMenu({ x: e.clientX, y: e.clientY, item });
+              }}
               selected={selected}
               onSelect={handleSelect}
             />
@@ -357,7 +385,7 @@ export default function ChatPage() {
         <div
           onClick={(e) => e.stopPropagation()}
           style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 100 }}
-          className="min-w-[200px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+          className="min-w-[230px] max-h-[80vh] overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
         >
           <div className="truncate px-3 py-1.5 text-xs font-medium text-slate-400">
             {contextMenu.item.lead?.name ?? contextMenu.item.displayName ?? contextMenu.item.phoneNormalized}
@@ -397,26 +425,6 @@ export default function ChatPage() {
           )}
           <div className="my-1 border-t border-slate-100" />
           <button
-            onClick={() => handleToggleOtherContact(contextMenu.item, !contextMenu.item.needsOtherContact)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-amber-500">
-              <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="2" />
-              <path d="M3 7l9 6 9-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            {contextMenu.item.needsOtherContact ? "Hapus Tandai Perlu Kontak Lain" : "Perlu Kontak Email/Lainnya"}
-          </button>
-          <button
-            onClick={() => handleToggleFollowUp(contextMenu.item, !contextMenu.item.needsFollowUp)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-sky-500">
-              <path d="M12 8v4l3 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-            </svg>
-            {contextMenu.item.needsFollowUp ? "Hapus Tandai Butuh Follow Up" : "Butuh Follow Up"}
-          </button>
-          <button
             onClick={() => handleToggleNoWaAccount(contextMenu.item, !contextMenu.item.noWaAccount)}
             className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
           >
@@ -424,18 +432,104 @@ export default function ChatPage() {
               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
               <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
-            {contextMenu.item.noWaAccount ? "Hapus Tandai Tidak Ada Kontak WA" : "Tidak Ada Kontak WA"}
+            {contextMenu.item.noWaAccount ? `Hapus Tandai ${CATEGORY_LABELS.no_wa_account}` : CATEGORY_LABELS.no_wa_account}
           </button>
-          <button
-            onClick={() => handleToggleAppointment(contextMenu.item, !contextMenu.item.appointment)}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-emerald-500">
-              <rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" />
-              <path d="M4 10h16M8 3v4M16 3v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-            {contextMenu.item.appointment ? "Hapus Tandai Appointment" : "Appointment"}
-          </button>
+          <div className="my-1 border-t border-slate-100" />
+          {/* Cascading branch picker mirroring the triase diagram: pick
+              "Tidak Reply" or "Reply" first, its leaf categories only then
+              expand below it — see leadSegmentation.ts's REPLY_BRANCH_GROUPS. */}
+          {REPLY_BRANCH_GROUPS.map((branch) => {
+            const isOpen = expandedBranch === branch.key;
+            return (
+              <div key={branch.key}>
+                <button
+                  onClick={() => setExpandedBranch(isOpen ? null : branch.key)}
+                  className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className={`shrink-0 text-slate-400 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                  >
+                    <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {branch.label}
+                </button>
+                {isOpen && (
+                  <div className="pb-1">
+                    {branch.key === "no_reply" ? (
+                      // Both leaves here are computed automatically (see
+                      // nonResponsive.ts / noReplyAfterPitch.ts) — shown as
+                      // read-only status, not a toggle, matching /reports/kanban
+                      // treating these as non-draggable columns.
+                      <>
+                        <div className="flex items-center justify-between px-3 py-1.5 pl-8 text-sm text-slate-500">
+                          <span>{CATEGORY_LABELS.non_responsive}</span>
+                          <span
+                            className="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+                            style={{
+                              backgroundColor: contextMenu.item.nonResponsive ? `${CATEGORY_COLORS.non_responsive}1a` : undefined,
+                              color: contextMenu.item.nonResponsive ? CATEGORY_COLORS.non_responsive : "#cbd5e1",
+                            }}
+                          >
+                            {contextMenu.item.nonResponsive ? "Ya" : "Belum"}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between px-3 py-1.5 pl-8 text-sm text-slate-500">
+                          <span>{CATEGORY_LABELS.no_reply_after_pitch}</span>
+                          <span
+                            className="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+                            style={{
+                              backgroundColor: contextMenu.item.noReplyAfterPitch
+                                ? `${CATEGORY_COLORS.no_reply_after_pitch}1a`
+                                : undefined,
+                              color: contextMenu.item.noReplyAfterPitch ? CATEGORY_COLORS.no_reply_after_pitch : "#cbd5e1",
+                            }}
+                          >
+                            {contextMenu.item.noReplyAfterPitch ? "Ya" : "Belum"}
+                          </span>
+                        </div>
+                        <div className="px-3 pl-8 text-[11px] text-slate-400">Otomatis — tidak bisa ditandai manual.</div>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleToggleFollowUp(contextMenu.item, !contextMenu.item.needsFollowUp)}
+                          className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+                        >
+                          <span>{CATEGORY_LABELS.needs_follow_up}</span>
+                          {contextMenu.item.needsFollowUp && <span className="text-emerald-500">✓</span>}
+                        </button>
+                        <button
+                          onClick={() => handleToggleOtherContact(contextMenu.item, !contextMenu.item.needsOtherContact)}
+                          className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+                        >
+                          <span>{CATEGORY_LABELS.needs_other_contact}</span>
+                          {contextMenu.item.needsOtherContact && <span className="text-emerald-500">✓</span>}
+                        </button>
+                        <button
+                          onClick={() => handleToggleDeclined(contextMenu.item, !contextMenu.item.declined)}
+                          className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+                        >
+                          <span>{CATEGORY_LABELS.declined}</span>
+                          {contextMenu.item.declined && <span className="text-emerald-500">✓</span>}
+                        </button>
+                        <button
+                          onClick={() => handleToggleAppointment(contextMenu.item, !contextMenu.item.appointment)}
+                          className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+                        >
+                          <span>{CATEGORY_LABELS.appointment}</span>
+                          {contextMenu.item.appointment && <span className="text-emerald-500">✓</span>}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

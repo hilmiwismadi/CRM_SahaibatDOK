@@ -8,14 +8,16 @@ const schema = z
     needsFollowUp: z.boolean().optional(),
     noWaAccount: z.boolean().optional(),
     appointment: z.boolean().optional(),
+    declined: z.boolean().optional(),
   })
   .refine(
     (v) =>
       v.needsOtherContact !== undefined ||
       v.needsFollowUp !== undefined ||
       v.noWaAccount !== undefined ||
-      v.appointment !== undefined,
-    { message: "At least one of needsOtherContact, needsFollowUp, noWaAccount, or appointment is required" },
+      v.appointment !== undefined ||
+      v.declined !== undefined,
+    { message: "At least one of needsOtherContact, needsFollowUp, noWaAccount, appointment, or declined is required" },
   );
 
 /**
@@ -23,14 +25,15 @@ const schema = z
  * (WhatsApp isn't working for this lead, try email/phone/other instead),
  * "needs follow-up" (proactively check back with this lead), "no WA
  * account" (confirmed this number has no WhatsApp at all — a factual
- * dead-end, e.g. a landline scraped as the lead's phone), and "appointment"
- * (a meeting has been scheduled — the one positive flag among these).
- * Separate from the /replied route: unlike that override, none of these
- * auto-expire on a new inbound message — see schema.prisma's WaContact doc
- * comments.
+ * dead-end, e.g. a landline scraped as the lead's phone), "appointment"
+ * (a meeting has been scheduled), and "declined" (lead explicitly said no)
+ * — appointment and declined are the two positive/negative outcomes among
+ * these, the other three are standing notes. Separate from the /replied
+ * route: unlike that override, none of these auto-expire on a new inbound
+ * message — see schema.prisma's WaContact doc comments.
  *
  * Each actual value change is logged to lead_activities (type
- * "tag_change") — these 4 flags are plain booleans with no timestamp
+ * "tag_change") — these 5 flags are plain booleans with no timestamp
  * column of their own, so this log is the only way to answer "when did
  * this lead get flagged X" later (backs /reports/kanban-history's
  * per-date/per-week breakdown). Skipped when the contact isn't linked to
@@ -47,23 +50,32 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { needsOtherContact, needsFollowUp, noWaAccount, appointment } = parsed.data;
+  const { needsOtherContact, needsFollowUp, noWaAccount, appointment, declined } = parsed.data;
   const data: {
     needsOtherContact?: boolean;
     needsFollowUp?: boolean;
     noWaAccount?: boolean;
     appointment?: boolean;
+    declined?: boolean;
   } = {};
   if (needsOtherContact !== undefined) data.needsOtherContact = needsOtherContact;
   if (needsFollowUp !== undefined) data.needsFollowUp = needsFollowUp;
   if (noWaAccount !== undefined) data.noWaAccount = noWaAccount;
   if (appointment !== undefined) data.appointment = appointment;
+  if (declined !== undefined) data.declined = declined;
 
   try {
     const contact = await db.$transaction(async (tx) => {
       const before = await tx.waContact.findUniqueOrThrow({
         where: { id },
-        select: { needsOtherContact: true, needsFollowUp: true, noWaAccount: true, appointment: true, leadId: true },
+        select: {
+          needsOtherContact: true,
+          needsFollowUp: true,
+          noWaAccount: true,
+          appointment: true,
+          declined: true,
+          leadId: true,
+        },
       });
 
       const updated = await tx.waContact.update({ where: { id }, data });
