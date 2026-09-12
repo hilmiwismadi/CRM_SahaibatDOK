@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const TABS = [
-  { href: "/reports", label: "Overview" },
-  { href: "/reports/kanban", label: "Kanban" },
-  { href: "/reports/history", label: "History" },
+const TABS: { href: string; label: string; isActive: (pathname: string) => boolean }[] = [
+  { href: "/reports/overview", label: "Overview", isActive: (p) => p === "/reports" || p === "/reports/overview" },
+  // /reports/kanban/{overview,daily} both count as the Kanban tab.
+  { href: "/reports/kanban/overview", label: "Kanban", isActive: (p) => p.startsWith("/reports/kanban") },
+  { href: "/reports/history", label: "History", isActive: (p) => p === "/reports/history" },
 ];
 
 export default function ReportsTabs() {
@@ -14,7 +15,7 @@ export default function ReportsTabs() {
   return (
     <div className="mb-6 flex gap-1 border-b border-slate-200">
       {TABS.map((t) => {
-        const active = pathname === t.href;
+        const active = t.isActive(pathname);
         return (
           <Link
             key={t.href}

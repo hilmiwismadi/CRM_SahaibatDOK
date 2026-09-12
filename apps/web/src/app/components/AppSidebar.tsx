@@ -22,7 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { page: "map", href: "/map", label: "Map", Icon: PinIcon },
   { page: "chat", href: "/chat", label: "Chat", Icon: ChatIcon },
   { page: "templates", href: "/templates", label: "Templates", Icon: TemplateIcon },
-  { page: "reports", href: "/reports", label: "Reports", Icon: ReportIcon },
+  { page: "reports", href: "/reports/overview", label: "Reports", Icon: ReportIcon },
   { page: "scrapes", href: "/admin/scrapes", label: "Scrape Jobs", Icon: ScrapeIcon },
 ];
 
