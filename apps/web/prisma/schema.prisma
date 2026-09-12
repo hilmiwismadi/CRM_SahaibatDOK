@@ -194,6 +194,15 @@ model WaContact {
   // (which all mark problems). Same no-auto-expiry semantics; cleared
   // manually once the appointment has passed or fallen through.
   appointment Boolean @default(false)
+  // Manual flag: lead explicitly said no (with or without a stated
+  // reason) — a confirmed dead end, same tier as appointment but the
+  // negative outcome. Kept manual because decline wording is too varied
+  // to detect reliably from message text alone (see the 2026-09-12
+  // chat-history review that first identified this gap — Erika Dian
+  // Puspitasari's "tidak melayani BPJS" was sitting under needsFollowUp
+  // with nowhere else to go). Same no-auto-expiry semantics as the flags
+  // above.
+  declined Boolean @default(false)
 
   messages    WaMessage[]
   contactNode LeadContactNode?

@@ -21,10 +21,17 @@
  * Within "touched", a lead can carry multiple tags at once (e.g. both
  * needsFollowUp and noWaAccount) but only belongs to ONE category for
  * funnel/Kanban purposes — first match in CATEGORY_ORDER wins. Order is
- * deliberately: confirmed dead-end (no_wa_account) and the one positive
- * milestone (appointment) first since they're the most actionable/rare,
- * then the "needs a reply" urgency signals, then the two standing-note
- * tags, then the catch-all "active" (touched, ongoing, no special flag).
+ * deliberately: confirmed dead-ends (no_wa_account, declined) and the one
+ * positive milestone (appointment) first since they're the most
+ * actionable/rare, then the "needs a reply" urgency signals, then the
+ * standing-note tags, then the two "gone quiet" flavors, then "active" —
+ * which is deliberately NOT a resting state. It means nothing has been
+ * assessed yet, not that the lead is fine; a human still has to look and
+ * either tag it into one of the categories above or leave it here on
+ * purpose. See the 2026-09-12 chat-history review that renamed this from
+ * "Aktif" for exactly that reason — the old name read as "healthy" when
+ * most of what landed here on inspection was actually unclassified
+ * declines or dead silence.
  * "no_wa_account" here means the confirmed WaContact.noWaAccount tag
  * specifically — NOT the broader "or has no phone at all" definition
  * /map's pinColor() uses. A lead with zero phone can never be "touched"
@@ -36,22 +43,26 @@ export type LeadCategory =
   | "untouched"
   | "no_wa_account"
   | "appointment"
+  | "declined"
   | "needs_reply"
   | "replied_by_bot"
   | "needs_other_contact"
   | "needs_follow_up"
   | "no_reply_after_pitch"
+  | "non_responsive"
   | "active";
 
 export const CATEGORY_ORDER: LeadCategory[] = [
   "untouched",
   "no_wa_account",
   "appointment",
+  "declined",
   "needs_reply",
   "replied_by_bot",
   "needs_other_contact",
   "needs_follow_up",
   "no_reply_after_pitch",
+  "non_responsive",
   "active",
 ];
 
@@ -59,24 +70,28 @@ export const CATEGORY_LABELS: Record<LeadCategory, string> = {
   untouched: "Belum Disentuh",
   no_wa_account: "Tidak Ada Kontak WA",
   appointment: "Appointment",
+  declined: "Menolak",
   needs_reply: "Belum Dijawab",
   replied_by_bot: "Dijawab Bot",
   needs_other_contact: "Perlu Kontak Lain",
   needs_follow_up: "Butuh Follow Up",
   no_reply_after_pitch: "Tidak Reply Lagi",
-  active: "Aktif",
+  non_responsive: "Non-Responsive",
+  active: "Perlu Diklasifikasi",
 };
 
 export const CATEGORY_COLORS: Record<LeadCategory, string> = {
   untouched: "#94a3b8", // slate-400
   no_wa_account: "#6b7280", // gray-500
   appointment: "#10b981", // emerald-500
+  declined: "#991b1b", // red-800
   needs_reply: "#ef4444", // red-500
   replied_by_bot: "#8b5cf6", // violet-500
   needs_other_contact: "#f59e0b", // amber-500
   needs_follow_up: "#0ea5e9", // sky-500
   no_reply_after_pitch: "#dc2626", // red-600 — solid fallback where a single color is needed
-  active: "#0891b2", // cyan-600
+  non_responsive: "#a16207", // amber-700
+  active: "#78716c", // stone-500 — deliberately muted/neutral, not a "healthy" color
 };
 
 // Two-stop gradient for categories that want the richer treatment (currently
@@ -90,6 +105,11 @@ export const CATEGORY_GRADIENTS: Partial<Record<LeadCategory, [string, string]>>
 export interface ContactTagInput {
   noWaAccount: boolean;
   appointment: boolean;
+  // Manual flag: lead explicitly said no. Checked right after appointment
+  // (same tier — a confirmed dead end) so a decline doesn't linger under
+  // needsFollowUp or fall through to "Perlu Diklasifikasi" just because no
+  // one clicked the right button yet.
+  declined: boolean;
   needsOtherContact: boolean;
   needsFollowUp: boolean;
   repliedOverrideAt: Date | string | null;
@@ -98,11 +118,17 @@ export interface ContactTagInput {
   // True when this contact matches the "sent the pitch, they'd replied
   // before it, nothing since" pattern — computed via a DB query
   // (getNoReplyAfterPitchContactIds in noReplyAfterPitch.ts) since it needs
-  // full message history, not just the fields above. Lowest classification
-  // priority among the "something's off" categories — deliberately checked
-  // after needs_follow_up so a lead you've manually tagged Butuh Follow Up
+  // full message history, not just the fields above. Checked after
+  // needs_follow_up so a lead you've manually tagged Butuh Follow Up
   // keeps showing there rather than being silently reclassified.
   noReplyAfterPitch: boolean;
+  // True when this contact has at least one outbound message, zero
+  // inbound ever, and the first outbound was sent more than 2 days ago —
+  // computed via getNonResponsiveContactIds in nonResponsive.ts. The
+  // "diam dari awal" counterpart to noReplyAfterPitch's "diam setelah
+  // pitch"; checked last among the "something's off" categories since
+  // anything more specific above should win first.
+  nonResponsive: boolean;
 }
 
 export interface ClassifyLeadInput {
@@ -115,18 +141,22 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
 
   let anyNoWa = false;
   let anyAppointment = false;
+  let anyDeclined = false;
   let anyNeedsReply = false;
   let anyRepliedBot = false;
   let anyOtherContact = false;
   let anyFollowUp = false;
   let anyNoReplyAfterPitch = false;
+  let anyNonResponsive = false;
 
   for (const c of input.contacts) {
     if (c.noWaAccount) anyNoWa = true;
     if (c.appointment) anyAppointment = true;
+    if (c.declined) anyDeclined = true;
     if (c.needsOtherContact) anyOtherContact = true;
     if (c.needsFollowUp) anyFollowUp = true;
     if (c.noReplyAfterPitch) anyNoReplyAfterPitch = true;
+    if (c.nonResponsive) anyNonResponsive = true;
 
     const lastMessage = c.lastMessage;
     const overrideActive =
@@ -137,10 +167,12 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
 
   if (anyNoWa) return "no_wa_account";
   if (anyAppointment) return "appointment";
+  if (anyDeclined) return "declined";
   if (anyNeedsReply) return "needs_reply";
   if (anyRepliedBot) return "replied_by_bot";
   if (anyOtherContact) return "needs_other_contact";
   if (anyFollowUp) return "needs_follow_up";
   if (anyNoReplyAfterPitch) return "no_reply_after_pitch";
+  if (anyNonResponsive) return "non_responsive";
   return "active";
 }

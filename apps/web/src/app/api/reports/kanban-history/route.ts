@@ -17,19 +17,19 @@ import { db } from "@/lib/db";
  * number. A lead is deduped to at most once per (day, category) even if
  * multiple events fired that day (e.g. a tag toggled on/off/on again).
  *
- * 3 of the 7 categories were already fully timestamped (no logging
+ * 3 of the 8 categories were already fully timestamped (no logging
  * change needed): stage_change activities (untouched->touched),
  * wa_messages.sent_at (needs_reply), replied_override_at (superseded here
  * by the newer replied_marked activity log for full history — see
- * apps/web/src/app/api/conversations/[id]/replied/route.ts). The other 4
- * (noWaAccount/appointment/needsOtherContact/needsFollowUp) only have
+ * apps/web/src/app/api/conversations/[id]/replied/route.ts). The other 5
+ * (noWaAccount/appointment/declined/needsOtherContact/needsFollowUp) only have
  * history from whenever tag_change logging was added (see
  * apps/web/src/app/api/conversations/[id]/flag/route.ts) — earlier days
  * will show 0 for those even if the flag was already true, because no
  * event was ever recorded for it.
  */
 
-const TAG_KEYS = ["noWaAccount", "appointment", "needsOtherContact", "needsFollowUp"] as const;
+const TAG_KEYS = ["noWaAccount", "appointment", "declined", "needsOtherContact", "needsFollowUp"] as const;
 
 type CategoryKey =
   | "untouchedToTouched"
@@ -37,6 +37,7 @@ type CategoryKey =
   | "repliedByBot"
   | "noWaAccount"
   | "appointment"
+  | "declined"
   | "needsOtherContact"
   | "needsFollowUp";
 
@@ -46,6 +47,7 @@ const CATEGORY_KEYS: CategoryKey[] = [
   "repliedByBot",
   "noWaAccount",
   "appointment",
+  "declined",
   "needsOtherContact",
   "needsFollowUp",
 ];

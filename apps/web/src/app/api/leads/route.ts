@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { extractProvince } from "@/lib/provinceExtract";
 import { classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
 import { getNoReplyAfterPitchContactIds } from "@/lib/noReplyAfterPitch";
+import { getNonResponsiveContactIds } from "@/lib/nonResponsive";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
   // use, so this filter can never disagree with what those pages show.
   const tag = searchParams.get("tag") ?? "";
 
-  const [leads, noReplyAfterPitchIds] = await Promise.all([
+  const [leads, noReplyAfterPitchIds, nonResponsiveIds] = await Promise.all([
     db.lead.findMany({
       where: {
         ...(stage && stage !== "all" ? { pipelineStage: stage } : {}),
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
             id: true,
             noWaAccount: true,
             appointment: true,
+            declined: true,
             needsOtherContact: true,
             needsFollowUp: true,
             repliedOverrideAt: true,
@@ -61,6 +63,7 @@ export async function GET(req: NextRequest) {
       },
     }),
     getNoReplyAfterPitchContactIds(),
+    getNonResponsiveContactIds(),
   ]);
 
   // Display-only fallback: derive from `address` for any row the bulk
@@ -82,12 +85,14 @@ export async function GET(req: NextRequest) {
         contacts: waContacts.map((c) => ({
           noWaAccount: c.noWaAccount,
           appointment: c.appointment,
+          declined: c.declined,
           needsOtherContact: c.needsOtherContact,
           needsFollowUp: c.needsFollowUp,
           repliedOverrideAt: c.repliedOverrideAt,
           repliedOverrideKind: c.repliedOverrideKind,
           lastMessage: c.messages[0] ?? null,
           noReplyAfterPitch: noReplyAfterPitchIds.has(c.id),
+          nonResponsive: nonResponsiveIds.has(c.id),
         })),
       }),
     };

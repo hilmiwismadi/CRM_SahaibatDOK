@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { CATEGORY_LABELS, CATEGORY_ORDER, classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
 import { getNoReplyAfterPitchContactIds } from "@/lib/noReplyAfterPitch";
+import { getNonResponsiveContactIds } from "@/lib/nonResponsive";
 
 interface CardLead {
   id: string;
@@ -20,7 +21,7 @@ interface CardLead {
  * disagree. See that file's doc comment for the full classification rules.
  */
 export async function GET() {
-  const [leads, noReplyAfterPitchIds] = await Promise.all([
+  const [leads, noReplyAfterPitchIds, nonResponsiveIds] = await Promise.all([
     db.lead.findMany({
       select: {
         id: true,
@@ -33,6 +34,7 @@ export async function GET() {
             id: true,
             noWaAccount: true,
             appointment: true,
+            declined: true,
             needsOtherContact: true,
             needsFollowUp: true,
             repliedOverrideAt: true,
@@ -43,6 +45,7 @@ export async function GET() {
       },
     }),
     getNoReplyAfterPitchContactIds(),
+    getNonResponsiveContactIds(),
   ]);
 
   const buckets = Object.fromEntries(CATEGORY_ORDER.map((k) => [k, [] as CardLead[]])) as Record<
@@ -56,12 +59,14 @@ export async function GET() {
       contacts: l.waContacts.map((c) => ({
         noWaAccount: c.noWaAccount,
         appointment: c.appointment,
+        declined: c.declined,
         needsOtherContact: c.needsOtherContact,
         needsFollowUp: c.needsFollowUp,
         repliedOverrideAt: c.repliedOverrideAt,
         repliedOverrideKind: c.repliedOverrideKind,
         lastMessage: c.messages[0] ?? null,
         noReplyAfterPitch: noReplyAfterPitchIds.has(c.id),
+        nonResponsive: nonResponsiveIds.has(c.id),
       })),
     });
 

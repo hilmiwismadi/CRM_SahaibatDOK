@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 
-const BOOLEAN_ACTIONS = ["noWaAccount", "appointment", "needsOtherContact", "needsFollowUp"] as const;
+const BOOLEAN_ACTIONS = ["noWaAccount", "appointment", "declined", "needsOtherContact", "needsFollowUp"] as const;
 const schema = z.object({ action: z.enum([...BOOLEAN_ACTIONS, "repliedBot", "clear"]) });
 
 /**
@@ -32,6 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       id: true,
       noWaAccount: true,
       appointment: true,
+      declined: true,
       needsOtherContact: true,
       needsFollowUp: true,
       repliedOverrideAt: true,
@@ -55,6 +56,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           [
             { tag: "noWaAccount", was: c.noWaAccount },
             { tag: "appointment", was: c.appointment },
+            { tag: "declined", was: c.declined },
             { tag: "needsOtherContact", was: c.needsOtherContact },
             { tag: "needsFollowUp", was: c.needsFollowUp },
           ] as const
@@ -66,6 +68,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           data: {
             noWaAccount: false,
             appointment: false,
+            declined: false,
             needsOtherContact: false,
             needsFollowUp: false,
             repliedOverrideAt: null,

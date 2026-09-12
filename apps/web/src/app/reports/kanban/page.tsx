@@ -6,20 +6,22 @@ import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../ReportsTabs";
 import { CATEGORY_COLORS, CATEGORY_GRADIENTS, CATEGORY_LABELS, CATEGORY_ORDER, type LeadCategory } from "@/lib/leadSegmentation";
 
-// The 6 real "move a lead" actions — everything /api/leads/[id]/quick-tag
-// accepts. Two Kanban categories (untouched, needs_reply) have no
-// corresponding action: you can't force a lead back to "never contacted"
-// or fabricate an inbound message, so they're never a valid drop target /
-// "Pindahkan ke" option below.
-type QuickTagAction = "noWaAccount" | "appointment" | "needsOtherContact" | "needsFollowUp" | "repliedBot" | "clear";
+// The 7 real "move a lead" actions — everything /api/leads/[id]/quick-tag
+// accepts. Three Kanban categories (untouched, needs_reply, non_responsive)
+// have no corresponding action: you can't force a lead back to "never
+// contacted", fabricate an inbound message, or hand-set a computed
+// silence pattern, so they're never a valid drop target / "Pindahkan ke"
+// option below.
+type QuickTagAction = "noWaAccount" | "appointment" | "declined" | "needsOtherContact" | "needsFollowUp" | "repliedBot" | "clear";
 
 const QUICK_TAG_TARGETS: { action: QuickTagAction; label: string; color: string }[] = [
   { action: "noWaAccount", label: CATEGORY_LABELS.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
   { action: "appointment", label: CATEGORY_LABELS.appointment, color: CATEGORY_COLORS.appointment },
+  { action: "declined", label: CATEGORY_LABELS.declined, color: CATEGORY_COLORS.declined },
   { action: "repliedBot", label: CATEGORY_LABELS.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
   { action: "needsOtherContact", label: CATEGORY_LABELS.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
   { action: "needsFollowUp", label: CATEGORY_LABELS.needs_follow_up, color: CATEGORY_COLORS.needs_follow_up },
-  { action: "clear", label: "Aktif (hapus tag)", color: CATEGORY_COLORS.active },
+  { action: "clear", label: `${CATEGORY_LABELS.active} (hapus tag)`, color: CATEGORY_COLORS.active },
 ];
 
 // Sekarang's columns that are valid drag-and-drop targets, mapped to the
@@ -27,6 +29,7 @@ const QUICK_TAG_TARGETS: { action: QuickTagAction; label: string; color: string 
 const DROPPABLE_ACTION: Partial<Record<LeadCategory, QuickTagAction>> = {
   no_wa_account: "noWaAccount",
   appointment: "appointment",
+  declined: "declined",
   replied_by_bot: "repliedBot",
   needs_other_contact: "needsOtherContact",
   needs_follow_up: "needsFollowUp",
@@ -73,6 +76,7 @@ type HistoryMetric =
   | "repliedByBot"
   | "noWaAccount"
   | "appointment"
+  | "declined"
   | "needsOtherContact"
   | "needsFollowUp";
 
@@ -87,13 +91,15 @@ interface DayEntry {
   leads: Record<HistoryMetric, HistoryLead[]>;
 }
 
-// Same 7 event categories as kanban-history's API, in CATEGORY_ORDER's
-// order minus "active" (a default catch-all bucket, not an event that
-// ever gets logged). Reuses leadSegmentation's labels/colors so the
-// history table matches the "Sekarang" columns visually.
+// Same 8 event categories as kanban-history's API, in CATEGORY_ORDER's
+// order minus "non_responsive" (computed, never a logged event) and
+// "active" (a default catch-all bucket, not an event that ever gets
+// logged). Reuses leadSegmentation's labels/colors so the history table
+// matches the "Sekarang" columns visually.
 const HISTORY_COLUMNS: { key: HistoryMetric; label: string; color: string }[] = [
   { key: "noWaAccount", label: CATEGORY_LABELS.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
   { key: "appointment", label: CATEGORY_LABELS.appointment, color: CATEGORY_COLORS.appointment },
+  { key: "declined", label: CATEGORY_LABELS.declined, color: CATEGORY_COLORS.declined },
   { key: "needsReply", label: CATEGORY_LABELS.needs_reply, color: CATEGORY_COLORS.needs_reply },
   { key: "repliedByBot", label: CATEGORY_LABELS.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
   { key: "needsOtherContact", label: CATEGORY_LABELS.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
@@ -480,7 +486,7 @@ export default function KanbanPage() {
         <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
         <p className="mb-4 text-sm text-slate-500">
           Kanban lead per status — klik kartu untuk lihat ringkasan &amp; pindahkan tag, atau drag ke kolom lain.
-          &ldquo;Belum Disentuh&rdquo;, &ldquo;Belum Dijawab&rdquo;, dan &ldquo;Tidak Reply Lagi&rdquo; tidak bisa dipindah manual — itu status otomatis, bukan tag.
+          &ldquo;Belum Disentuh&rdquo;, &ldquo;Belum Dijawab&rdquo;, &ldquo;Tidak Reply Lagi&rdquo;, dan &ldquo;Non-Responsive&rdquo; tidak bisa dipindah manual — itu status otomatis, bukan tag. &ldquo;Perlu Diklasifikasi&rdquo; bukan status aman — itu artinya belum ada yang menandai lead ini, cek isi chat-nya dan pindahkan ke kategori yang sesuai.
         </p>
         <ReportsTabs />
 
