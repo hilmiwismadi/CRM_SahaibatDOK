@@ -15,26 +15,14 @@ interface Segmentation {
   };
 }
 
-// One flat, non-nested card — used both for the standalone top/bottom
-// blocks (Tidak Ada Kontak WA, Perlu Diklasifikasi) and for the leaf cards
-// inside a branch group below.
-function FlowCard({
-  label,
-  count,
-  color,
-  size = "md",
-}: {
-  label: string;
-  count: number;
-  color: string;
-  size?: "md" | "sm";
-}) {
+// One flat, non-nested card, sized the same everywhere (matching the
+// leaf cards inside a branch group below) so nothing — the top totals,
+// "Tidak Ada Kontak WA", "Perlu Diklasifikasi" — ends up looking like a
+// different tier of information just because of where it sits.
+function FlowCard({ label, count, color }: { label: string; count: number; color: string }) {
   return (
-    <div
-      className={`rounded-xl border bg-white ${size === "md" ? "p-4" : "p-3"}`}
-      style={{ borderColor: `${color}40` }}
-    >
-      <div className={size === "md" ? "text-2xl font-bold" : "text-xl font-bold"} style={{ color }}>
+    <div className="rounded-xl border bg-white p-3" style={{ borderColor: `${color}40` }}>
+      <div className="text-xl font-bold" style={{ color }}>
         {count}
       </div>
       <div className="text-xs font-medium text-slate-500">{label}</div>
@@ -52,19 +40,25 @@ function FlowArrow() {
   );
 }
 
-// The funnel as 4 blocks a rep scans top-to-bottom: a dead end (Tidak Ada
-// Kontak WA), the two "did they reply" branches side by side each holding
-// their own leaf categories, and the unclassified catch-all at the bottom.
-// See leadSegmentation.ts's REPLY_BRANCH_GROUPS for the branch/leaf data
-// this reads from — this component doesn't hardcode categories itself so
-// it never drifts from what /chat and /reports/kanban show.
+// The funnel as 3 rows a rep scans top-to-bottom: totals + the one dead-end
+// category, the two "did they reply" branches side by side each holding
+// their own leaf categories, and the two catch-all/needs-a-reply
+// categories at the bottom. See leadSegmentation.ts's REPLY_BRANCH_GROUPS
+// for the branch/leaf data this reads from — this component doesn't
+// hardcode categories itself so it never drifts from what /chat and
+// /reports/kanban show.
 function SegmentationFlow({ segmentation }: { segmentation: Segmentation }) {
   const byKey = new Map(segmentation.touched.categories.map((c) => [c.key, c]));
   const get = (key: LeadCategory) => byKey.get(key)?.count ?? 0;
 
   return (
     <div className="flex flex-col items-stretch gap-1">
-      <FlowCard label={CATEGORY_LABELS.no_wa_account} count={get("no_wa_account")} color={CATEGORY_COLORS.no_wa_account} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <FlowCard label="Total Lead" count={segmentation.total} color="#64748b" />
+        <FlowCard label="Belum Disentuh" count={segmentation.untouched.count} color="#94a3b8" />
+        <FlowCard label="Sudah Disentuh" count={segmentation.touched.count} color="#0891b2" />
+        <FlowCard label={CATEGORY_LABELS.no_wa_account} count={get("no_wa_account")} color={CATEGORY_COLORS.no_wa_account} />
+      </div>
       <FlowArrow />
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -80,7 +74,7 @@ function SegmentationFlow({ segmentation }: { segmentation: Segmentation }) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {branch.categories.map((key) => (
-                  <FlowCard key={key} label={CATEGORY_LABELS[key]} count={get(key)} color={CATEGORY_COLORS[key]} size="sm" />
+                  <FlowCard key={key} label={CATEGORY_LABELS[key]} count={get(key)} color={CATEGORY_COLORS[key]} />
                 ))}
               </div>
             </div>
@@ -89,7 +83,11 @@ function SegmentationFlow({ segmentation }: { segmentation: Segmentation }) {
       </div>
 
       <FlowArrow />
-      <FlowCard label={`${CATEGORY_LABELS.active} (On Going)`} count={get("active")} color={CATEGORY_COLORS.active} />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <FlowCard label={`${CATEGORY_LABELS.active} (On Going)`} count={get("active")} color={CATEGORY_COLORS.active} />
+        <FlowCard label={CATEGORY_LABELS.needs_reply} count={get("needs_reply")} color={CATEGORY_COLORS.needs_reply} />
+        <FlowCard label={CATEGORY_LABELS.replied_by_bot} count={get("replied_by_bot")} color={CATEGORY_COLORS.replied_by_bot} />
+      </div>
     </div>
   );
 }
@@ -113,9 +111,6 @@ export default function ReportsOverviewPage() {
     };
   }, []);
 
-  const needsReply = segmentation?.touched.categories.find((c) => c.key === "needs_reply")?.count ?? 0;
-  const repliedByBot = segmentation?.touched.categories.find((c) => c.key === "replied_by_bot")?.count ?? 0;
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
@@ -128,34 +123,16 @@ export default function ReportsOverviewPage() {
 
         {segmentation && (
           <div className="rounded-xl border border-slate-100 bg-white p-5">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-sm font-semibold text-slate-900">Segmentasi Leads</h2>
-                <p className="text-xs text-slate-400">
-                  &ldquo;Disentuh&rdquo; = pernah dihubungi (kirim pesan berhasil/gagal) — bukan sekadar dilihat di dashboard.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
-                  {segmentation.total} total
-                </span>
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
-                  {segmentation.untouched.count} belum disentuh
-                </span>
-                <span className="rounded-full bg-cyan-50 px-2.5 py-1 font-medium text-cyan-700">
-                  {segmentation.touched.count} sudah disentuh
-                </span>
-                {needsReply > 0 && (
-                  <span className="rounded-full px-2.5 py-1 font-medium" style={{ backgroundColor: `${CATEGORY_COLORS.needs_reply}1a`, color: CATEGORY_COLORS.needs_reply }}>
-                    {needsReply} {CATEGORY_LABELS.needs_reply}
-                  </span>
-                )}
-                {repliedByBot > 0 && (
-                  <span className="rounded-full px-2.5 py-1 font-medium" style={{ backgroundColor: `${CATEGORY_COLORS.replied_by_bot}1a`, color: CATEGORY_COLORS.replied_by_bot }}>
-                    {repliedByBot} {CATEGORY_LABELS.replied_by_bot}
-                  </span>
-                )}
-              </div>
+            <div className="mb-4">
+              <h2 className="text-sm font-semibold text-slate-900">Segmentasi Leads</h2>
+              <p className="text-xs text-slate-400">
+                &ldquo;Disentuh&rdquo; = pernah dihubungi (kirim pesan berhasil/gagal) — bukan sekadar dilihat di dashboard.
+                Angka di sini adalah status <strong>saat ini</strong> — untuk riwayat kapan sesuatu terjadi, lihat{" "}
+                <Link href="/reports/kanban/daily" className="text-cyan-700 hover:underline">
+                  Kanban → Riwayat
+                </Link>
+                .
+              </p>
             </div>
 
             <SegmentationFlow segmentation={segmentation} />

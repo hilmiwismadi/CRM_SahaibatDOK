@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../ReportsTabs";
+import { CATEGORY_LABELS } from "@/lib/leadSegmentation";
 
 interface Activity {
   id: string;
@@ -20,6 +21,8 @@ const TYPE_LABELS: Record<string, string> = {
   manual_edit: "Edit Manual",
   scrape_update: "Update Scrape",
   contact_chain_updated: "Kontak Chain Diubah",
+  tag_change: "Ubah Tag",
+  replied_marked: "Tandai Dibalas",
   note: "Catatan",
 };
 
@@ -30,18 +33,43 @@ const TYPE_COLORS: Record<string, string> = {
   manual_edit: "text-amber-700 bg-amber-50",
   scrape_update: "text-slate-600 bg-slate-100",
   contact_chain_updated: "text-sky-700 bg-sky-50",
+  tag_change: "text-fuchsia-700 bg-fuchsia-50",
+  replied_marked: "text-rose-700 bg-rose-50",
   note: "text-slate-600 bg-slate-100",
+};
+
+// wa_contacts boolean column name -> the same label /chat and /reports use
+// for it, so "tag_change" rows read the same word everywhere.
+const TAG_FIELD_LABELS: Record<string, string> = {
+  noWaAccount: CATEGORY_LABELS.no_wa_account,
+  appointment: CATEGORY_LABELS.appointment,
+  declined: CATEGORY_LABELS.declined,
+  needsOtherContact: CATEGORY_LABELS.needs_other_contact,
+  needsFollowUp: CATEGORY_LABELS.needs_follow_up,
 };
 
 function describeActivity(a: Activity): string {
   if (a.type === "stage_change" && a.payload) {
     return `${a.payload.from ?? "?"} → ${a.payload.to ?? "?"}`;
   }
+  if (a.type === "tag_change" && a.payload) {
+    const tag = typeof a.payload.tag === "string" ? a.payload.tag : "";
+    const label = TAG_FIELD_LABELS[tag] ?? tag;
+    return a.payload.value ? `${label}: ditandai` : `${label}: dihapus`;
+  }
+  if (a.type === "replied_marked" && a.payload) {
+    if (a.payload.cleared) return "Tandai sudah dibalas: dihapus";
+    return a.payload.kind === "bot" ? "Ditandai dibalas oleh bot" : "Ditandai sudah dibalas (manual)";
+  }
   if (a.type === "wa_message_sent" || a.type === "wa_message_received") {
     return "";
   }
-  if (a.type === "manual_edit" && a.payload && Array.isArray(a.payload.fields)) {
-    return `Field: ${(a.payload.fields as string[]).join(", ")}`;
+  if (a.type === "manual_edit" && a.payload) {
+    if (Array.isArray(a.payload.fields)) return `Field: ${(a.payload.fields as string[]).join(", ")}`;
+    if (typeof a.payload.action === "string") {
+      return a.payload.action === "created_manually" ? "Lead dibuat manual (bukan dari scrape)" : a.payload.action;
+    }
+    if (typeof a.payload.note === "string") return a.payload.note;
   }
   return "";
 }

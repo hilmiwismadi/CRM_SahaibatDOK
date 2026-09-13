@@ -156,11 +156,16 @@ export default function KanbanOverviewPage() {
         {loading && <div className="text-sm text-slate-400">Loading…</div>}
         {data && (
           <div className="flex flex-1 flex-col overflow-hidden">
+            {/* One shared horizontal scroller for both rows below — on a
+                narrow screen the group headers ("Tidak Reply"/"Reply") must
+                scroll together with the columns they label, not stay fixed
+                while the board underneath slides past them. */}
+            <div className="flex flex-1 flex-col overflow-x-auto overflow-y-hidden">
             {/* Group header row — same track widths as the board below, so
                 "Tidak Reply" / "Reply" visually span exactly the columns
                 they contain. */}
             <div
-              className="grid gap-4 pb-2"
+              className="grid shrink-0 gap-4 pb-2"
               style={{ gridAutoFlow: "column", gridAutoColumns: COLUMN_WIDTH }}
             >
               {HEADER_CELLS.map((cell, i) => (
@@ -179,7 +184,7 @@ export default function KanbanOverviewPage() {
             </div>
 
             <div
-              className="grid flex-1 gap-4 overflow-x-auto pb-4"
+              className="grid flex-1 gap-4 pb-4"
               style={{ gridAutoFlow: "column", gridAutoColumns: COLUMN_WIDTH }}
             >
               {columns.map((col) => {
@@ -243,6 +248,7 @@ export default function KanbanOverviewPage() {
                   </div>
                 );
               })}
+            </div>
             </div>
           </div>
         )}
