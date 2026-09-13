@@ -12,6 +12,8 @@ import {
   KanbanSubNav,
   quickTag,
   type QuickTagAction,
+  BOARD_COLUMN_WIDTH,
+  buildBoardHeaderCells,
 } from "../shared";
 
 // Overview's columns that are valid drag-and-drop targets, mapped to the
@@ -58,31 +60,7 @@ const FUNNEL_COLUMNS: { key: LeadCategory; group?: "no_reply" | "reply" }[] = [
 ];
 
 const GROUP_LABELS: Record<"no_reply" | "reply", string> = { no_reply: "Tidak Reply", reply: "Reply" };
-const COLUMN_WIDTH = "18rem"; // keep in sync with the `w-72` cards use below
-
-// Consecutive same-group columns collapse into one header cell spanning
-// their combined width; ungrouped columns get a blank same-width spacer so
-// the two grids' tracks stay aligned.
-function buildHeaderCells() {
-  const cells: { label: string | null; span: number }[] = [];
-  let i = 0;
-  while (i < FUNNEL_COLUMNS.length) {
-    const group = FUNNEL_COLUMNS[i].group;
-    if (!group) {
-      cells.push({ label: null, span: 1 });
-      i++;
-      continue;
-    }
-    let span = 0;
-    while (i < FUNNEL_COLUMNS.length && FUNNEL_COLUMNS[i].group === group) {
-      span++;
-      i++;
-    }
-    cells.push({ label: GROUP_LABELS[group], span });
-  }
-  return cells;
-}
-const HEADER_CELLS = buildHeaderCells();
+const HEADER_CELLS = buildBoardHeaderCells(FUNNEL_COLUMNS, GROUP_LABELS);
 
 export default function KanbanOverviewPage() {
   const [data, setData] = useState<Segmentation | null>(null);
@@ -141,7 +119,7 @@ export default function KanbanOverviewPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
-      <div className="flex flex-1 flex-col overflow-hidden p-6">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
         <p className="mb-4 text-sm text-slate-500">
           Alur kiri ke kanan: Belum Disentuh → Tidak Ada Kontak WA → (Tidak Reply) → (Reply) → lainnya. Klik kartu
@@ -155,18 +133,22 @@ export default function KanbanOverviewPage() {
 
         {loading && <div className="text-sm text-slate-400">Loading…</div>}
         {data && (
-          <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {/* One shared horizontal scroller for both rows below — on a
                 narrow screen the group headers ("Tidak Reply"/"Reply") must
                 scroll together with the columns they label, not stay fixed
-                while the board underneath slides past them. */}
-            <div className="flex flex-1 flex-col overflow-x-auto overflow-y-hidden">
+                while the board underneath slides past them. min-h-0
+                everywhere in this chain: flex/grid children default to
+                min-height:auto (content size), which silently defeats a
+                descendant's overflow-y-auto by never letting this
+                container shrink below "tall enough to show every card". */}
+            <div className="flex min-h-0 flex-1 flex-col overflow-x-auto overflow-y-hidden">
             {/* Group header row — same track widths as the board below, so
                 "Tidak Reply" / "Reply" visually span exactly the columns
                 they contain. */}
             <div
               className="grid shrink-0 gap-4 pb-2"
-              style={{ gridAutoFlow: "column", gridAutoColumns: COLUMN_WIDTH }}
+              style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}
             >
               {HEADER_CELLS.map((cell, i) => (
                 <div
@@ -184,8 +166,8 @@ export default function KanbanOverviewPage() {
             </div>
 
             <div
-              className="grid flex-1 gap-4 pb-4"
-              style={{ gridAutoFlow: "column", gridAutoColumns: COLUMN_WIDTH }}
+              className="grid min-h-0 flex-1 gap-4 pb-4"
+              style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}
             >
               {columns.map((col) => {
                 const droppable = Boolean(DROPPABLE_ACTION[col.key]);
@@ -210,7 +192,7 @@ export default function KanbanOverviewPage() {
                           }
                         : undefined
                     }
-                    className={`flex flex-col rounded-xl bg-slate-100/60 p-3 transition ${
+                    className={`flex min-h-0 flex-col rounded-xl bg-slate-100/60 p-3 transition ${
                       dragOverKey === col.key ? "ring-2 ring-cyan-400 bg-cyan-50/60" : ""
                     }`}
                   >
@@ -228,7 +210,7 @@ export default function KanbanOverviewPage() {
                         {col.leads.length}
                       </span>
                     </div>
-                    <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
+                    <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
                       {col.leads.length === 0 && (
                         <div className="rounded-lg border border-dashed border-slate-200 p-3 text-center text-xs text-slate-400">
                           Kosong

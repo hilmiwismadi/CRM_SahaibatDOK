@@ -1,50 +1,199 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../../ReportsTabs";
 import { CATEGORY_COLORS, CATEGORY_LABELS } from "@/lib/leadSegmentation";
 import {
   type DayEntry,
   type HistoryMetric,
+  type PeriodEntry,
   type SelectedLead,
+  type QuickTagAction,
   HISTORY_COLUMNS,
-  HistoryLeadCard,
+  HistoryBoardCard,
   LeadPopup,
   KanbanSubNav,
+  BOARD_COLUMN_WIDTH,
+  buildBoardHeaderCells,
+  quickTag,
   toPeriods,
   groupWeekly,
 } from "../shared";
 
 type Grouping = "daily" | "weekly";
+type GroupKey = "unanswered" | "needs_more" | "resolved";
 
 const byMetric = new Map(HISTORY_COLUMNS.map((c) => [c.key, c]));
 
-// Same left-to-right story as /reports/overview's funnel, but for *events*
-// instead of current state: did we even reach them, then — for the ones
-// who haven't given a real answer yet — did a bot field it or is it just
-// sitting unclassified, then the two "needs more from us" tags, then the
-// two definitive outcomes. "On Going" has no card here on purpose: it's
-// leadSegmentation's fallback ("active") for whatever doesn't match any
-// tag, not something anyone ever *sets* — there's no tag_change event to
-// count, so showing a number for it would be making one up. See
-// /reports/overview for its current (not historical) count instead.
-const STANDALONE: HistoryMetric[] = ["untouchedToTouched", "noWaAccount"];
-const GROUPS: { label: string; metrics: HistoryMetric[]; hasOnGoing?: boolean }[] = [
-  { label: "Belum Dijawab", metrics: ["repliedByBot"], hasOnGoing: true },
-  { label: "Perlu Lanjutan", metrics: ["needsFollowUp", "needsOtherContact"] },
-  { label: "Jawaban Pasti", metrics: ["appointment", "declined"] },
+// Same left-to-right story as /reports/kanban/overview's live board, but
+// for *events*: did we even reach them, then — for the ones who haven't
+// given a real answer yet — did a bot field it or is it just sitting
+// unclassified, then the two "needs more from us" tags, then the two
+// definitive outcomes. "On Going" is a synthetic column (key "onGoing")
+// with no backing data: leadSegmentation's fallback ("active") is never
+// *set*, so there's no tag_change event to count — it always renders
+// empty rather than a made-up number. See /reports/overview for its
+// current (not historical) count instead.
+const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | "onGoing"; group?: GroupKey }[] = [
+  { key: "untouchedToTouched" },
+  { key: "noWaAccount" },
+  { key: "repliedByBot", group: "unanswered" },
+  { key: "onGoing", group: "unanswered" },
+  { key: "needsFollowUp", group: "needs_more" },
+  { key: "needsOtherContact", group: "needs_more" },
+  { key: "appointment", group: "resolved" },
+  { key: "declined", group: "resolved" },
 ];
+const GROUP_LABELS: Record<GroupKey, string> = {
+  unanswered: "Belum Dijawab",
+  needs_more: "Perlu Lanjutan",
+  resolved: "Jawaban Pasti",
+};
+const HEADER_CELLS = buildBoardHeaderCells(HISTORY_FUNNEL_COLUMNS, GROUP_LABELS);
 
-function StatCard({ label, count, color }: { label: string; count: number | null; color: string }) {
+// The 6 history metrics a drop actually can change — same quick-tag
+// actions the live board offers, minus "untouchedToTouched" (can't
+// fabricate an untouched->touched transition) and "onGoing" (nothing to
+// hand-set, see above).
+const DROPPABLE_ACTION: Partial<Record<HistoryMetric, QuickTagAction>> = {
+  noWaAccount: "noWaAccount",
+  appointment: "appointment",
+  declined: "declined",
+  repliedByBot: "repliedBot",
+  needsOtherContact: "needsOtherContact",
+  needsFollowUp: "needsFollowUp",
+};
+
+// One mini kanban board per period — dragging a card here applies the
+// change right now (same /api/leads/[id]/quick-tag the live board uses);
+// it doesn't rewrite history, so the card stays visible under its
+// original day/week too. That's intentional: this board is a fast way to
+// reclassify a lead you spot while scanning the past, not a time machine.
+function PeriodBoard({
+  period,
+  onMoved,
+  onOpen,
+  onDropError,
+}: {
+  period: PeriodEntry;
+  onMoved: () => void;
+  onOpen: (s: SelectedLead) => void;
+  onDropError: (msg: string) => void;
+}) {
+  const [dragOverKey, setDragOverKey] = useState<string | null>(null);
+  const total = HISTORY_COLUMNS.reduce((sum, c) => sum + period.counts[c.key], 0);
+
+  async function handleDrop(leadId: string, targetKey: HistoryMetric) {
+    setDragOverKey(null);
+    const action = DROPPABLE_ACTION[targetKey];
+    if (!action) return;
+    const result = await quickTag(leadId, action);
+    if (!result.ok) {
+      onDropError(result.error ?? "Gagal memindahkan lead.");
+      return;
+    }
+    onMoved();
+  }
+
   return (
-    <div className="rounded-xl border p-3" style={{ backgroundColor: count === null ? undefined : `${color}12`, borderColor: `${color}33` }}>
-      <div className="text-xl font-bold" style={{ color }}>
-        {count === null ? "—" : count}
+    <div className="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-2.5">
+        <span className="text-sm font-semibold text-slate-700">{period.label}</span>
+        <span className="text-xs text-slate-400">{total} event</span>
       </div>
-      <div className="text-xs font-medium" style={{ color }}>
-        {label}
-      </div>
+      {total === 0 ? (
+        <div className="px-4 py-5 text-center text-xs text-slate-300">Tidak ada aktivitas</div>
+      ) : (
+        <div className="overflow-x-auto p-3">
+          <div className="grid shrink-0 gap-3 pb-1.5" style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}>
+            {HEADER_CELLS.map((cell, i) => (
+              <div
+                key={i}
+                style={{ gridColumn: `span ${cell.span}` }}
+                className={
+                  cell.label
+                    ? "rounded-t-md border border-b-0 border-slate-200 bg-slate-100 px-2 py-1 text-center text-[10px] font-semibold uppercase tracking-wide text-slate-500"
+                    : ""
+                }
+              >
+                {cell.label}
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-3" style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}>
+            {HISTORY_FUNNEL_COLUMNS.map(({ key }) => {
+              if (key === "onGoing") {
+                return (
+                  <div key="onGoing" className="rounded-lg bg-slate-50 p-2.5">
+                    <div className="mb-2 flex items-center gap-1.5 px-0.5">
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: CATEGORY_COLORS.active }} />
+                      <span className="text-xs font-semibold text-slate-500">{CATEGORY_LABELS.active}</span>
+                    </div>
+                    <div className="rounded-lg border border-dashed border-slate-200 p-2.5 text-center text-[11px] text-slate-300">
+                      Tidak terlacak
+                    </div>
+                  </div>
+                );
+              }
+              const col = byMetric.get(key)!;
+              const leads = period.leads[key];
+              const droppable = Boolean(DROPPABLE_ACTION[key]);
+              return (
+                <div
+                  key={key}
+                  onDragOver={
+                    droppable
+                      ? (e) => {
+                          e.preventDefault();
+                          setDragOverKey(key);
+                        }
+                      : undefined
+                  }
+                  onDragLeave={droppable ? () => setDragOverKey((k) => (k === key ? null : k)) : undefined}
+                  onDrop={
+                    droppable
+                      ? (e) => {
+                          e.preventDefault();
+                          const leadId = e.dataTransfer.getData("text/plain");
+                          if (leadId) handleDrop(leadId, key);
+                        }
+                      : undefined
+                  }
+                  className={`flex flex-col rounded-lg bg-slate-50 p-2.5 transition ${
+                    dragOverKey === key ? "ring-2 ring-cyan-400 bg-cyan-50/60" : ""
+                  }`}
+                >
+                  <div className="mb-2 flex items-center gap-1.5 px-0.5">
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: col.color }} />
+                    <span className="text-xs font-semibold text-slate-500">{col.label}</span>
+                    <span className="ml-auto rounded-full bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
+                      {leads.length}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {leads.length === 0 && (
+                      <div className="rounded-md border border-dashed border-slate-200 py-2 text-center text-[10px] text-slate-300">
+                        Kosong
+                      </div>
+                    )}
+                    {leads.map((lead) => (
+                      <HistoryBoardCard
+                        key={lead.id}
+                        lead={lead}
+                        categoryLabel={col.label}
+                        categoryColor={col.color}
+                        draggable={droppable}
+                        onOpen={onOpen}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -54,22 +203,24 @@ export default function KanbanHistoryPage() {
   const [history, setHistory] = useState<DayEntry[] | null>(null);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [selected, setSelected] = useState<SelectedLead | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast((cur) => (cur === msg ? null : cur)), 3000);
+  }, []);
+
+  const loadHistory = useCallback(() => {
+    setHistoryLoading(true);
+    return fetch("/api/reports/kanban-history?days=60")
+      .then((r) => r.json())
+      .then((d) => setHistory(d.series))
+      .finally(() => setHistoryLoading(false));
+  }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    setHistoryLoading(true);
-    fetch("/api/reports/kanban-history?days=60")
-      .then((r) => r.json())
-      .then((d) => {
-        if (!cancelled) setHistory(d.series);
-      })
-      .finally(() => {
-        if (!cancelled) setHistoryLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    loadHistory();
+  }, [loadHistory]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
@@ -77,7 +228,8 @@ export default function KanbanHistoryPage() {
       <div className="flex flex-1 flex-col overflow-hidden p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
         <p className="mb-4 text-sm text-slate-500">
-          Riwayat <strong>event</strong> (kapan sesuatu ditandai) — bukan jumlah saat ini. Untuk status hari ini, lihat{" "}
+          Riwayat <strong>event</strong> (kapan sesuatu ditandai), satu board per periode — drag kartu untuk menandai
+          ulang lead sekarang juga. Untuk status hari ini, lihat{" "}
           <a href="/reports/overview" className="text-cyan-700 hover:underline">
             Overview
           </a>
@@ -103,119 +255,26 @@ export default function KanbanHistoryPage() {
           ))}
         </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <p className="mb-3 text-xs text-slate-400">
-            Jumlah lead yang <strong>baru</strong> masuk ke kategori tersebut pada {grouping === "daily" ? "tanggal" : "minggu"} itu —
-            bukan snapshot total saat ini. &ldquo;Tidak Ada Kontak WA&rdquo; di sini hanya menghitung yang ditandai manual lewat
-            dashboard — kegagalan otomatis saat kirim pesan tidak melewati jalur yang tercatat, jadi angkanya akan jauh
-            lebih kecil dari total di Overview. Kategori tag lain juga hanya tercatat sejak fitur ini aktif; hari-hari
-            sebelumnya akan tampak 0 meski lead sudah ditandai duluan.
-          </p>
-          {historyLoading && <div className="text-sm text-slate-400">Loading…</div>}
-          {!historyLoading && history && (
-            <>
-              {/* Totals across the loaded 60-day window. */}
-              <div className="mb-4 flex flex-wrap gap-3">
-                {STANDALONE.map((key) => {
-                  const col = byMetric.get(key)!;
-                  const total = history.reduce((sum, d) => sum + d.counts[key], 0);
-                  return <StatCard key={key} label={col.label} count={total} color={col.color} />;
-                })}
-                {GROUPS.map((group) => (
-                  <div key={group.label} className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-3">
-                    <div className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">{group.label}</div>
-                    <div className="flex gap-2">
-                      {group.metrics.map((key) => {
-                        const col = byMetric.get(key)!;
-                        const total = history.reduce((sum, d) => sum + d.counts[key], 0);
-                        return <StatCard key={key} label={col.label} count={total} color={col.color} />;
-                      })}
-                      {group.hasOnGoing && (
-                        <StatCard label={`${CATEGORY_LABELS.active} (On Going)`} count={null} color={CATEGORY_COLORS.active} />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+        <p className="mb-3 text-xs text-slate-400">
+          &ldquo;Tidak Ada Kontak WA&rdquo; di sini hanya menghitung yang ditandai manual lewat dashboard — kegagalan
+          otomatis saat kirim pesan tidak melewati jalur yang tercatat, jadi angkanya akan jauh lebih kecil dari total
+          di Overview. Kategori tag lain juga hanya tercatat sejak fitur ini aktif; hari-hari sebelumnya akan tampak 0
+          meski lead sudah ditandai duluan.
+        </p>
 
-              {/* One card per period, columns = categories holding the
-                  actual leads (not just a count) — matches CRM_Grad's
-                  SalesReport.tsx layout: a period card with a colored
-                  pill header per category and a numbered list underneath. */}
-              <div className="flex-1 overflow-y-auto pb-4">
-                {(grouping === "daily" ? toPeriods(history) : groupWeekly(history)).map((period) => {
-                  const total = HISTORY_COLUMNS.reduce((sum, c) => sum + period.counts[c.key], 0);
-                  return (
-                    <div key={period.key} className="mb-3 overflow-hidden rounded-xl border border-slate-200 bg-white">
-                      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-2.5">
-                        <span className="text-sm font-semibold text-slate-700">{period.label}</span>
-                        <span className="text-xs text-slate-400">{total} event</span>
-                      </div>
-                      {total === 0 ? (
-                        <div className="px-4 py-5 text-center text-xs text-slate-300">Tidak ada aktivitas</div>
-                      ) : (
-                        <div className="flex flex-wrap gap-4 p-4">
-                          {STANDALONE.map((key) => (
-                            <PeriodMetric key={key} col={byMetric.get(key)!} leads={period.leads[key]} onOpen={setSelected} />
-                          ))}
-                          {GROUPS.map((group) => (
-                            <div key={group.label} className="rounded-xl border border-dashed border-slate-200 p-3">
-                              <div className="mb-2 text-[10px] font-bold uppercase tracking-wide text-slate-400">{group.label}</div>
-                              <div className="flex flex-wrap gap-4">
-                                {group.metrics.map((key) => (
-                                  <PeriodMetric key={key} col={byMetric.get(key)!} leads={period.leads[key]} onOpen={setSelected} />
-                                ))}
-                                {group.hasOnGoing && (
-                                  <div className="w-32">
-                                    <span className="mb-2 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-400">
-                                      On Going (—)
-                                    </span>
-                                    <div className="mt-1 text-[11px] italic text-slate-300">Tidak terlacak per-hari</div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </>
-          )}
+        <div className="flex-1 overflow-y-auto pb-4">
+          {historyLoading && <div className="text-sm text-slate-400">Loading…</div>}
+          {!historyLoading &&
+            history &&
+            (grouping === "daily" ? toPeriods(history) : groupWeekly(history)).map((period) => (
+              <PeriodBoard key={period.key} period={period} onMoved={loadHistory} onOpen={setSelected} onDropError={showToast} />
+            ))}
         </div>
       </div>
-      {selected && <LeadPopup selection={selected} onClose={() => setSelected(null)} onMoved={() => {}} />}
-    </div>
-  );
-}
-
-function PeriodMetric({
-  col,
-  leads,
-  onOpen,
-}: {
-  col: { key: HistoryMetric; label: string; color: string };
-  leads: { id: string; name: string }[];
-  onOpen: (s: SelectedLead) => void;
-}) {
-  return (
-    <div className="w-32">
-      <span
-        className="mb-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold"
-        style={{ backgroundColor: `${col.color}1a`, color: col.color }}
-      >
-        {col.label} ({leads.length})
-      </span>
-      {leads.length === 0 ? (
-        <div className="mt-1 text-[11px] italic text-slate-300">—</div>
-      ) : (
-        <div className="mt-1 space-y-0.5">
-          {leads.slice(0, 5).map((l, i) => (
-            <HistoryLeadCard key={l.id} lead={l} index={i} categoryLabel={col.label} categoryColor={col.color} onOpen={onOpen} />
-          ))}
-          {leads.length > 5 && <div className="px-1.5 text-[10px] text-slate-400">+{leads.length - 5} lainnya</div>}
+      {selected && <LeadPopup selection={selected} onClose={() => setSelected(null)} onMoved={loadHistory} />}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+          {toast}
         </div>
       )}
     </div>

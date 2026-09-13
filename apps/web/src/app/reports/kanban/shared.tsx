@@ -19,6 +19,70 @@ export type QuickTagAction =
   | "repliedBot"
   | "clear";
 
+// Column width both board layouts (the live "Sekarang" board and each
+// per-period history board) use for their CSS grid tracks, so a group
+// header's `gridColumn: span N` always lines up with N columns' worth of
+// width in the board row beneath it.
+export const BOARD_COLUMN_WIDTH = "18rem";
+
+// Collapses a left-to-right column list into header cells: consecutive
+// columns sharing the same `group` become one cell spanning their combined
+// width (rendered with `gridColumn: span N`); an ungrouped column becomes
+// a blank same-width spacer, so the header row's tracks stay aligned with
+// the board row's regardless of how the groups are arranged.
+export function buildBoardHeaderCells<G extends string>(
+  columns: { group?: G }[],
+  groupLabels: Record<G, string>,
+): { label: string | null; span: number }[] {
+  const cells: { label: string | null; span: number }[] = [];
+  let i = 0;
+  while (i < columns.length) {
+    const group = columns[i].group;
+    if (!group) {
+      cells.push({ label: null, span: 1 });
+      i++;
+      continue;
+    }
+    let span = 0;
+    while (i < columns.length && columns[i].group === group) {
+      span++;
+      i++;
+    }
+    cells.push({ label: groupLabels[group], span });
+  }
+  return cells;
+}
+
+// Compact draggable card for boards built from history data, which only
+// ever has {id, name} per lead (kanban-history's API doesn't fetch phone/
+// stage/lastMessage) — visually consistent with the live board's LeadCard
+// but without the fields history can't supply.
+export function HistoryBoardCard({
+  lead,
+  categoryLabel,
+  categoryColor,
+  draggable,
+  onOpen,
+}: {
+  lead: HistoryLead;
+  categoryLabel: string;
+  categoryColor: string;
+  draggable: boolean;
+  onOpen: (selection: SelectedLead) => void;
+}) {
+  return (
+    <button
+      type="button"
+      draggable={draggable}
+      onDragStart={draggable ? (e) => e.dataTransfer.setData("text/plain", lead.id) : undefined}
+      onClick={() => onOpen({ id: lead.id, name: lead.name, categoryLabel, categoryColor })}
+      className={`block w-full truncate rounded-lg border border-slate-100 bg-white p-2.5 text-left text-xs font-medium text-slate-700 shadow-sm transition hover:border-cyan-300 hover:shadow ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
+    >
+      {lead.name}
+    </button>
+  );
+}
+
 export const QUICK_TAG_TARGETS: { action: QuickTagAction; label: string; color: string }[] = [
   { action: "noWaAccount", label: CATEGORY_LABELS.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
   { action: "appointment", label: CATEGORY_LABELS.appointment, color: CATEGORY_COLORS.appointment },
