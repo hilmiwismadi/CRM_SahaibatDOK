@@ -192,23 +192,31 @@ function formatWeekLabel(startDate: string, endDate: string) {
 // separate backend route, per the plan. Lead lists are merged and
 // deduped per category (a lead could in principle show up on more than
 // one day of the week, though rare in practice).
-// A lead that changed categories more than once within the same week (e.g.
-// only a bot replied on Thursday, then Saturday brought an Appointment —
-// both in the same Mon-Sun week) must land in exactly one column: whichever
-// happened last. The naive "merge every day's lead lists" approach used to
-// let the same lead pile up under every category it ever touched that
-// week — correct per-day (see /reports/kanban/daily's per-day boards,
-// which deliberately keep showing the same lead on each day something
-// really happened) but wrong once several days get collapsed into one
-// week-sized board. `counts` is derived from the deduped `leads` arrays
-// (never summed from the raw daily counts) so the "N event" total always
-// matches the number of cards actually shown — see the 2026-09-13 chat
-// that traced Adera showing under both "Dijawab Bot" and "Appointment" for
-// the same week to this exact bug.
+// Only these 6 are mutually-exclusive "which state-tag button did someone
+// press" events — the same shape as classifyLead()'s manual flags, so a
+// lead sitting under two of them in the same week reads as a contradiction
+// (a real case: Klinik Pratama Adera showed under both "Dijawab Bot" and
+// "Appointment" for the same Mon-Sun week — bot-replied Thursday,
+// Appointment tagged Saturday). Last one that week wins.
+// `untouchedToTouched` and `needsReply` are deliberately excluded: they're
+// milestone/volume markers, not alternative descriptions of current state
+// — "became touched on day 1" and "sent a message on day 4" both stay
+// true regardless of what gets tagged afterward, so they keep the old
+// union-and-dedupe-by-id behavior instead of competing for one slot.
+const EXCLUSIVE_METRICS: HistoryMetric[] = [
+  "noWaAccount",
+  "appointment",
+  "declined",
+  "needsOtherContact",
+  "needsFollowUp",
+  "repliedByBot",
+];
+
 export function groupWeekly(series: DayEntry[]): PeriodEntry[] {
   const weekLabel = new Map<string, string>();
-  // weekKey -> leadId -> latest {category, name} seen so far this week.
-  const weekLeadLatest = new Map<string, Map<string, { category: HistoryMetric; name: string }>>();
+  const weekAdditive = new Map<string, Record<HistoryMetric, Map<string, string>>>(); // leadId -> name
+  // weekKey -> leadId -> latest {category, name} among EXCLUSIVE_METRICS only.
+  const weekExclusiveLatest = new Map<string, Map<string, { category: HistoryMetric; name: string }>>();
 
   const chronological = [...series].sort((a, b) => a.date.localeCompare(b.date));
   for (const day of chronological) {
@@ -223,27 +231,42 @@ export function groupWeekly(series: DayEntry[]): PeriodEntry[] {
     if (!weekLabel.has(weekKey)) {
       weekLabel.set(weekKey, formatWeekLabel(weekKey, sunday.toISOString().slice(0, 10)));
     }
-    let latest = weekLeadLatest.get(weekKey);
-    if (!latest) {
-      latest = new Map();
-      weekLeadLatest.set(weekKey, latest);
+    let exclusiveLatest = weekExclusiveLatest.get(weekKey);
+    if (!exclusiveLatest) {
+      exclusiveLatest = new Map();
+      weekExclusiveLatest.set(weekKey, exclusiveLatest);
+    }
+    let additive = weekAdditive.get(weekKey);
+    if (!additive) {
+      additive = emptyMetricRecord<Map<string, string>>(() => new Map());
+      weekAdditive.set(weekKey, additive);
     }
 
-    // Days are processed oldest-first, so this later write naturally
-    // overwrites whatever category an earlier day this week recorded for
-    // the same lead — "last write wins" needs no extra timestamp bookkeeping.
     for (const col of HISTORY_COLUMNS) {
+      const isExclusive = (EXCLUSIVE_METRICS as string[]).includes(col.key);
       for (const lead of day.leads[col.key]) {
-        latest.set(lead.id, { category: col.key, name: lead.name });
+        if (isExclusive) {
+          // Days are processed oldest-first, so this later write naturally
+          // overwrites whatever category an earlier day this week recorded
+          // for the same lead — no extra timestamp bookkeeping needed.
+          exclusiveLatest.set(lead.id, { category: col.key, name: lead.name });
+        } else {
+          additive[col.key].set(lead.id, lead.name);
+        }
       }
     }
   }
 
   const result: PeriodEntry[] = [];
-  for (const [weekKey, latest] of weekLeadLatest) {
+  for (const weekKey of weekLabel.keys()) {
     const leads = emptyMetricRecord<HistoryLead[]>(() => []);
-    for (const [id, { category, name }] of latest) {
+    for (const [id, { category, name }] of weekExclusiveLatest.get(weekKey) ?? []) {
       leads[category].push({ id, name });
+    }
+    const additive = weekAdditive.get(weekKey)!;
+    for (const col of HISTORY_COLUMNS) {
+      if ((EXCLUSIVE_METRICS as string[]).includes(col.key)) continue;
+      for (const [id, name] of additive[col.key]) leads[col.key].push({ id, name });
     }
     const counts = {} as Record<HistoryMetric, number>;
     for (const col of HISTORY_COLUMNS) {
