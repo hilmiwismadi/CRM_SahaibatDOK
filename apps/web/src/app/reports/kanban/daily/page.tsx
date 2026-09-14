@@ -22,22 +22,33 @@ import {
 } from "../shared";
 
 type Grouping = "daily" | "weekly";
-type GroupKey = "unanswered" | "needs_more" | "resolved";
+type GroupKey = "no_reply" | "unanswered" | "needs_more" | "resolved";
+// The two "Tidak Reply" leaves and "On Going" are all synthetic columns
+// with no backing data: no_reply_after_pitch, non_responsive, and
+// leadSegmentation's fallback ("active") are every one of them *computed*
+// from message patterns, never a tag_change event someone fires — so
+// there's nothing to count per day/week without making a number up. Each
+// always renders "Tidak terlacak" instead. See /reports/overview for
+// their current (not historical) counts.
+type SyntheticKey = "nonResponsive" | "notInterested" | "onGoing";
+const SYNTHETIC_INFO: Record<SyntheticKey, { label: string; color: string }> = {
+  nonResponsive: { label: CATEGORY_LABELS.non_responsive, color: CATEGORY_COLORS.non_responsive },
+  notInterested: { label: CATEGORY_LABELS.no_reply_after_pitch, color: CATEGORY_COLORS.no_reply_after_pitch },
+  onGoing: { label: CATEGORY_LABELS.active, color: CATEGORY_COLORS.active },
+};
 
 const byMetric = new Map(HISTORY_COLUMNS.map((c) => [c.key, c]));
 
-// Same left-to-right story as /reports/kanban/overview's live board, but
-// for *events*: did we even reach them, then — for the ones who haven't
-// given a real answer yet — did a bot field it or is it just sitting
-// unclassified, then the two "needs more from us" tags, then the two
-// definitive outcomes. "On Going" is a synthetic column (key "onGoing")
-// with no backing data: leadSegmentation's fallback ("active") is never
-// *set*, so there's no tag_change event to count — it always renders
-// empty rather than a made-up number. See /reports/overview for its
-// current (not historical) count instead.
-const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | "onGoing"; group?: GroupKey }[] = [
+// Same left-to-right story as /reports/kanban/overview's live board: did we
+// even reach them, then did they reply at all (Tidak Reply), then — for
+// the ones who did but haven't given a real answer yet — did a bot field
+// it or is it just sitting unclassified, then the two "needs more from
+// us" tags, then the two definitive outcomes.
+const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | SyntheticKey; group?: GroupKey }[] = [
   { key: "untouchedToTouched" },
   { key: "noWaAccount" },
+  { key: "nonResponsive", group: "no_reply" },
+  { key: "notInterested", group: "no_reply" },
   { key: "repliedByBot", group: "unanswered" },
   { key: "onGoing", group: "unanswered" },
   { key: "needsFollowUp", group: "needs_more" },
@@ -46,6 +57,7 @@ const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | "onGoing"; group?: GroupKey
   { key: "declined", group: "resolved" },
 ];
 const GROUP_LABELS: Record<GroupKey, string> = {
+  no_reply: "Tidak Reply",
   unanswered: "Belum Dijawab",
   needs_more: "Perlu Lanjutan",
   resolved: "Jawaban Pasti",
@@ -123,12 +135,13 @@ function PeriodBoard({
           </div>
           <div className="grid gap-3" style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}>
             {HISTORY_FUNNEL_COLUMNS.map(({ key }) => {
-              if (key === "onGoing") {
+              if (key in SYNTHETIC_INFO) {
+                const info = SYNTHETIC_INFO[key as SyntheticKey];
                 return (
-                  <div key="onGoing" className="rounded-lg bg-slate-50 p-2.5">
+                  <div key={key} className="rounded-lg bg-slate-50 p-2.5">
                     <div className="mb-2 flex items-center gap-1.5 px-0.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: CATEGORY_COLORS.active }} />
-                      <span className="text-xs font-semibold text-slate-500">{CATEGORY_LABELS.active}</span>
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: info.color }} />
+                      <span className="text-xs font-semibold text-slate-500">{info.label}</span>
                     </div>
                     <div className="rounded-lg border border-dashed border-slate-200 p-2.5 text-center text-[11px] text-slate-300">
                       Tidak terlacak
@@ -136,32 +149,33 @@ function PeriodBoard({
                   </div>
                 );
               }
-              const col = byMetric.get(key)!;
-              const leads = period.leads[key];
-              const droppable = Boolean(DROPPABLE_ACTION[key]);
+              const metricKey = key as HistoryMetric;
+              const col = byMetric.get(metricKey)!;
+              const leads = period.leads[metricKey];
+              const droppable = Boolean(DROPPABLE_ACTION[metricKey]);
               return (
                 <div
-                  key={key}
+                  key={metricKey}
                   onDragOver={
                     droppable
                       ? (e) => {
                           e.preventDefault();
-                          setDragOverKey(key);
+                          setDragOverKey(metricKey);
                         }
                       : undefined
                   }
-                  onDragLeave={droppable ? () => setDragOverKey((k) => (k === key ? null : k)) : undefined}
+                  onDragLeave={droppable ? () => setDragOverKey((k) => (k === metricKey ? null : k)) : undefined}
                   onDrop={
                     droppable
                       ? (e) => {
                           e.preventDefault();
                           const leadId = e.dataTransfer.getData("text/plain");
-                          if (leadId) handleDrop(leadId, key);
+                          if (leadId) handleDrop(leadId, metricKey);
                         }
                       : undefined
                   }
                   className={`flex flex-col rounded-lg bg-slate-50 p-2.5 transition ${
-                    dragOverKey === key ? "ring-2 ring-cyan-400 bg-cyan-50/60" : ""
+                    dragOverKey === metricKey ? "ring-2 ring-cyan-400 bg-cyan-50/60" : ""
                   }`}
                 >
                   <div className="mb-2 flex items-center gap-1.5 px-0.5">
