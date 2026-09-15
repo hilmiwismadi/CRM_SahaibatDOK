@@ -92,7 +92,7 @@ const dict = {
     tabPerDay: "Per Tanggal",
     tabPerWeek: "Per Minggu",
     kanbanDailyFootnote:
-      "“Tidak Ada Kontak WA” di sini hanya menghitung yang ditandai manual lewat dashboard — kegagalan otomatis saat kirim pesan tidak melewati jalur yang tercatat, jadi angkanya akan jauh lebih kecil dari total di Overview. Kategori tag lain juga hanya tercatat sejak fitur ini aktif; hari-hari sebelumnya akan tampak 0 meski lead sudah ditandai duluan.",
+      "Semua tag (termasuk kegagalan otomatis “Tidak Ada Kontak WA”) sekarang tercatat waktunya. Untuk kejadian dari sebelum pencatatan ini aktif, tanggalnya adalah perkiraan (dari tanggal lead dibuat), bukan tanggal asli kejadian — jadi jangan dibaca sebagai riwayat harian yang presisi untuk data lama.",
     eventCountSuffix: "event",
     noActivity: "Tidak ada aktivitas",
     notTracked: "Tidak terlacak",
@@ -204,7 +204,7 @@ const dict = {
     tabPerDay: "By Day",
     tabPerWeek: "By Week",
     kanbanDailyFootnote:
-      "“No WhatsApp Contact” here only counts leads tagged manually via the dashboard — automatic send failures don't go through the logged path, so this number will be much lower than the Overview total. Other tag categories are only logged since that feature went live; earlier days will show 0 even if the lead was already tagged.",
+      "Every tag (including automatic \"No WhatsApp Contact\" failures) is now timestamped. Events from before this logging went live use an approximate date (the lead's creation date), not the true event date — don't read older entries as a precise day-by-day history.",
     eventCountSuffix: "events",
     noActivity: "No activity",
     notTracked: "Not tracked",
