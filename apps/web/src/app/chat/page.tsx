@@ -8,11 +8,14 @@ import MessageThread from "./MessageThread";
 import Composer from "./Composer";
 import WaStatusBadge from "./WaStatusBadge";
 import type { ConversationListItem, LeadBrief, Selected, WaMessageItem } from "./types";
-import { CATEGORY_COLORS, CATEGORY_LABELS, REPLY_BRANCH_GROUPS } from "@/lib/leadSegmentation";
+import { CATEGORY_COLORS, categoryLabels, REPLY_BRANCH_GROUPS, replyBranchLabel } from "@/lib/leadSegmentation";
+import { useLanguage } from "@/lib/i18n/context";
 
 const POLL_MS = 4000;
 
 export default function ChatPage() {
+  const { locale, t } = useLanguage();
+  const labels = categoryLabels(locale);
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
   const [convLoading, setConvLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -334,7 +337,7 @@ export default function ChatPage() {
           <div className="flex flex-1 flex-col overflow-hidden">
             {!selected && (
               <div className="flex flex-1 items-center justify-center text-sm text-slate-400">
-                Select a conversation to start chatting.
+                {t.chatSelectPrompt}
               </div>
             )}
 
@@ -350,7 +353,7 @@ export default function ChatPage() {
                       onClick={() => setInfoOpen((v) => !v)}
                       className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
                     >
-                      {infoOpen ? "Hide info" : "Lead info"}
+                      {infoOpen ? t.chatHideInfo : t.chatLeadInfo}
                     </button>
                   )}
                 </div>
@@ -359,14 +362,14 @@ export default function ChatPage() {
 
                 <Composer
                   disabled={!canSend}
-                  disabledReason={!canSend ? "No known phone number for this contact yet." : undefined}
+                  disabledReason={!canSend ? t.chatNoPhoneYet : undefined}
                   contactName={title !== "…" ? title : null}
                   onSend={handleSend}
                 />
 
                 {selected.kind === "lead" && infoOpen && (
                   <div className="max-h-64 overflow-y-auto border-t border-slate-100 bg-white p-4">
-                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Contact chain</div>
+                    <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t.chatContactChain}</div>
                     <ContactChainTree
                       contacts={contacts}
                       activeContactId={activeContactId}
@@ -399,7 +402,7 @@ export default function ChatPage() {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-emerald-500">
                   <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Tandai Sudah Dibalas
+                {t.chatMarkReplied}
               </button>
               <button
                 onClick={() => handleMarkReplied(contextMenu.item, true, "bot")}
@@ -409,7 +412,7 @@ export default function ChatPage() {
                   <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
                   <path d="M9 13v2M15 13v2M9 4v4M15 4v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
-                Dibalas oleh Bot
+                {t.chatMarkRepliedByBot}
               </button>
             </>
           ) : (
@@ -420,7 +423,7 @@ export default function ChatPage() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-red-500">
                 <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" />
               </svg>
-              Tandai Belum Dibalas
+              {t.chatMarkUnreplied}
             </button>
           )}
           <div className="my-1 border-t border-slate-100" />
@@ -432,7 +435,7 @@ export default function ChatPage() {
               <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
               <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
-            {contextMenu.item.noWaAccount ? `Hapus Tandai ${CATEGORY_LABELS.no_wa_account}` : CATEGORY_LABELS.no_wa_account}
+            {contextMenu.item.noWaAccount ? `${t.chatRemoveTagPrefix} ${labels.no_wa_account}` : labels.no_wa_account}
           </button>
           <div className="my-1 border-t border-slate-100" />
           {/* Cascading branch picker mirroring the triase diagram: pick
@@ -455,7 +458,7 @@ export default function ChatPage() {
                   >
                     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  {branch.label}
+                  {replyBranchLabel(branch.key, locale)}
                 </button>
                 {isOpen && (
                   <div className="pb-1">
@@ -466,7 +469,7 @@ export default function ChatPage() {
                       // treating these as non-draggable columns.
                       <>
                         <div className="flex items-center justify-between px-3 py-1.5 pl-8 text-sm text-slate-500">
-                          <span>{CATEGORY_LABELS.non_responsive}</span>
+                          <span>{labels.non_responsive}</span>
                           <span
                             className="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
                             style={{
@@ -474,11 +477,11 @@ export default function ChatPage() {
                               color: contextMenu.item.nonResponsive ? CATEGORY_COLORS.non_responsive : "#cbd5e1",
                             }}
                           >
-                            {contextMenu.item.nonResponsive ? "Ya" : "Belum"}
+                            {contextMenu.item.nonResponsive ? t.chatYes : t.chatNotYet}
                           </span>
                         </div>
                         <div className="flex items-center justify-between px-3 py-1.5 pl-8 text-sm text-slate-500">
-                          <span>{CATEGORY_LABELS.no_reply_after_pitch}</span>
+                          <span>{labels.no_reply_after_pitch}</span>
                           <span
                             className="rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
                             style={{
@@ -488,10 +491,10 @@ export default function ChatPage() {
                               color: contextMenu.item.noReplyAfterPitch ? CATEGORY_COLORS.no_reply_after_pitch : "#cbd5e1",
                             }}
                           >
-                            {contextMenu.item.noReplyAfterPitch ? "Ya" : "Belum"}
+                            {contextMenu.item.noReplyAfterPitch ? t.chatYes : t.chatNotYet}
                           </span>
                         </div>
-                        <div className="px-3 pl-8 text-[11px] text-slate-400">Otomatis — tidak bisa ditandai manual.</div>
+                        <div className="px-3 pl-8 text-[11px] text-slate-400">{t.chatAutoNoManual}</div>
                       </>
                     ) : (
                       <>
@@ -499,28 +502,28 @@ export default function ChatPage() {
                           onClick={() => handleToggleFollowUp(contextMenu.item, !contextMenu.item.needsFollowUp)}
                           className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
                         >
-                          <span>{CATEGORY_LABELS.needs_follow_up}</span>
+                          <span>{labels.needs_follow_up}</span>
                           {contextMenu.item.needsFollowUp && <span className="text-emerald-500">✓</span>}
                         </button>
                         <button
                           onClick={() => handleToggleOtherContact(contextMenu.item, !contextMenu.item.needsOtherContact)}
                           className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
                         >
-                          <span>{CATEGORY_LABELS.needs_other_contact}</span>
+                          <span>{labels.needs_other_contact}</span>
                           {contextMenu.item.needsOtherContact && <span className="text-emerald-500">✓</span>}
                         </button>
                         <button
                           onClick={() => handleToggleDeclined(contextMenu.item, !contextMenu.item.declined)}
                           className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
                         >
-                          <span>{CATEGORY_LABELS.declined}</span>
+                          <span>{labels.declined}</span>
                           {contextMenu.item.declined && <span className="text-emerald-500">✓</span>}
                         </button>
                         <button
                           onClick={() => handleToggleAppointment(contextMenu.item, !contextMenu.item.appointment)}
                           className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
                         >
-                          <span>{CATEGORY_LABELS.appointment}</span>
+                          <span>{labels.appointment}</span>
                           {contextMenu.item.appointment && <span className="text-emerald-500">✓</span>}
                         </button>
                       </>

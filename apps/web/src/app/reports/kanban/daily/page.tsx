@@ -3,7 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../../ReportsTabs";
-import { CATEGORY_COLORS, CATEGORY_LABELS } from "@/lib/leadSegmentation";
+import { CATEGORY_COLORS, categoryLabels, type LeadCategory } from "@/lib/leadSegmentation";
+import { useLanguage } from "@/lib/i18n/context";
+import type { Translations } from "@/lib/i18n/translations";
+import type { Locale } from "@/lib/i18n/locale";
 import {
   type DayEntry,
   type HistoryMetric,
@@ -11,6 +14,7 @@ import {
   type SelectedLead,
   type QuickTagAction,
   HISTORY_COLUMNS,
+  historyColumnLabels,
   HistoryBoardCard,
   LeadPopup,
   KanbanSubNav,
@@ -28,14 +32,17 @@ type GroupKey = "no_reply" | "unanswered" | "needs_more" | "resolved";
 // leadSegmentation's fallback ("active") are every one of them *computed*
 // from message patterns, never a tag_change event someone fires — so
 // there's nothing to count per day/week without making a number up. Each
-// always renders "Tidak terlacak" instead. See /reports/overview for
-// their current (not historical) counts.
+// always renders the "not tracked" placeholder instead. See
+// /reports/overview for their current (not historical) counts.
 type SyntheticKey = "nonResponsive" | "notInterested" | "onGoing";
-const SYNTHETIC_INFO: Record<SyntheticKey, { label: string; color: string }> = {
-  nonResponsive: { label: CATEGORY_LABELS.non_responsive, color: CATEGORY_COLORS.non_responsive },
-  notInterested: { label: CATEGORY_LABELS.no_reply_after_pitch, color: CATEGORY_COLORS.no_reply_after_pitch },
-  onGoing: { label: CATEGORY_LABELS.active, color: CATEGORY_COLORS.active },
-};
+
+function syntheticInfo(labels: Record<LeadCategory, string>): Record<SyntheticKey, { label: string; color: string }> {
+  return {
+    nonResponsive: { label: labels.non_responsive, color: CATEGORY_COLORS.non_responsive },
+    notInterested: { label: labels.no_reply_after_pitch, color: CATEGORY_COLORS.no_reply_after_pitch },
+    onGoing: { label: labels.active, color: CATEGORY_COLORS.active },
+  };
+}
 
 const byMetric = new Map(HISTORY_COLUMNS.map((c) => [c.key, c]));
 
@@ -56,13 +63,15 @@ const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | SyntheticKey; group?: Group
   { key: "appointment", group: "resolved" },
   { key: "declined", group: "resolved" },
 ];
-const GROUP_LABELS: Record<GroupKey, string> = {
-  no_reply: "Tidak Reply",
-  unanswered: "Belum Dijawab",
-  needs_more: "Perlu Lanjutan",
-  resolved: "Jawaban Pasti",
-};
-const HEADER_CELLS = buildBoardHeaderCells(HISTORY_FUNNEL_COLUMNS, GROUP_LABELS);
+
+function groupLabels(t: Translations): Record<GroupKey, string> {
+  return {
+    no_reply: t.groupNoReply,
+    unanswered: t.groupUnanswered,
+    needs_more: t.groupNeedsMore,
+    resolved: t.groupResolved,
+  };
+}
 
 // The 6 history metrics a drop actually can change — same quick-tag
 // actions the live board offers, minus "untouchedToTouched" (can't
@@ -95,14 +104,18 @@ function PeriodBoard({
 }) {
   const [dragOverKey, setDragOverKey] = useState<string | null>(null);
   const total = HISTORY_COLUMNS.reduce((sum, c) => sum + period.counts[c.key], 0);
+  const { locale, t } = useLanguage();
+  const labels = historyColumnLabels(locale, t.untouchedToTouched);
+  const SYNTHETIC_INFO = syntheticInfo(categoryLabels(locale));
+  const HEADER_CELLS = buildBoardHeaderCells(HISTORY_FUNNEL_COLUMNS, groupLabels(t));
 
   async function handleDrop(leadId: string, targetKey: HistoryMetric) {
     setDragOverKey(null);
     const action = DROPPABLE_ACTION[targetKey];
     if (!action) return;
-    const result = await quickTag(leadId, action);
+    const result = await quickTag(leadId, action, { generic: t.quickTagFailedGeneric, conn: t.quickTagFailedConn });
     if (!result.ok) {
-      onDropError(result.error ?? "Gagal memindahkan lead.");
+      onDropError(result.error ?? t.quickTagFailedGeneric);
       return;
     }
     onMoved();
@@ -112,10 +125,10 @@ function PeriodBoard({
     <div className="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-2.5">
         <span className="text-sm font-semibold text-slate-700">{period.label}</span>
-        <span className="text-xs text-slate-400">{total} event</span>
+        <span className="text-xs text-slate-400">{total} {t.eventCountSuffix}</span>
       </div>
       {total === 0 ? (
-        <div className="px-4 py-5 text-center text-xs text-slate-300">Tidak ada aktivitas</div>
+        <div className="px-4 py-5 text-center text-xs text-slate-300">{t.noActivity}</div>
       ) : (
         <div className="overflow-x-auto p-3">
           <div className="grid shrink-0 gap-3 pb-1.5" style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}>
@@ -144,13 +157,14 @@ function PeriodBoard({
                       <span className="text-xs font-semibold text-slate-500">{info.label}</span>
                     </div>
                     <div className="rounded-lg border border-dashed border-slate-200 p-2.5 text-center text-[11px] text-slate-300">
-                      Tidak terlacak
+                      {t.notTracked}
                     </div>
                   </div>
                 );
               }
               const metricKey = key as HistoryMetric;
               const col = byMetric.get(metricKey)!;
+              const colLabel = labels[metricKey];
               const leads = period.leads[metricKey];
               const droppable = Boolean(DROPPABLE_ACTION[metricKey]);
               return (
@@ -180,7 +194,7 @@ function PeriodBoard({
                 >
                   <div className="mb-2 flex items-center gap-1.5 px-0.5">
                     <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: col.color }} />
-                    <span className="text-xs font-semibold text-slate-500">{col.label}</span>
+                    <span className="text-xs font-semibold text-slate-500">{colLabel}</span>
                     <span className="ml-auto rounded-full bg-white px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
                       {leads.length}
                     </span>
@@ -188,14 +202,14 @@ function PeriodBoard({
                   <div className="flex flex-col gap-1.5">
                     {leads.length === 0 && (
                       <div className="rounded-md border border-dashed border-slate-200 py-2 text-center text-[10px] text-slate-300">
-                        Kosong
+                        {t.empty}
                       </div>
                     )}
                     {leads.map((lead) => (
                       <HistoryBoardCard
                         key={lead.id}
                         lead={lead}
-                        categoryLabel={col.label}
+                        categoryLabel={colLabel}
                         categoryColor={col.color}
                         draggable={droppable}
                         onOpen={onOpen}
@@ -213,6 +227,7 @@ function PeriodBoard({
 }
 
 export default function KanbanHistoryPage() {
+  const { locale, t } = useLanguage();
   const [grouping, setGrouping] = useState<Grouping>("daily");
   const [history, setHistory] = useState<DayEntry[] | null>(null);
   const [historyLoading, setHistoryLoading] = useState(true);
@@ -240,12 +255,13 @@ export default function KanbanHistoryPage() {
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
       <div className="flex flex-1 flex-col overflow-hidden p-6">
-        <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
+        <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
         <p className="mb-4 text-sm text-slate-500">
-          Riwayat <strong>event</strong> (kapan sesuatu ditandai), satu board per periode — drag kartu untuk menandai
-          ulang lead sekarang juga. Untuk status hari ini, lihat{" "}
+          {t.kanbanDailyDesc1}
+          <strong>{t.kanbanDailyDescEvent}</strong>
+          {t.kanbanDailyDesc2}
           <a href="/reports/overview" className="text-cyan-700 hover:underline">
-            Overview
+            {t.kanbanDailyOverviewLink}
           </a>
           .
         </p>
@@ -254,8 +270,8 @@ export default function KanbanHistoryPage() {
 
         <div className="mb-4 flex w-fit gap-1 rounded-lg bg-slate-100 p-1">
           {([
-            ["daily", "Per Tanggal"],
-            ["weekly", "Per Minggu"],
+            ["daily", t.tabPerDay],
+            ["weekly", t.tabPerWeek],
           ] as [Grouping, string][]).map(([g, label]) => (
             <button
               key={g}
@@ -269,18 +285,13 @@ export default function KanbanHistoryPage() {
           ))}
         </div>
 
-        <p className="mb-3 text-xs text-slate-400">
-          &ldquo;Tidak Ada Kontak WA&rdquo; di sini hanya menghitung yang ditandai manual lewat dashboard — kegagalan
-          otomatis saat kirim pesan tidak melewati jalur yang tercatat, jadi angkanya akan jauh lebih kecil dari total
-          di Overview. Kategori tag lain juga hanya tercatat sejak fitur ini aktif; hari-hari sebelumnya akan tampak 0
-          meski lead sudah ditandai duluan.
-        </p>
+        <p className="mb-3 text-xs text-slate-400">{t.kanbanDailyFootnote}</p>
 
         <div className="flex-1 overflow-y-auto pb-4">
-          {historyLoading && <div className="text-sm text-slate-400">Loading…</div>}
+          {historyLoading && <div className="text-sm text-slate-400">{t.loading}</div>}
           {!historyLoading &&
             history &&
-            (grouping === "daily" ? toPeriods(history) : groupWeekly(history)).map((period) => (
+            (grouping === "daily" ? toPeriods(history, locale) : groupWeekly(history, locale)).map((period) => (
               <PeriodBoard key={period.key} period={period} onMoved={loadHistory} onOpen={setSelected} onDropError={showToast} />
             ))}
         </div>

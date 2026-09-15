@@ -87,6 +87,29 @@ export const CATEGORY_LABELS: Record<LeadCategory, string> = {
   active: "Perlu Diklasifikasi",
 };
 
+// English counterpart, same keys/order — used by every UI component
+// instead of CATEGORY_LABELS when the language toggle (see
+// src/lib/i18n) is set to "en". Kept next to CATEGORY_LABELS rather than
+// in the i18n dictionary since both are derived from the same
+// LeadCategory source of truth and must never drift apart key-for-key.
+export const CATEGORY_LABELS_EN: Record<LeadCategory, string> = {
+  untouched: "Untouched",
+  no_wa_account: "No WhatsApp Contact",
+  appointment: "Appointment",
+  declined: "Reject",
+  needs_reply: "Awaiting Reply",
+  replied_by_bot: "Replied by Bot",
+  needs_other_contact: "Further Contact",
+  needs_follow_up: "Follow Up",
+  no_reply_after_pitch: "Not-Interested",
+  non_responsive: "Non-Responsive",
+  active: "Needs Review",
+};
+
+export function categoryLabels(locale: "id" | "en"): Record<LeadCategory, string> {
+  return locale === "en" ? CATEGORY_LABELS_EN : CATEGORY_LABELS;
+}
+
 /**
  * The two-level grouping the triase diagram draws — Bisa Dihubungi splits
  * into "Tidak Reply" vs "Reply", each with its own leaf categories. Drives
@@ -104,6 +127,15 @@ export const REPLY_BRANCH_GROUPS: {
   { key: "no_reply", label: "Tidak Reply", categories: ["non_responsive", "no_reply_after_pitch"] },
   { key: "reply", label: "Reply", categories: ["needs_follow_up", "needs_other_contact", "declined", "appointment"] },
 ];
+
+export const REPLY_BRANCH_LABELS_EN: Record<"no_reply" | "reply", string> = {
+  no_reply: "No Reply",
+  reply: "Replied",
+};
+
+export function replyBranchLabel(key: "no_reply" | "reply", locale: "id" | "en"): string {
+  return locale === "en" ? REPLY_BRANCH_LABELS_EN[key] : REPLY_BRANCH_GROUPS.find((b) => b.key === key)!.label;
+}
 
 export const CATEGORY_COLORS: Record<LeadCategory, string> = {
   untouched: "#94a3b8", // slate-400

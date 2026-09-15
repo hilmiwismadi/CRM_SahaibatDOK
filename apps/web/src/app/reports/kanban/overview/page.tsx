@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../../ReportsTabs";
-import { CATEGORY_COLORS, CATEGORY_GRADIENTS, CATEGORY_LABELS, type LeadCategory } from "@/lib/leadSegmentation";
+import { CATEGORY_COLORS, CATEGORY_GRADIENTS, categoryLabels, type LeadCategory } from "@/lib/leadSegmentation";
+import { useLanguage } from "@/lib/i18n/context";
 import {
   type CardLead,
   type SelectedLead,
@@ -59,10 +60,11 @@ const FUNNEL_COLUMNS: { key: LeadCategory; group?: "no_reply" | "reply" }[] = [
   { key: "active" },
 ];
 
-const GROUP_LABELS: Record<"no_reply" | "reply", string> = { no_reply: "Tidak Reply", reply: "Reply" };
-const HEADER_CELLS = buildBoardHeaderCells(FUNNEL_COLUMNS, GROUP_LABELS);
-
 export default function KanbanOverviewPage() {
+  const { locale, t } = useLanguage();
+  const labels = categoryLabels(locale);
+  const GROUP_LABELS: Record<"no_reply" | "reply", string> = { no_reply: t.replyBranchNoReply, reply: t.replyBranchReply };
+  const HEADER_CELLS = buildBoardHeaderCells(FUNNEL_COLUMNS, GROUP_LABELS);
   const [data, setData] = useState<Segmentation | null>(null);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<SelectedLead | null>(null);
@@ -98,9 +100,9 @@ export default function KanbanOverviewPage() {
     setDragOverKey(null);
     const action = DROPPABLE_ACTION[targetKey];
     if (!action) return;
-    const result = await quickTag(leadId, action);
+    const result = await quickTag(leadId, action, { generic: t.quickTagFailedGeneric, conn: t.quickTagFailedConn });
     if (!result.ok) {
-      showToast(result.error ?? "Gagal memindahkan lead.");
+      showToast(result.error ?? t.quickTagFailedGeneric);
       return;
     }
     handleMoved();
@@ -109,10 +111,10 @@ export default function KanbanOverviewPage() {
   const columns = data
     ? FUNNEL_COLUMNS.map(({ key }) => {
         if (key === "untouched") {
-          return { key, label: CATEGORY_LABELS.untouched, leads: data.untouched.leads };
+          return { key, label: labels.untouched, leads: data.untouched.leads };
         }
         const cat = data.touched.categories.find((c) => c.key === key);
-        return { key, label: cat?.label ?? CATEGORY_LABELS[key], leads: cat?.leads ?? [] };
+        return { key, label: labels[key], leads: cat?.leads ?? [] };
       })
     : [];
 
@@ -120,18 +122,12 @@ export default function KanbanOverviewPage() {
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6">
-        <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
-        <p className="mb-4 text-sm text-slate-500">
-          Alur kiri ke kanan: Belum Disentuh → Tidak Ada Kontak WA → (Tidak Reply) → (Reply) → lainnya. Klik kartu
-          untuk lihat ringkasan &amp; pindahkan tag, atau drag ke kolom lain. &ldquo;Belum Disentuh&rdquo;, &ldquo;Belum
-          Dijawab&rdquo;, &ldquo;Not-Interested&rdquo;, dan &ldquo;Non-Responsive&rdquo; tidak bisa dipindah manual —
-          itu status otomatis, bukan tag. &ldquo;Perlu Diklasifikasi&rdquo; bukan status aman — cek isi chat-nya dan
-          pindahkan ke kategori yang sesuai.
-        </p>
+        <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
+        <p className="mb-4 text-sm text-slate-500">{t.kanbanOverviewDesc}</p>
         <ReportsTabs />
         <KanbanSubNav active="overview" />
 
-        {loading && <div className="text-sm text-slate-400">Loading…</div>}
+        {loading && <div className="text-sm text-slate-400">{t.loading}</div>}
         {data && (
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {/* One shared horizontal scroller for both rows below — on a
@@ -213,7 +209,7 @@ export default function KanbanOverviewPage() {
                     <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
                       {col.leads.length === 0 && (
                         <div className="rounded-lg border border-dashed border-slate-200 p-3 text-center text-xs text-slate-400">
-                          Kosong
+                          {t.empty}
                         </div>
                       )}
                       {col.leads.map((lead) => (

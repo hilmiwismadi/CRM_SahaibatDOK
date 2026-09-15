@@ -7,23 +7,24 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/context";
+import { NAV_LABELS } from "@/lib/i18n/translations";
 
 export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "none";
 
 interface NavItem {
-  page: AppPage;
+  page: Exclude<AppPage, "none">;
   href: string;
-  label: string;
   Icon: (props: { muted: boolean }) => React.ReactElement;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { page: "dashboard", href: "/dashboard", label: "Dashboard", Icon: DashboardIcon },
-  { page: "map", href: "/map", label: "Map", Icon: PinIcon },
-  { page: "chat", href: "/chat", label: "Chat", Icon: ChatIcon },
-  { page: "templates", href: "/templates", label: "Templates", Icon: TemplateIcon },
-  { page: "reports", href: "/reports/overview", label: "Reports", Icon: ReportIcon },
-  { page: "scrapes", href: "/admin/scrapes", label: "Scrape Jobs", Icon: ScrapeIcon },
+  { page: "dashboard", href: "/dashboard", Icon: DashboardIcon },
+  { page: "map", href: "/map", Icon: PinIcon },
+  { page: "chat", href: "/chat", Icon: ChatIcon },
+  { page: "templates", href: "/templates", Icon: TemplateIcon },
+  { page: "reports", href: "/reports/overview", Icon: ReportIcon },
+  { page: "scrapes", href: "/admin/scrapes", Icon: ScrapeIcon },
 ];
 
 const STORAGE_KEY = "sahaibat-sidebar-collapsed";
@@ -33,6 +34,7 @@ const COLLAPSED_WIDTH = 68;
 export default function AppSidebar({ active }: { active: AppPage }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { locale, setLocale, t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
@@ -78,14 +80,15 @@ export default function AppSidebar({ active }: { active: AppPage }) {
         {!collapsed && (
           <div style={{ whiteSpace: "nowrap" }}>
             <div style={{ fontWeight: 700, fontSize: 14, color: "#f8fafc", lineHeight: 1.1 }}>SahAIbat DOK</div>
-            <div style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.1, marginTop: 2 }}>Lead CRM</div>
+            <div style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.1, marginTop: 2 }}>{t.sidebarTagline}</div>
           </div>
         )}
       </div>
 
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {NAV_ITEMS.map(({ page, href, label, Icon }) => {
+        {NAV_ITEMS.map(({ page, href, Icon }) => {
           const isActive = page === active;
+          const label = NAV_LABELS[locale][page];
           const content = (
             <>
               <Icon muted={!isActive} />
@@ -107,8 +110,35 @@ export default function AppSidebar({ active }: { active: AppPage }) {
       <div style={{ flex: 1 }} />
 
       <button
+        onClick={() => setLocale(locale === "id" ? "en" : "id")}
+        title={t.sidebarLanguage}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-start",
+          gap: 10,
+          padding: "9px 12px",
+          borderRadius: 8,
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "#94a3b8",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="12" cy="12" r="9" stroke="#94a3b8" strokeWidth="2" />
+          <path d="M3 12h18M12 3c2.5 2.6 4 5.9 4 9s-1.5 6.4-4 9c-2.5-2.6-4-5.9-4-9s1.5-6.4 4-9Z" stroke="#94a3b8" strokeWidth="2" />
+        </svg>
+        {!collapsed && (
+          <span style={{ fontSize: 12.5, fontWeight: 600 }}>
+            {locale.toUpperCase()} <span style={{ color: "#4b5563" }}>→</span> {(locale === "id" ? "en" : "id").toUpperCase()}
+          </span>
+        )}
+      </button>
+
+      <button
         onClick={toggle}
-        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        title={collapsed ? t.sidebarExpandTitle : t.sidebarCollapseTitle}
         style={{
           display: "flex",
           alignItems: "center",
@@ -131,7 +161,7 @@ export default function AppSidebar({ active }: { active: AppPage }) {
         >
           <path d="M15 6l-6 6 6 6" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-        {!collapsed && <span style={{ fontSize: 12.5, fontWeight: 500 }}>Collapse</span>}
+        {!collapsed && <span style={{ fontSize: 12.5, fontWeight: 500 }}>{t.sidebarCollapse}</span>}
       </button>
     </div>
   );

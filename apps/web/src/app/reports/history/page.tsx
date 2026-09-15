@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import AppSidebar from "@/app/components/AppSidebar";
 import ReportsTabs from "../ReportsTabs";
-import { CATEGORY_LABELS } from "@/lib/leadSegmentation";
+import { categoryLabels } from "@/lib/leadSegmentation";
+import { useLanguage } from "@/lib/i18n/context";
+import { ACTIVITY_TYPE_LABELS } from "@/lib/i18n/translations";
+import { formatDate, formatTime, type Locale } from "@/lib/i18n/locale";
+import type { Translations } from "@/lib/i18n/translations";
 
 interface Activity {
   id: string;
@@ -13,18 +17,6 @@ interface Activity {
   createdAt: string;
   lead: { id: string; name: string } | null;
 }
-
-const TYPE_LABELS: Record<string, string> = {
-  stage_change: "Ganti Stage",
-  wa_message_sent: "Pesan Terkirim",
-  wa_message_received: "Pesan Masuk",
-  manual_edit: "Edit Manual",
-  scrape_update: "Update Scrape",
-  contact_chain_updated: "Kontak Chain Diubah",
-  tag_change: "Ubah Tag",
-  replied_marked: "Tandai Dibalas",
-  note: "Catatan",
-};
 
 const TYPE_COLORS: Record<string, string> = {
   stage_change: "text-cyan-700 bg-cyan-50",
@@ -40,34 +32,37 @@ const TYPE_COLORS: Record<string, string> = {
 
 // wa_contacts boolean column name -> the same label /chat and /reports use
 // for it, so "tag_change" rows read the same word everywhere.
-const TAG_FIELD_LABELS: Record<string, string> = {
-  noWaAccount: CATEGORY_LABELS.no_wa_account,
-  appointment: CATEGORY_LABELS.appointment,
-  declined: CATEGORY_LABELS.declined,
-  needsOtherContact: CATEGORY_LABELS.needs_other_contact,
-  needsFollowUp: CATEGORY_LABELS.needs_follow_up,
-};
+function tagFieldLabels(locale: Locale): Record<string, string> {
+  const labels = categoryLabels(locale);
+  return {
+    noWaAccount: labels.no_wa_account,
+    appointment: labels.appointment,
+    declined: labels.declined,
+    needsOtherContact: labels.needs_other_contact,
+    needsFollowUp: labels.needs_follow_up,
+  };
+}
 
-function describeActivity(a: Activity): string {
+function describeActivity(a: Activity, locale: Locale, t: Translations): string {
   if (a.type === "stage_change" && a.payload) {
     return `${a.payload.from ?? "?"} → ${a.payload.to ?? "?"}`;
   }
   if (a.type === "tag_change" && a.payload) {
     const tag = typeof a.payload.tag === "string" ? a.payload.tag : "";
-    const label = TAG_FIELD_LABELS[tag] ?? tag;
-    return a.payload.value ? `${label}: ditandai` : `${label}: dihapus`;
+    const label = tagFieldLabels(locale)[tag] ?? tag;
+    return a.payload.value ? `${label}: ${t.activityTagMarked}` : `${label}: ${t.activityTagCleared}`;
   }
   if (a.type === "replied_marked" && a.payload) {
-    if (a.payload.cleared) return "Tandai sudah dibalas: dihapus";
-    return a.payload.kind === "bot" ? "Ditandai dibalas oleh bot" : "Ditandai sudah dibalas (manual)";
+    if (a.payload.cleared) return t.activityRepliedCleared;
+    return a.payload.kind === "bot" ? t.activityRepliedBot : t.activityRepliedManual;
   }
   if (a.type === "wa_message_sent" || a.type === "wa_message_received") {
     return "";
   }
   if (a.type === "manual_edit" && a.payload) {
-    if (Array.isArray(a.payload.fields)) return `Field: ${(a.payload.fields as string[]).join(", ")}`;
+    if (Array.isArray(a.payload.fields)) return `${t.activityFieldPrefix}: ${(a.payload.fields as string[]).join(", ")}`;
     if (typeof a.payload.action === "string") {
-      return a.payload.action === "created_manually" ? "Lead dibuat manual (bukan dari scrape)" : a.payload.action;
+      return a.payload.action === "created_manually" ? t.activityLeadCreatedManually : a.payload.action;
     }
     if (typeof a.payload.note === "string") return a.payload.note;
   }
@@ -75,6 +70,8 @@ function describeActivity(a: Activity): string {
 }
 
 export default function HistoryPage() {
+  const { locale, t } = useLanguage();
+  const TYPE_LABELS = ACTIVITY_TYPE_LABELS[locale];
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(30);
@@ -102,10 +99,8 @@ export default function HistoryPage() {
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
       <div className="flex-1 overflow-y-auto p-6">
-        <h1 className="mb-1 text-lg font-bold text-slate-900">Sales report</h1>
-        <p className="mb-4 text-sm text-slate-500">
-          Riwayat aktivitas — kapan lead dikontak, kapan status berubah, dll. Maks. 200 baris terbaru.
-        </p>
+        <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
+        <p className="mb-4 text-sm text-slate-500">{t.historySubtitle}</p>
         <ReportsTabs />
 
         <div className="mb-4 flex gap-3">
@@ -114,16 +109,16 @@ export default function HistoryPage() {
             onChange={(e) => setDays(Number(e.target.value))}
             className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
           >
-            <option value={7}>7 hari terakhir</option>
-            <option value={30}>30 hari terakhir</option>
-            <option value={90}>90 hari terakhir</option>
+            <option value={7}>{t.historyDays7}</option>
+            <option value={30}>{t.historyDays30}</option>
+            <option value={90}>{t.historyDays90}</option>
           </select>
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
           >
-            <option value="all">Semua tipe</option>
+            <option value="all">{t.historyAllTypes}</option>
             {Object.entries(TYPE_LABELS).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}
@@ -133,25 +128,26 @@ export default function HistoryPage() {
         </div>
 
         <div className="overflow-hidden rounded-xl border border-slate-100 bg-white shadow-sm">
-          {loading && <div className="p-6 text-center text-sm text-slate-400">Loading…</div>}
+          {loading && <div className="p-6 text-center text-sm text-slate-400">{t.loading}</div>}
           {!loading && activities.length === 0 && (
-            <div className="p-6 text-center text-sm text-slate-400">Tidak ada aktivitas di rentang ini.</div>
+            <div className="p-6 text-center text-sm text-slate-400">{t.historyNoActivity}</div>
           )}
           {!loading && activities.length > 0 && (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left text-slate-500">
-                  <th className="px-4 py-2.5 font-medium">Waktu</th>
-                  <th className="px-4 py-2.5 font-medium">Lead</th>
-                  <th className="px-4 py-2.5 font-medium">Tipe</th>
-                  <th className="px-4 py-2.5 font-medium">Detail</th>
+                  <th className="px-4 py-2.5 font-medium">{t.historyColTime}</th>
+                  <th className="px-4 py-2.5 font-medium">{t.historyColLead}</th>
+                  <th className="px-4 py-2.5 font-medium">{t.historyColType}</th>
+                  <th className="px-4 py-2.5 font-medium">{t.historyColDetail}</th>
                 </tr>
               </thead>
               <tbody>
                 {activities.map((a) => (
                   <tr key={a.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50">
                     <td className="whitespace-nowrap px-4 py-2 text-slate-400">
-                      {new Date(a.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
+                      {formatDate(a.createdAt, locale, { dateStyle: "medium" })}{" "}
+                      {formatTime(a.createdAt, locale, { timeStyle: "short" })}
                     </td>
                     <td className="px-4 py-2">
                       {a.lead ? (
@@ -169,7 +165,7 @@ export default function HistoryPage() {
                         {TYPE_LABELS[a.type] ?? a.type}
                       </span>
                     </td>
-                    <td className="px-4 py-2 text-slate-500">{describeActivity(a)}</td>
+                    <td className="px-4 py-2 text-slate-500">{describeActivity(a, locale, t)}</td>
                   </tr>
                 ))}
               </tbody>

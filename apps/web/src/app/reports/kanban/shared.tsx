@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CATEGORY_COLORS, CATEGORY_LABELS } from "@/lib/leadSegmentation";
+import { CATEGORY_COLORS, categoryLabels, CATEGORY_LABELS, CATEGORY_LABELS_EN } from "@/lib/leadSegmentation";
+import { useLanguage } from "@/lib/i18n/context";
+import { formatDate, type Locale } from "@/lib/i18n/locale";
 
 // The 7 real "move a lead" actions — everything /api/leads/[id]/quick-tag
 // accepts. Three Kanban categories (untouched, needs_reply, non_responsive)
@@ -83,17 +85,24 @@ export function HistoryBoardCard({
   );
 }
 
-export const QUICK_TAG_TARGETS: { action: QuickTagAction; label: string; color: string }[] = [
-  { action: "noWaAccount", label: CATEGORY_LABELS.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
-  { action: "appointment", label: CATEGORY_LABELS.appointment, color: CATEGORY_COLORS.appointment },
-  { action: "declined", label: CATEGORY_LABELS.declined, color: CATEGORY_COLORS.declined },
-  { action: "repliedBot", label: CATEGORY_LABELS.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
-  { action: "needsOtherContact", label: CATEGORY_LABELS.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
-  { action: "needsFollowUp", label: CATEGORY_LABELS.needs_follow_up, color: CATEGORY_COLORS.needs_follow_up },
-  { action: "clear", label: `${CATEGORY_LABELS.active} (hapus tag)`, color: CATEGORY_COLORS.active },
-];
+export function quickTagTargets(locale: Locale, clearSuffix: string): { action: QuickTagAction; label: string; color: string }[] {
+  const labels = categoryLabels(locale);
+  return [
+    { action: "noWaAccount", label: labels.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
+    { action: "appointment", label: labels.appointment, color: CATEGORY_COLORS.appointment },
+    { action: "declined", label: labels.declined, color: CATEGORY_COLORS.declined },
+    { action: "repliedBot", label: labels.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
+    { action: "needsOtherContact", label: labels.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
+    { action: "needsFollowUp", label: labels.needs_follow_up, color: CATEGORY_COLORS.needs_follow_up },
+    { action: "clear", label: `${labels.active} ${clearSuffix}`, color: CATEGORY_COLORS.active },
+  ];
+}
 
-export async function quickTag(leadId: string, action: QuickTagAction): Promise<{ ok: boolean; error?: string }> {
+export async function quickTag(
+  leadId: string,
+  action: QuickTagAction,
+  errors?: { generic: string; conn: string },
+): Promise<{ ok: boolean; error?: string }> {
   try {
     const res = await fetch(`/api/leads/${leadId}/quick-tag`, {
       method: "PATCH",
@@ -101,10 +110,10 @@ export async function quickTag(leadId: string, action: QuickTagAction): Promise<
       body: JSON.stringify({ action }),
     });
     const body = await res.json().catch(() => ({}));
-    if (!res.ok) return { ok: false, error: body.error ?? "Gagal memindahkan lead." };
+    if (!res.ok) return { ok: false, error: body.error ?? errors?.generic ?? "Failed to move lead." };
     return { ok: true };
   } catch {
-    return { ok: false, error: "Gagal memindahkan lead — cek koneksi." };
+    return { ok: false, error: errors?.conn ?? "Failed to move lead — check your connection." };
   }
 }
 
@@ -142,25 +151,36 @@ export interface DayEntry {
 // Same 8 event categories as kanban-history's API, in CATEGORY_ORDER's
 // order minus "non_responsive" (computed, never a logged event) and
 // "active" (a default catch-all bucket, not an event that ever gets
-// logged). Reuses leadSegmentation's labels/colors so the history table
-// matches the overview board's columns visually.
-export const HISTORY_COLUMNS: { key: HistoryMetric; label: string; color: string }[] = [
-  { key: "noWaAccount", label: CATEGORY_LABELS.no_wa_account, color: CATEGORY_COLORS.no_wa_account },
-  { key: "appointment", label: CATEGORY_LABELS.appointment, color: CATEGORY_COLORS.appointment },
-  { key: "declined", label: CATEGORY_LABELS.declined, color: CATEGORY_COLORS.declined },
-  { key: "needsReply", label: CATEGORY_LABELS.needs_reply, color: CATEGORY_COLORS.needs_reply },
-  { key: "repliedByBot", label: CATEGORY_LABELS.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
-  { key: "needsOtherContact", label: CATEGORY_LABELS.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
-  { key: "needsFollowUp", label: CATEGORY_LABELS.needs_follow_up, color: CATEGORY_COLORS.needs_follow_up },
-  { key: "untouchedToTouched", label: "Belum Disentuh → Disentuh", color: CATEGORY_COLORS.untouched },
+// logged). Colors are locale-independent; labels come from
+// historyColumnLabels() below so the history table matches the overview
+// board's columns in whichever language is active.
+export const HISTORY_COLUMNS: { key: HistoryMetric; color: string }[] = [
+  { key: "noWaAccount", color: CATEGORY_COLORS.no_wa_account },
+  { key: "appointment", color: CATEGORY_COLORS.appointment },
+  { key: "declined", color: CATEGORY_COLORS.declined },
+  { key: "needsReply", color: CATEGORY_COLORS.needs_reply },
+  { key: "repliedByBot", color: CATEGORY_COLORS.replied_by_bot },
+  { key: "needsOtherContact", color: CATEGORY_COLORS.needs_other_contact },
+  { key: "needsFollowUp", color: CATEGORY_COLORS.needs_follow_up },
+  { key: "untouchedToTouched", color: CATEGORY_COLORS.untouched },
 ];
 
-export function formatDayLabel(dateStr: string) {
-  return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "short",
-    timeZone: "UTC",
-  });
+export function historyColumnLabels(locale: Locale, untouchedToTouched: string): Record<HistoryMetric, string> {
+  const labels = locale === "en" ? CATEGORY_LABELS_EN : CATEGORY_LABELS;
+  return {
+    noWaAccount: labels.no_wa_account,
+    appointment: labels.appointment,
+    declined: labels.declined,
+    needsReply: labels.needs_reply,
+    repliedByBot: labels.replied_by_bot,
+    needsOtherContact: labels.needs_other_contact,
+    needsFollowUp: labels.needs_follow_up,
+    untouchedToTouched,
+  };
+}
+
+export function formatDayLabel(dateStr: string, locale: Locale = "id") {
+  return formatDate(`${dateStr}T00:00:00Z`, locale, { day: "2-digit", month: "short", timeZone: "UTC" });
 }
 
 export interface PeriodEntry {
@@ -176,15 +196,14 @@ export function emptyMetricRecord<T>(fill: () => T): Record<HistoryMetric, T> {
   return rec;
 }
 
-export function toPeriods(series: DayEntry[]): PeriodEntry[] {
+export function toPeriods(series: DayEntry[], locale: Locale = "id"): PeriodEntry[] {
   return [...series]
     .sort((a, b) => b.date.localeCompare(a.date))
-    .map((d) => ({ key: d.date, label: formatDayLabel(d.date), counts: d.counts, leads: d.leads }));
+    .map((d) => ({ key: d.date, label: formatDayLabel(d.date, locale), counts: d.counts, leads: d.leads }));
 }
 
-function formatWeekLabel(startDate: string, endDate: string) {
-  const fmt = (s: string) =>
-    new Date(`${s}T00:00:00Z`).toLocaleDateString("id-ID", { day: "2-digit", month: "short", timeZone: "UTC" });
+function formatWeekLabel(startDate: string, endDate: string, locale: Locale) {
+  const fmt = (s: string) => formatDate(`${s}T00:00:00Z`, locale, { day: "2-digit", month: "short", timeZone: "UTC" });
   return `${fmt(startDate)} – ${fmt(endDate)}`;
 }
 
@@ -212,7 +231,7 @@ const EXCLUSIVE_METRICS: HistoryMetric[] = [
   "repliedByBot",
 ];
 
-export function groupWeekly(series: DayEntry[]): PeriodEntry[] {
+export function groupWeekly(series: DayEntry[], locale: Locale = "id"): PeriodEntry[] {
   const weekLabel = new Map<string, string>();
   const weekAdditive = new Map<string, Record<HistoryMetric, Map<string, string>>>(); // leadId -> name
   // weekKey -> leadId -> latest {category, name} among EXCLUSIVE_METRICS only.
@@ -229,7 +248,7 @@ export function groupWeekly(series: DayEntry[]): PeriodEntry[] {
     const weekKey = monday.toISOString().slice(0, 10);
 
     if (!weekLabel.has(weekKey)) {
-      weekLabel.set(weekKey, formatWeekLabel(weekKey, sunday.toISOString().slice(0, 10)));
+      weekLabel.set(weekKey, formatWeekLabel(weekKey, sunday.toISOString().slice(0, 10), locale));
     }
     let exclusiveLatest = weekExclusiveLatest.get(weekKey);
     if (!exclusiveLatest) {
@@ -311,6 +330,7 @@ export function LeadCard({
   draggable: boolean;
   onOpen: (selection: SelectedLead) => void;
 }) {
+  const { locale } = useLanguage();
   return (
     <button
       type="button"
@@ -340,7 +360,7 @@ export function LeadCard({
         </span>
         {lead.lastMessageAt && (
           <span className="text-[10px] text-slate-400">
-            {new Date(lead.lastMessageAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}
+            {formatDate(lead.lastMessageAt, locale, { day: "2-digit", month: "short" })}
           </span>
         )}
       </div>
@@ -387,14 +407,15 @@ export function LeadPopup({
 }) {
   const [pending, setPending] = useState<QuickTagAction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { locale, t } = useLanguage();
 
   async function handleMove(action: QuickTagAction) {
     setPending(action);
     setError(null);
-    const result = await quickTag(selection.id, action);
+    const result = await quickTag(selection.id, action, { generic: t.quickTagFailedGeneric, conn: t.quickTagFailedConn });
     setPending(null);
     if (!result.ok) {
-      setError(result.error ?? "Gagal memindahkan lead.");
+      setError(result.error ?? t.quickTagFailedGeneric);
       return;
     }
     onMoved();
@@ -410,7 +431,7 @@ export function LeadPopup({
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Tutup"
+            aria-label={t.close}
           >
             ✕
           </button>
@@ -441,21 +462,17 @@ export function LeadPopup({
           <div className="mb-4 space-y-2 rounded-lg bg-slate-50 p-3 text-sm">
             {selection.phoneNormalized !== undefined && (
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Nomor</span>
+                <span className="text-slate-400">{t.popupNomor}</span>
                 <span className="font-medium text-slate-700">{selection.phoneNormalized ?? "—"}</span>
               </div>
             )}
             {selection.lastMessageAt !== undefined && (
               <div className="flex items-center justify-between">
-                <span className="text-slate-400">Pesan terakhir</span>
+                <span className="text-slate-400">{t.popupLastMessage}</span>
                 <span className="font-medium text-slate-700">
                   {selection.lastMessageAt
-                    ? new Date(selection.lastMessageAt).toLocaleDateString("id-ID", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : "Belum pernah"}
+                    ? formatDate(selection.lastMessageAt, locale, { day: "2-digit", month: "short", year: "numeric" })
+                    : t.popupNever}
                 </span>
               </div>
             )}
@@ -463,18 +480,18 @@ export function LeadPopup({
         )}
 
         <div className="mb-4">
-          <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">Pindahkan ke</div>
+          <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">{t.popupMoveTo}</div>
           <div className="flex flex-wrap gap-1.5">
-            {QUICK_TAG_TARGETS.map((t) => (
+            {quickTagTargets(locale, t.quickTagClearSuffix).map((target) => (
               <button
-                key={t.action}
+                key={target.action}
                 type="button"
                 disabled={pending !== null}
-                onClick={() => handleMove(t.action)}
+                onClick={() => handleMove(target.action)}
                 className="rounded-full px-2.5 py-1 text-xs font-medium transition hover:brightness-95 disabled:opacity-50"
-                style={{ backgroundColor: `${t.color}1a`, color: t.color }}
+                style={{ backgroundColor: `${target.color}1a`, color: target.color }}
               >
-                {pending === t.action ? "…" : t.label}
+                {pending === target.action ? "…" : target.label}
               </button>
             ))}
           </div>
@@ -487,7 +504,7 @@ export function LeadPopup({
           rel="noopener noreferrer"
           className="block rounded-lg bg-cyan-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-cyan-700"
         >
-          Buka Chat
+          {t.popupOpenChat}
         </Link>
       </div>
     </div>
@@ -498,9 +515,10 @@ export function LeadPopup({
 // ReportsTabs one level up, but scoped to /reports/kanban/* since these
 // aren't siblings of Overview/History.
 export function KanbanSubNav({ active }: { active: "overview" | "history" }) {
+  const { t } = useLanguage();
   const tabs: { href: string; key: "overview" | "history"; label: string }[] = [
-    { href: "/reports/kanban/overview", key: "overview", label: "Board" },
-    { href: "/reports/kanban/daily", key: "history", label: "Riwayat" },
+    { href: "/reports/kanban/overview", key: "overview", label: t.kanbanSubnavBoard },
+    { href: "/reports/kanban/daily", key: "history", label: t.kanbanSubnavHistory },
   ];
   return (
     <div className="mb-4 flex w-fit gap-1 rounded-lg bg-slate-100 p-1">
