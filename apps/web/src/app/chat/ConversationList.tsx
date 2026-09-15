@@ -62,7 +62,23 @@ export default function ConversationList({
   // Name/phone/message-body matching already happened server-side (see
   // /api/conversations' `?q=` handling) — `conversations` here is already
   // the search result set. Only the category chip filter is client-side.
-  const filtered = conversations.filter((c) => tagFilter === "all" || c.tagCategory === tagFilter);
+  //
+  // needs_other_contact and needs_follow_up are the two categories that
+  // sit *after* needs_reply/replied_by_bot in classifyLead's priority
+  // order (see leadSegmentation.ts's CATEGORY_ORDER) — so a lead tagged
+  // Further Contact or Follow Up while it also has an unanswered message
+  // gets tagCategory "needs_reply", not the tag you just set. Matching
+  // those two filters against the raw boolean instead of tagCategory is
+  // what makes a freshly-tagged lead actually show up under its own
+  // filter chip; every other chip is a real mutually-exclusive state
+  // (no_wa_account/appointment/declined outrank needs_reply already) so
+  // tagCategory alone is correct for them.
+  const filtered = conversations.filter((c) => {
+    if (tagFilter === "all") return true;
+    if (tagFilter === "needs_other_contact") return c.needsOtherContact;
+    if (tagFilter === "needs_follow_up") return c.needsFollowUp;
+    return c.tagCategory === tagFilter;
+  });
 
   // "needsReply" is computed server-side (GET /api/conversations) — a
   // room's most recent message is inbound, unless a manual "mark as
@@ -173,6 +189,26 @@ export default function ConversationList({
                     style={{ backgroundColor: `${categoryColor}1a`, color: categoryColor }}
                   >
                     {categoryLabel}
+                  </span>
+                )}
+                {/* Same masking as the filter above: show these two even when
+                    tagCategory picked needs_reply/replied_by_bot instead, so a
+                    manual tag never becomes invisible just because the lead
+                    also has an unanswered message right now. */}
+                {c.needsOtherContact && c.tagCategory !== "needs_other_contact" && (
+                  <span
+                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                    style={{ backgroundColor: `${CATEGORY_COLORS.needs_other_contact}1a`, color: CATEGORY_COLORS.needs_other_contact }}
+                  >
+                    {labels.needs_other_contact}
+                  </span>
+                )}
+                {c.needsFollowUp && c.tagCategory !== "needs_follow_up" && (
+                  <span
+                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                    style={{ backgroundColor: `${CATEGORY_COLORS.needs_follow_up}1a`, color: CATEGORY_COLORS.needs_follow_up }}
+                  >
+                    {labels.needs_follow_up}
                   </span>
                 )}
                 <span className="truncate text-xs text-slate-500">{preview}</span>
