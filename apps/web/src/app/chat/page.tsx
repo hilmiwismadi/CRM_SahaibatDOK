@@ -60,6 +60,19 @@ export default function ChatPage() {
   // to collapsed every time a fresh menu opens (see onContextMenu below).
   const [expandedBranch, setExpandedBranch] = useState<"no_reply" | "reply" | null>(null);
 
+  // Every tag action below closes the menu immediately and the list's
+  // single canonical badge (see ConversationList) often doesn't change at
+  // all — e.g. tagging "Further Contact" on a lead that's currently
+  // "Belum Dijawab" (needs_reply outranks it in classifyLead's priority
+  // order) leaves the row looking untouched even though the tag saved
+  // correctly. Without this toast a successful click and a silently
+  // failed fetch were indistinguishable — this is the fix for that.
+  const [toast, setToast] = useState<string | null>(null);
+  const showToast = useCallback((msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast((cur) => (cur === msg ? null : cur)), 3000);
+  }, []);
+
   useEffect(() => {
     if (!contextMenu) return;
     const close = () => setContextMenu(null);
@@ -76,64 +89,78 @@ export default function ChatPage() {
     };
   }, [contextMenu]);
 
+  async function applyFlag(item: ConversationListItem, body: Record<string, boolean>, successMsg: string) {
+    setContextMenu(null);
+    try {
+      const res = await fetch(`/api/conversations/${item.id}/flag`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        showToast(t.chatTagFailed);
+        return;
+      }
+      showToast(successMsg);
+      await loadConversations();
+    } catch {
+      showToast(t.chatTagFailed);
+    }
+  }
+
   async function handleMarkReplied(item: ConversationListItem, replied: boolean, kind?: "manual" | "bot") {
-    await fetch(`/api/conversations/${item.id}/replied`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ replied, kind }),
-    });
     setContextMenu(null);
-    await loadConversations();
+    try {
+      const res = await fetch(`/api/conversations/${item.id}/replied`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ replied, kind }),
+      });
+      if (!res.ok) {
+        showToast(t.chatTagFailed);
+        return;
+      }
+      showToast(!replied ? t.chatToastMarkedUnreplied : kind === "bot" ? t.chatToastMarkedRepliedByBot : t.chatToastMarkedReplied);
+      await loadConversations();
+    } catch {
+      showToast(t.chatTagFailed);
+    }
   }
 
-  async function handleToggleOtherContact(item: ConversationListItem, needsOtherContact: boolean) {
-    await fetch(`/api/conversations/${item.id}/flag`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ needsOtherContact }),
-    });
-    setContextMenu(null);
-    await loadConversations();
+  function handleToggleOtherContact(item: ConversationListItem, needsOtherContact: boolean) {
+    return applyFlag(
+      item,
+      { needsOtherContact },
+      needsOtherContact ? t.chatTagApplied(labels.needs_other_contact) : t.chatTagRemoved(labels.needs_other_contact),
+    );
   }
 
-  async function handleToggleFollowUp(item: ConversationListItem, needsFollowUp: boolean) {
-    await fetch(`/api/conversations/${item.id}/flag`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ needsFollowUp }),
-    });
-    setContextMenu(null);
-    await loadConversations();
+  function handleToggleFollowUp(item: ConversationListItem, needsFollowUp: boolean) {
+    return applyFlag(
+      item,
+      { needsFollowUp },
+      needsFollowUp ? t.chatTagApplied(labels.needs_follow_up) : t.chatTagRemoved(labels.needs_follow_up),
+    );
   }
 
-  async function handleToggleNoWaAccount(item: ConversationListItem, noWaAccount: boolean) {
-    await fetch(`/api/conversations/${item.id}/flag`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ noWaAccount }),
-    });
-    setContextMenu(null);
-    await loadConversations();
+  function handleToggleNoWaAccount(item: ConversationListItem, noWaAccount: boolean) {
+    return applyFlag(
+      item,
+      { noWaAccount },
+      noWaAccount ? t.chatTagApplied(labels.no_wa_account) : t.chatTagRemoved(labels.no_wa_account),
+    );
   }
 
-  async function handleToggleAppointment(item: ConversationListItem, appointment: boolean) {
-    await fetch(`/api/conversations/${item.id}/flag`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ appointment }),
-    });
-    setContextMenu(null);
-    await loadConversations();
+  function handleToggleAppointment(item: ConversationListItem, appointment: boolean) {
+    return applyFlag(
+      item,
+      { appointment },
+      appointment ? t.chatTagApplied(labels.appointment) : t.chatTagRemoved(labels.appointment),
+    );
   }
 
-  async function handleToggleDeclined(item: ConversationListItem, declined: boolean) {
-    await fetch(`/api/conversations/${item.id}/flag`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ declined }),
-    });
-    setContextMenu(null);
-    await loadConversations();
+  function handleToggleDeclined(item: ConversationListItem, declined: boolean) {
+    return applyFlag(item, { declined }, declined ? t.chatTagApplied(labels.declined) : t.chatTagRemoved(labels.declined));
   }
 
   // Passive notification: a lead replying while you're on a different tab
@@ -533,6 +560,11 @@ export default function ChatPage() {
               </div>
             );
           })}
+        </div>
+      )}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+          {toast}
         </div>
       )}
     </div>

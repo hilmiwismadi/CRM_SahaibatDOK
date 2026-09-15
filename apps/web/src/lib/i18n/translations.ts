@@ -29,6 +29,12 @@ const dict = {
     chatYes: "Ya",
     chatNotYet: "Belum",
     chatAutoNoManual: "Otomatis — tidak bisa ditandai manual.",
+    chatTagApplied: (label: string) => `${label} ditandai.`,
+    chatTagRemoved: (label: string) => `Tandai ${label} dihapus.`,
+    chatTagFailed: "Gagal menyimpan perubahan — cek koneksi.",
+    chatToastMarkedReplied: "Ditandai sudah dibalas.",
+    chatToastMarkedRepliedByBot: "Ditandai dibalas oleh bot.",
+    chatToastMarkedUnreplied: "Ditandai belum dibalas.",
 
     // ConversationList
     convAll: "Semua",
@@ -141,6 +147,12 @@ const dict = {
     chatYes: "Yes",
     chatNotYet: "Not yet",
     chatAutoNoManual: "Automatic — can't be tagged manually.",
+    chatTagApplied: (label: string) => `${label} marked.`,
+    chatTagRemoved: (label: string) => `${label} unmarked.`,
+    chatTagFailed: "Failed to save — check your connection.",
+    chatToastMarkedReplied: "Marked as replied.",
+    chatToastMarkedRepliedByBot: "Marked as replied by bot.",
+    chatToastMarkedUnreplied: "Marked as unreplied.",
 
     // ConversationList
     convAll: "All",
