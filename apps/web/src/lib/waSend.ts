@@ -64,7 +64,18 @@ export async function sendOutboundToPhone(
         // OR-widened filter that lets a zero-message, tagged contact show
         // up there.
         const jid = phoneToJid(params.phoneNormalized);
-        await db.waContact.upsert({
+        // wa_contacts has no created/updated timestamp of its own, so the
+        // *only* record of "when" this happened is the lead_activities row
+        // below — without it, this path (the one that actually accounts
+        // for most noWaAccount tags in practice) is structurally invisible
+        // to /reports/kanban-history regardless of date. Mirrors
+        // quick-tag's tag_change logging exactly so both paths feed the
+        // same history. Read-before-write (rather than relying on the
+        // upsert's return value) so a second failed send to an
+        // already-tagged number doesn't log a duplicate "newly tagged"
+        // event.
+        const existing = await db.waContact.findUnique({ where: { jid }, select: { noWaAccount: true } });
+        const waContact = await db.waContact.upsert({
           where: { jid },
           create: {
             jid,
@@ -75,6 +86,15 @@ export async function sendOutboundToPhone(
           },
           update: { noWaAccount: true, ...(params.leadId ? { leadId: params.leadId, linkedAt: new Date() } : {}) },
         });
+        if (waContact.leadId && !existing?.noWaAccount) {
+          await db.leadActivity.create({
+            data: {
+              leadId: waContact.leadId,
+              type: "tag_change",
+              payload: { tag: "noWaAccount", value: true, waContactId: waContact.id },
+            },
+          });
+        }
       }
       throw err;
     }
