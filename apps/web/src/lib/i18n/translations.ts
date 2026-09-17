@@ -36,6 +36,16 @@ const dict = {
     chatToastMarkedRepliedByBot: "Ditandai dibalas oleh bot.",
     chatToastMarkedUnreplied: "Ditandai belum dibalas.",
 
+    // Unlinked contacts (personal WA contacts / inbound-first leads)
+    unlinkedButton: "Kontak Belum Terhubung",
+    unlinkedTitle: "Kontak Belum Terhubung ke Lead",
+    unlinkedDesc:
+      "Nomor yang chat tapi belum cocok dengan lead manapun di CRM — biasanya kontak pribadi Anda. Kalau ini calon lead yang chat duluan, jadikan lead di sini supaya riwayat chat-nya ikut terbawa. Yang tidak dijadikan lead akan otomatis terhapus setelah beberapa waktu.",
+    unlinkedEmpty: "Tidak ada kontak yang menunggu.",
+    unlinkedNamePlaceholder: "Nama lead…",
+    unlinkedPromoteAction: "Jadikan Lead",
+    unlinkedPromoteFailed: "Gagal membuat lead — cek koneksi.",
+
     // ConversationList
     convAll: "Semua",
     convUnrepliedSuffix: "belum dibalas",
@@ -153,6 +163,16 @@ const dict = {
     chatToastMarkedReplied: "Marked as replied.",
     chatToastMarkedRepliedByBot: "Marked as replied by bot.",
     chatToastMarkedUnreplied: "Marked as unreplied.",
+
+    // Unlinked contacts (personal WA contacts / inbound-first leads)
+    unlinkedButton: "Unlinked Contacts",
+    unlinkedTitle: "Contacts Not Linked to a Lead",
+    unlinkedDesc:
+      "Numbers that messaged in but don't match any lead in the CRM yet — usually your personal contacts. If this is actually a new lead who wrote in first, turn it into a lead here so its chat history carries over. Anything left unclaimed gets deleted automatically after a while.",
+    unlinkedEmpty: "No contacts waiting.",
+    unlinkedNamePlaceholder: "Lead name…",
+    unlinkedPromoteAction: "Make Lead",
+    unlinkedPromoteFailed: "Failed to create the lead — check your connection.",
 
     // ConversationList
     convAll: "All",

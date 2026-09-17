@@ -7,6 +7,7 @@ import ConversationList from "./ConversationList";
 import MessageThread from "./MessageThread";
 import Composer from "./Composer";
 import WaStatusBadge from "./WaStatusBadge";
+import UnlinkedContactsButton from "./UnlinkedContacts";
 import type { ConversationListItem, LeadBrief, Selected, WaMessageItem } from "./types";
 import { CATEGORY_COLORS, categoryLabels, REPLY_BRANCH_GROUPS, replyBranchLabel } from "@/lib/leadSegmentation";
 import { useLanguage } from "@/lib/i18n/context";
@@ -342,7 +343,15 @@ export default function ChatPage() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-5">
           <h1 className="text-sm font-bold text-slate-900">Chat</h1>
-          <WaStatusBadge />
+          <div className="flex items-center gap-2">
+            <UnlinkedContactsButton
+              onPromoted={(leadId) => {
+                setSelected({ kind: "lead", leadId });
+                loadConversations();
+              }}
+            />
+            <WaStatusBadge />
+          </div>
         </div>
 
         <div className="flex flex-1 overflow-hidden">

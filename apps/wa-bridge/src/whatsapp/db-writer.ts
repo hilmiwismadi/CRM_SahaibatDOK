@@ -180,6 +180,117 @@ export async function maybeAdvanceToResponded(leadId: string, waContactId: strin
   await insertLeadActivity(leadId, "stage_change", { from: "contacted", to: "responded" });
 }
 
+/**
+ * Deletes wa_contacts that never matched a lead (lead_id IS NULL — the
+ * account owner's personal contacts, e.g. friends/family texting their
+ * own WhatsApp number, since that number is also this bridge's session)
+ * whose most recent message is older than `retentionDays`. wa_messages
+ * cascade-deletes via the FK (ON DELETE CASCADE). A contact with zero
+ * messages is left alone — inbound.ts only ever creates a wa_contacts row
+ * as a side effect of a real message, so that shouldn't happen, but it's
+ * not this job's place to guess an unrelated retention rule for it.
+ *
+ * Deliberately NOT immediate-on-arrival: a genuine new lead who messages
+ * before ever being added to the CRM looks identical to a personal
+ * contact until someone notices and promotes it (see
+ * routes/unlinked-contacts.ts) — the retention window is the time the
+ * account owner has to catch that case before the history is gone for
+ * good.
+ */
+export async function purgeStalePersonalContacts(retentionDays: number): Promise<number> {
+  const result = await pool.query(
+    `DELETE FROM "wa_contacts" wc
+     WHERE wc."lead_id" IS NULL
+       AND EXISTS (SELECT 1 FROM "wa_messages" wm WHERE wm."wa_contact_id" = wc."id")
+       AND NOT EXISTS (
+         SELECT 1 FROM "wa_messages" wm2
+         WHERE wm2."wa_contact_id" = wc."id" AND wm2."sent_at" > now() - ($1 || ' days')::interval
+       )`,
+    [retentionDays],
+  );
+  return result.rowCount ?? 0;
+}
+
+export interface UnlinkedContact {
+  id: string;
+  phoneNormalized: string | null;
+  displayName: string | null;
+  lastMessageAt: string;
+  lastMessageBody: string | null;
+  messageCount: number;
+}
+
+/** Personal/unclaimed contacts (lead_id IS NULL) that have messaged, newest first — the promotion candidate list. */
+export async function listUnlinkedContacts(): Promise<UnlinkedContact[]> {
+  const result = await pool.query<{
+    id: string;
+    phone_normalized: string | null;
+    display_name: string | null;
+    last_message_at: string;
+    last_message_body: string | null;
+    message_count: string;
+  }>(
+    `SELECT wc."id", wc."phone_normalized", wc."display_name",
+            last_msg."sent_at" AS last_message_at, last_msg."body" AS last_message_body,
+            counts."message_count"
+     FROM "wa_contacts" wc
+     JOIN LATERAL (
+       SELECT "sent_at", "body" FROM "wa_messages" WHERE "wa_contact_id" = wc."id" ORDER BY "sent_at" DESC LIMIT 1
+     ) last_msg ON true
+     JOIN LATERAL (
+       SELECT COUNT(*)::text AS message_count FROM "wa_messages" WHERE "wa_contact_id" = wc."id"
+     ) counts ON true
+     WHERE wc."lead_id" IS NULL
+     ORDER BY last_msg."sent_at" DESC`,
+  );
+  return result.rows.map((r) => ({
+    id: r.id,
+    phoneNormalized: r.phone_normalized,
+    displayName: r.display_name,
+    lastMessageAt: r.last_message_at,
+    lastMessageBody: r.last_message_body,
+    messageCount: Number(r.message_count),
+  }));
+}
+
+/**
+ * Creates a new lead for a phone number that messaged before ever being
+ * added to the CRM, and links the existing wa_contact (with its full
+ * message history already in wa_messages) to it — the rep can open
+ * /chat?leadId=<id> immediately afterward and the whole conversation is
+ * already there, not just messages from this point forward.
+ */
+export async function promoteContactToLead(waContactId: string, name: string): Promise<{ leadId: string }> {
+  const contact = await pool.query<{ phone_normalized: string | null }>(
+    `SELECT "phone_normalized" FROM "wa_contacts" WHERE "id" = $1`,
+    [waContactId],
+  );
+  const phoneNormalized = contact.rows[0]?.phone_normalized ?? null;
+  if (!phoneNormalized) {
+    throw new Error("This contact has no known phone number yet — can't create a lead from it.");
+  }
+
+  // google_place_id is NOT NULL + UNIQUE with no default (every other lead
+  // comes from the Google Maps scraper) — "manual-<uuid>" is the same
+  // placeholder convention already used for the hand-added leads earlier
+  // in this CRM's history (e.g. "manual-bf7e6eb6-...").
+  const lead = await pool.query<{ id: string }>(
+    `INSERT INTO "leads" ("id", "google_place_id", "name", "phone_normalized", "pipeline_stage", "created_at", "updated_at")
+     VALUES (gen_random_uuid(), 'manual-' || gen_random_uuid(), $1, $2, 'contacted', now(), now())
+     RETURNING "id"`,
+    [name, phoneNormalized],
+  );
+  const leadId = lead.rows[0].id;
+
+  await pool.query(
+    `UPDATE "wa_contacts" SET "lead_id" = $1, "linked_at" = now() WHERE "id" = $2`,
+    [leadId, waContactId],
+  );
+  await insertLeadActivity(leadId, "manual_edit", { action: "created_from_inbound_contact", waContactId });
+
+  return { leadId };
+}
+
 export async function insertLeadActivity(
   leadId: string,
   type: string,

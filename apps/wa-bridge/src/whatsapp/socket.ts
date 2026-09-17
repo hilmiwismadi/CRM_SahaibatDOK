@@ -58,6 +58,15 @@ export async function initWhatsApp(logger: FastifyBaseLogger): Promise<void> {
     version,
     auth: state,
     logger: logger.child({ module: "baileys" }),
+    // Baileys defaults this to true, which broadcasts a persistent
+    // "online" presence from this linked device the whole time the
+    // bridge is connected. That's the documented cause of a real
+    // symptom the account owner hit: phone push notifications for 1:1
+    // chats stopped arriving (group notifications were unaffected —
+    // groups don't go through the same presence-aware suppression)
+    // ever since this bridge started running continuously. Explicitly
+    // off so the account's presence reflects the phone app only.
+    markOnlineOnConnect: false,
   });
 
   sock.ev.on("creds.update", saveCreds);
