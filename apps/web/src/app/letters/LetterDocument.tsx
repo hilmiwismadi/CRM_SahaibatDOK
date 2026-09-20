@@ -119,9 +119,12 @@ const styles = StyleSheet.create({
     right: 50,
   },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  logoRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  wordmark: { fontFamily: "Helvetica-Bold", fontSize: 13, color: INK },
-  wordmarkDok: { fontFamily: "Helvetica-Bold", fontSize: 6.5, color: "#73867e", letterSpacing: 0.5 },
+  // Scaled up (icon 20->34, wordmark 13->22, "DOK" 6.5->11, same ratios) so
+  // the mark's height matches the 3-line address block on the right — they
+  // sit in the same flex row, so a shorter logo left a lopsided header.
+  logoRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  wordmark: { fontFamily: "Helvetica-Bold", fontSize: 22, color: INK },
+  wordmarkDok: { fontFamily: "Helvetica-Bold", fontSize: 11, color: "#73867e", letterSpacing: 0.5 },
   addrBlock: { alignItems: "flex-end" },
   addrLabel: {
     fontFamily: "Helvetica-Bold",
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
 function LetterheadMark() {
   return (
     <View style={styles.logoRow}>
-      <Svg viewBox="0 0 64 64" width={20} height={20}>
+      <Svg viewBox="0 0 64 64" width={34} height={34}>
         <G fill="none" stroke={ACCENT} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round">
           <Path d="M32 25 C32 17 26 14 22 11" />
           <Path d="M32 25 C32 17 38 14 42 11" />
