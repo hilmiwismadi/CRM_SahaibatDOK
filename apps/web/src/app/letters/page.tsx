@@ -20,6 +20,28 @@ interface SenderInfo {
 
 const SENDER_STORAGE_KEY = "sahaibat-letter-sender";
 
+// Falls back to the current BD's own info so the form is ready to submit
+// the first time this loads in a browser, before anything gets saved to
+// localStorage — matches the placeholders already shown in the fields.
+const DEFAULT_SENDER: SenderInfo = {
+  namaBD: "M. H. Dzaki Wismadi",
+  whatsappBD: "0818 0925 2706",
+  emailBD: "hilmi.d@sahaibat.com",
+};
+
+const JABATAN_OPTIONS = ["Direktur", "dr. Penanggung Jawab", "Kepala Klinik", "Pimpinan Klinik/Puskesmas", "Manager Operasional"];
+
+/**
+ * Opens a URL in a new tab without stealing focus — mirrors the dashboard's
+ * lead-row context menu so BD staff can peek at a lead's chat without
+ * losing their place in the letter form.
+ */
+function openInBackgroundTab(url: string) {
+  const win = window.open(url, "_blank");
+  win?.blur();
+  window.focus();
+}
+
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -27,15 +49,15 @@ function todayISO(): string {
 function loadSavedSender(): SenderInfo {
   try {
     const raw = window.localStorage.getItem(SENDER_STORAGE_KEY);
-    if (!raw) return { namaBD: "", whatsappBD: "", emailBD: "" };
+    if (!raw) return DEFAULT_SENDER;
     const parsed = JSON.parse(raw);
     return {
-      namaBD: typeof parsed.namaBD === "string" ? parsed.namaBD : "",
-      whatsappBD: typeof parsed.whatsappBD === "string" ? parsed.whatsappBD : "",
-      emailBD: typeof parsed.emailBD === "string" ? parsed.emailBD : "",
+      namaBD: typeof parsed.namaBD === "string" && parsed.namaBD ? parsed.namaBD : DEFAULT_SENDER.namaBD,
+      whatsappBD: typeof parsed.whatsappBD === "string" && parsed.whatsappBD ? parsed.whatsappBD : DEFAULT_SENDER.whatsappBD,
+      emailBD: typeof parsed.emailBD === "string" && parsed.emailBD ? parsed.emailBD : DEFAULT_SENDER.emailBD,
     };
   } catch {
-    return { namaBD: "", whatsappBD: "", emailBD: "" };
+    return DEFAULT_SENDER;
   }
 }
 
@@ -50,8 +72,9 @@ export default function LettersPage() {
   const [tanggal, setTanggal] = useState(todayISO());
   const [namaKlinik, setNamaKlinik] = useState("");
   const [namaPenerima, setNamaPenerima] = useState("");
-  const [jabatanPenerima, setJabatanPenerima] = useState("Direktur");
-  const [sender, setSender] = useState<SenderInfo>({ namaBD: "", whatsappBD: "", emailBD: "" });
+  const [jabatanPenerima, setJabatanPenerima] = useState("");
+  const [sender, setSender] = useState<SenderInfo>(DEFAULT_SENDER);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; lead: LeadOption } | null>(null);
 
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +83,22 @@ export default function LettersPage() {
   useEffect(() => {
     setSender(loadSavedSender());
   }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    const closeOnEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("click", close);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      window.removeEventListener("click", close);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [contextMenu]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -200,6 +239,10 @@ export default function LettersPage() {
                     <button
                       key={lead.id}
                       onClick={() => selectLead(lead)}
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setContextMenu({ x: e.clientX, y: e.clientY, lead });
+                      }}
                       className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition ${
                         isActive ? "bg-cyan-50 ring-1 ring-cyan-200" : "hover:bg-slate-50"
                       }`}
@@ -240,7 +283,7 @@ export default function LettersPage() {
                     />
                   </Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Nama Penerima (opsional)">
+                    <Field label="Nama Penerima (opsional, biasanya kosong)">
                       <input
                         value={namaPenerima}
                         onChange={(e) => setNamaPenerima(e.target.value)}
@@ -248,13 +291,19 @@ export default function LettersPage() {
                         className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
                       />
                     </Field>
-                    <Field label="Jabatan Penerima">
-                      <input
+                    <Field label="Jabatan Penerima (opsional)">
+                      <select
                         value={jabatanPenerima}
                         onChange={(e) => setJabatanPenerima(e.target.value)}
-                        placeholder="Direktur"
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
-                      />
+                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                      >
+                        <option value="">(Kosongkan)</option>
+                        {JABATAN_OPTIONS.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </Field>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -281,7 +330,7 @@ export default function LettersPage() {
 
             <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
               <h2 className="mb-1 text-sm font-semibold text-slate-900">Data Pengirim (Business Development)</h2>
-              <p className="mb-3 text-xs text-slate-400">Diingat otomatis di browser ini untuk surat berikutnya.</p>
+              <p className="mb-3 text-xs text-slate-400">Sudah terisi default — ubah jika perlu. Diingat otomatis di browser ini untuk surat berikutnya.</p>
               <div className="flex flex-col gap-3">
                 <Field label="Nama Business Development">
                   <input
@@ -340,6 +389,28 @@ export default function LettersPage() {
           </div>
         </div>
       </div>
+
+      {contextMenu && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 100 }}
+          className="min-w-[180px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+        >
+          <div className="truncate px-3 py-1.5 text-xs font-medium text-slate-400">{contextMenu.lead.name}</div>
+          <button
+            onClick={() => {
+              openInBackgroundTab(`/chat?leadId=${contextMenu.lead.id}`);
+              setContextMenu(null);
+            }}
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-slate-400">
+              <path d="M4 4h16v12H8l-4 4V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+            </svg>
+            Open Chat in New Tab
+          </button>
+        </div>
+      )}
     </div>
   );
 }
