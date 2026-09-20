@@ -35,6 +35,7 @@ export interface ConversationListItem {
   repliedByBot: boolean;
   needsOtherContact: boolean;
   needsFollowUp: boolean;
+  letterSent: boolean;
   noWaAccount: boolean;
   appointment: boolean;
   declined: boolean;

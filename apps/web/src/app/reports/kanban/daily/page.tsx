@@ -60,6 +60,7 @@ const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | SyntheticKey; group?: Group
   { key: "onGoing", group: "unanswered" },
   { key: "needsFollowUp", group: "needs_more" },
   { key: "needsOtherContact", group: "needs_more" },
+  { key: "letterSent", group: "needs_more" },
   { key: "appointment", group: "resolved" },
   { key: "declined", group: "resolved" },
 ];
@@ -73,7 +74,7 @@ function groupLabels(t: Translations): Record<GroupKey, string> {
   };
 }
 
-// The 6 history metrics a drop actually can change — same quick-tag
+// The 7 history metrics a drop actually can change — same quick-tag
 // actions the live board offers, minus "untouchedToTouched" (can't
 // fabricate an untouched->touched transition) and "onGoing" (nothing to
 // hand-set, see above).
@@ -84,6 +85,7 @@ const DROPPABLE_ACTION: Partial<Record<HistoryMetric, QuickTagAction>> = {
   repliedByBot: "repliedBot",
   needsOtherContact: "needsOtherContact",
   needsFollowUp: "needsFollowUp",
+  letterSent: "letterSent",
 };
 
 // One mini kanban board per period — dragging a card here applies the

@@ -68,6 +68,7 @@ export async function GET() {
         repliedOverrideKind: true,
         needsOtherContact: true,
         needsFollowUp: true,
+        letterSent: true,
         noWaAccount: true,
         messages: { orderBy: { sentAt: "desc" }, take: 1, select: { direction: true, sentAt: true } },
       },
@@ -119,6 +120,7 @@ export async function GET() {
   let repliedByBotCount = 0;
   let needsOtherContactCount = 0;
   let needsFollowUpCount = 0;
+  let letterSentCount = 0;
   let noWaAccountTagCount = 0;
   for (const c of contactsWithLastMessage) {
     const lastMessage = c.messages[0] ?? null;
@@ -127,6 +129,7 @@ export async function GET() {
     if (overrideActive && c.repliedOverrideKind === "bot") repliedByBotCount++;
     if (c.needsOtherContact) needsOtherContactCount++;
     if (c.needsFollowUp) needsFollowUpCount++;
+    if (c.letterSent) letterSentCount++;
     if (c.noWaAccount) noWaAccountTagCount++;
   }
 
@@ -170,6 +173,7 @@ export async function GET() {
       repliedByBot: repliedByBotCount,
       needsOtherContact: needsOtherContactCount,
       needsFollowUp: needsFollowUpCount,
+      letterSent: letterSentCount,
       noWaAccount: noWaAccountTagCount,
     },
     followUps: {

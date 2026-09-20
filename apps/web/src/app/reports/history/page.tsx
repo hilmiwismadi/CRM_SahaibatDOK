@@ -40,6 +40,7 @@ function tagFieldLabels(locale: Locale): Record<string, string> {
     declined: labels.declined,
     needsOtherContact: labels.needs_other_contact,
     needsFollowUp: labels.needs_follow_up,
+    letterSent: labels.letter_sent,
   };
 }
 

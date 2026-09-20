@@ -164,6 +164,14 @@ export default function ChatPage() {
     return applyFlag(item, { declined }, declined ? t.chatTagApplied(labels.declined) : t.chatTagRemoved(labels.declined));
   }
 
+  function handleToggleLetterSent(item: ConversationListItem, letterSent: boolean) {
+    return applyFlag(
+      item,
+      { letterSent },
+      letterSent ? t.chatTagApplied(labels.letter_sent) : t.chatTagRemoved(labels.letter_sent),
+    );
+  }
+
   // Passive notification: a lead replying while you're on a different tab
   // (or a different page in the app) still shows up as a badge on the
   // browser tab title, since there's no OS-level push notification wired
@@ -561,6 +569,13 @@ export default function ChatPage() {
                         >
                           <span>{labels.appointment}</span>
                           {contextMenu.item.appointment && <span className="text-emerald-500">✓</span>}
+                        </button>
+                        <button
+                          onClick={() => handleToggleLetterSent(contextMenu.item, !contextMenu.item.letterSent)}
+                          className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+                        >
+                          <span>{labels.letter_sent}</span>
+                          {contextMenu.item.letterSent && <span className="text-emerald-500">✓</span>}
                         </button>
                       </>
                     )}

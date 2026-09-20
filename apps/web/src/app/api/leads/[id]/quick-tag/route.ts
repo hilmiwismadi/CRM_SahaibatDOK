@@ -2,7 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 
-const BOOLEAN_ACTIONS = ["noWaAccount", "appointment", "declined", "needsOtherContact", "needsFollowUp"] as const;
+const BOOLEAN_ACTIONS = [
+  "noWaAccount",
+  "appointment",
+  "declined",
+  "needsOtherContact",
+  "needsFollowUp",
+  "letterSent",
+] as const;
 const schema = z.object({ action: z.enum([...BOOLEAN_ACTIONS, "repliedBot", "clear"]) });
 
 /**
@@ -35,6 +42,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       declined: true,
       needsOtherContact: true,
       needsFollowUp: true,
+      letterSent: true,
       repliedOverrideAt: true,
       messages: { orderBy: { sentAt: "desc" }, take: 1, select: { sentAt: true } },
     },
@@ -59,6 +67,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             { tag: "declined", was: c.declined },
             { tag: "needsOtherContact", was: c.needsOtherContact },
             { tag: "needsFollowUp", was: c.needsFollowUp },
+            { tag: "letterSent", was: c.letterSent },
           ] as const
         ).filter((t) => t.was);
         if (tagChanges.length === 0 && !c.repliedOverrideAt) continue;
@@ -71,6 +80,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             declined: false,
             needsOtherContact: false,
             needsFollowUp: false,
+            letterSent: false,
             repliedOverrideAt: null,
             repliedOverrideKind: null,
           },

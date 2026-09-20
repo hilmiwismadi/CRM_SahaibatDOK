@@ -203,6 +203,15 @@ model WaContact {
   // with nowhere else to go). Same no-auto-expiry semantics as the flags
   // above.
   declined Boolean @default(false)
+  // Manual flag: BD sent this lead a formal invitation letter (see
+  // /letters) — a standing note about outreach history, not a funnel
+  // outcome, so it's deliberately NOT auto-set when a PDF is generated
+  // (a letter can be sent outside the tool too — printed, emailed
+  // manually). Low priority in classifyLead: only shown once no other
+  // funnel category applies, since it doesn't say anything about whether
+  // the lead is interested or has replied. Same no-auto-expiry semantics
+  // as the flags above.
+  letterSent Boolean @default(false) @map("letter_sent")
 
   messages    WaMessage[]
   contactNode LeadContactNode?

@@ -26,6 +26,7 @@ const DROPPABLE_ACTION: Partial<Record<LeadCategory, QuickTagAction>> = {
   replied_by_bot: "repliedBot",
   needs_other_contact: "needsOtherContact",
   needs_follow_up: "needsFollowUp",
+  letter_sent: "letterSent",
   active: "clear",
 };
 
@@ -41,11 +42,12 @@ interface Segmentation {
 // The funnel, drawn left to right exactly as the triase diagram reads:
 // Belum Disentuh -> Tidak Ada Kontak WA -> (Tidak Reply: Non-Responsive,
 // Not-Interested) -> (Reply: Follow Up, Further Contact, Reject,
-// Appointment) -> the 3 categories that sit outside that split entirely
-// (Belum Dijawab, Dijawab Bot, Perlu Diklasifikasi). This is a *display*
-// order, deliberately different from leadSegmentation's CATEGORY_ORDER
-// (which orders by classification priority, not funnel position) — see
-// GROUP_LABELS below for the two spanning headers this order lets us draw.
+// Appointment, Letter Sent) -> the 3 categories that sit outside that split
+// entirely (Belum Dijawab, Dijawab Bot, Perlu Diklasifikasi). This is a
+// *display* order, deliberately different from leadSegmentation's
+// CATEGORY_ORDER (which orders by classification priority, not funnel
+// position) — see GROUP_LABELS below for the two spanning headers this
+// order lets us draw.
 const FUNNEL_COLUMNS: { key: LeadCategory; group?: "no_reply" | "reply" }[] = [
   { key: "untouched" },
   { key: "no_wa_account" },
@@ -55,6 +57,7 @@ const FUNNEL_COLUMNS: { key: LeadCategory; group?: "no_reply" | "reply" }[] = [
   { key: "needs_other_contact", group: "reply" },
   { key: "declined", group: "reply" },
   { key: "appointment", group: "reply" },
+  { key: "letter_sent", group: "reply" },
   { key: "needs_reply" },
   { key: "replied_by_bot" },
   { key: "active" },

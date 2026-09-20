@@ -48,6 +48,7 @@ export type LeadCategory =
   | "replied_by_bot"
   | "needs_other_contact"
   | "needs_follow_up"
+  | "letter_sent"
   | "no_reply_after_pitch"
   | "non_responsive"
   | "active";
@@ -61,6 +62,7 @@ export const CATEGORY_ORDER: LeadCategory[] = [
   "replied_by_bot",
   "needs_other_contact",
   "needs_follow_up",
+  "letter_sent",
   "no_reply_after_pitch",
   "non_responsive",
   "active",
@@ -82,6 +84,7 @@ export const CATEGORY_LABELS: Record<LeadCategory, string> = {
   replied_by_bot: "Dijawab Bot",
   needs_other_contact: "Further Contact",
   needs_follow_up: "Follow Up",
+  letter_sent: "Letter Sent",
   no_reply_after_pitch: "Not-Interested",
   non_responsive: "Non-Responsive",
   active: "Perlu Diklasifikasi",
@@ -101,6 +104,7 @@ export const CATEGORY_LABELS_EN: Record<LeadCategory, string> = {
   replied_by_bot: "Replied by Bot",
   needs_other_contact: "Further Contact",
   needs_follow_up: "Follow Up",
+  letter_sent: "Letter Sent",
   no_reply_after_pitch: "Not-Interested",
   non_responsive: "Non-Responsive",
   active: "Needs Review",
@@ -125,7 +129,11 @@ export const REPLY_BRANCH_GROUPS: {
   categories: LeadCategory[];
 }[] = [
   { key: "no_reply", label: "Tidak Reply", categories: ["non_responsive", "no_reply_after_pitch"] },
-  { key: "reply", label: "Reply", categories: ["needs_follow_up", "needs_other_contact", "declined", "appointment"] },
+  {
+    key: "reply",
+    label: "Reply",
+    categories: ["needs_follow_up", "needs_other_contact", "declined", "appointment", "letter_sent"],
+  },
 ];
 
 export const REPLY_BRANCH_LABELS_EN: Record<"no_reply" | "reply", string> = {
@@ -146,6 +154,7 @@ export const CATEGORY_COLORS: Record<LeadCategory, string> = {
   replied_by_bot: "#8b5cf6", // violet-500
   needs_other_contact: "#f59e0b", // amber-500
   needs_follow_up: "#0ea5e9", // sky-500
+  letter_sent: "#0d9488", // teal-600
   no_reply_after_pitch: "#dc2626", // red-600 — solid fallback where a single color is needed
   non_responsive: "#a16207", // amber-700
   active: "#78716c", // stone-500 — deliberately muted/neutral, not a "healthy" color
@@ -169,6 +178,12 @@ export interface ContactTagInput {
   declined: boolean;
   needsOtherContact: boolean;
   needsFollowUp: boolean;
+  // Manual flag: BD sent this lead a formal invitation letter — see
+  // schema.prisma's WaContact.letterSent. Checked after needsFollowUp
+  // (lower priority) since it's a standing outreach note, not a funnel
+  // outcome — a lead who replied or needs review should still show that,
+  // not just "we mailed them something."
+  letterSent: boolean;
   repliedOverrideAt: Date | string | null;
   repliedOverrideKind: string | null;
   lastMessage: { direction: string; sentAt: Date | string } | null;
@@ -203,6 +218,7 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
   let anyRepliedBot = false;
   let anyOtherContact = false;
   let anyFollowUp = false;
+  let anyLetterSent = false;
   let anyNoReplyAfterPitch = false;
   let anyNonResponsive = false;
 
@@ -212,6 +228,7 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
     if (c.declined) anyDeclined = true;
     if (c.needsOtherContact) anyOtherContact = true;
     if (c.needsFollowUp) anyFollowUp = true;
+    if (c.letterSent) anyLetterSent = true;
     if (c.noReplyAfterPitch) anyNoReplyAfterPitch = true;
     if (c.nonResponsive) anyNonResponsive = true;
 
@@ -229,6 +246,7 @@ export function classifyLead(input: ClassifyLeadInput): LeadCategory {
   if (anyRepliedBot) return "replied_by_bot";
   if (anyOtherContact) return "needs_other_contact";
   if (anyFollowUp) return "needs_follow_up";
+  if (anyLetterSent) return "letter_sent";
   if (anyNoReplyAfterPitch) return "no_reply_after_pitch";
   if (anyNonResponsive) return "non_responsive";
   return "active";

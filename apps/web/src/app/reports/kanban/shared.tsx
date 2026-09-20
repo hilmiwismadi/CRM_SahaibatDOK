@@ -6,7 +6,7 @@ import { CATEGORY_COLORS, categoryLabels, CATEGORY_LABELS, CATEGORY_LABELS_EN } 
 import { useLanguage } from "@/lib/i18n/context";
 import { formatDate, type Locale } from "@/lib/i18n/locale";
 
-// The 7 real "move a lead" actions — everything /api/leads/[id]/quick-tag
+// The 8 real "move a lead" actions — everything /api/leads/[id]/quick-tag
 // accepts. Three Kanban categories (untouched, needs_reply, non_responsive)
 // have no corresponding action: you can't force a lead back to "never
 // contacted", fabricate an inbound message, or hand-set a computed
@@ -18,6 +18,7 @@ export type QuickTagAction =
   | "declined"
   | "needsOtherContact"
   | "needsFollowUp"
+  | "letterSent"
   | "repliedBot"
   | "clear";
 
@@ -94,6 +95,7 @@ export function quickTagTargets(locale: Locale, clearSuffix: string): { action: 
     { action: "repliedBot", label: labels.replied_by_bot, color: CATEGORY_COLORS.replied_by_bot },
     { action: "needsOtherContact", label: labels.needs_other_contact, color: CATEGORY_COLORS.needs_other_contact },
     { action: "needsFollowUp", label: labels.needs_follow_up, color: CATEGORY_COLORS.needs_follow_up },
+    { action: "letterSent", label: labels.letter_sent, color: CATEGORY_COLORS.letter_sent },
     { action: "clear", label: `${labels.active} ${clearSuffix}`, color: CATEGORY_COLORS.active },
   ];
 }
@@ -135,7 +137,8 @@ export type HistoryMetric =
   | "appointment"
   | "declined"
   | "needsOtherContact"
-  | "needsFollowUp";
+  | "needsFollowUp"
+  | "letterSent";
 
 export interface HistoryLead {
   id: string;
@@ -148,7 +151,7 @@ export interface DayEntry {
   leads: Record<HistoryMetric, HistoryLead[]>;
 }
 
-// Same 8 event categories as kanban-history's API, in CATEGORY_ORDER's
+// Same 9 event categories as kanban-history's API, in CATEGORY_ORDER's
 // order minus "non_responsive" (computed, never a logged event) and
 // "active" (a default catch-all bucket, not an event that ever gets
 // logged). Colors are locale-independent; labels come from
@@ -162,6 +165,7 @@ export const HISTORY_COLUMNS: { key: HistoryMetric; color: string }[] = [
   { key: "repliedByBot", color: CATEGORY_COLORS.replied_by_bot },
   { key: "needsOtherContact", color: CATEGORY_COLORS.needs_other_contact },
   { key: "needsFollowUp", color: CATEGORY_COLORS.needs_follow_up },
+  { key: "letterSent", color: CATEGORY_COLORS.letter_sent },
   { key: "untouchedToTouched", color: CATEGORY_COLORS.untouched },
 ];
 
@@ -175,6 +179,7 @@ export function historyColumnLabels(locale: Locale, untouchedToTouched: string):
     repliedByBot: labels.replied_by_bot,
     needsOtherContact: labels.needs_other_contact,
     needsFollowUp: labels.needs_follow_up,
+    letterSent: labels.letter_sent,
     untouchedToTouched,
   };
 }
@@ -228,6 +233,7 @@ const EXCLUSIVE_METRICS: HistoryMetric[] = [
   "declined",
   "needsOtherContact",
   "needsFollowUp",
+  "letterSent",
   "repliedByBot",
 ];
 

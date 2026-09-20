@@ -33,6 +33,7 @@ function tagFilters(locale: Locale, allLabel: string): { key: TagFilter; label: 
     { key: "needs_other_contact", label: labels.needs_other_contact },
     { key: "declined", label: labels.declined },
     { key: "appointment", label: labels.appointment },
+    { key: "letter_sent", label: labels.letter_sent },
     { key: "active", label: labels.active },
   ];
 }
@@ -63,20 +64,21 @@ export default function ConversationList({
   // /api/conversations' `?q=` handling) — `conversations` here is already
   // the search result set. Only the category chip filter is client-side.
   //
-  // needs_other_contact and needs_follow_up are the two categories that
-  // sit *after* needs_reply/replied_by_bot in classifyLead's priority
-  // order (see leadSegmentation.ts's CATEGORY_ORDER) — so a lead tagged
-  // Further Contact or Follow Up while it also has an unanswered message
-  // gets tagCategory "needs_reply", not the tag you just set. Matching
-  // those two filters against the raw boolean instead of tagCategory is
-  // what makes a freshly-tagged lead actually show up under its own
-  // filter chip; every other chip is a real mutually-exclusive state
-  // (no_wa_account/appointment/declined outrank needs_reply already) so
-  // tagCategory alone is correct for them.
+  // needs_other_contact, needs_follow_up, and letter_sent all sit *after*
+  // higher-priority categories in classifyLead's priority order (see
+  // leadSegmentation.ts's CATEGORY_ORDER) — so a lead tagged Further
+  // Contact, Follow Up, or Letter Sent while it also has an unanswered
+  // message (or any other higher-priority tag) gets a different
+  // tagCategory, not the tag you just set. Matching those filters against
+  // the raw boolean instead of tagCategory is what makes a freshly-tagged
+  // lead actually show up under its own filter chip; every other chip is a
+  // real mutually-exclusive state (no_wa_account/appointment/declined
+  // outrank needs_reply already) so tagCategory alone is correct for them.
   const filtered = conversations.filter((c) => {
     if (tagFilter === "all") return true;
     if (tagFilter === "needs_other_contact") return c.needsOtherContact;
     if (tagFilter === "needs_follow_up") return c.needsFollowUp;
+    if (tagFilter === "letter_sent") return c.letterSent;
     return c.tagCategory === tagFilter;
   });
 
@@ -209,6 +211,14 @@ export default function ConversationList({
                     style={{ backgroundColor: `${CATEGORY_COLORS.needs_follow_up}1a`, color: CATEGORY_COLORS.needs_follow_up }}
                   >
                     {labels.needs_follow_up}
+                  </span>
+                )}
+                {c.letterSent && c.tagCategory !== "letter_sent" && (
+                  <span
+                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                    style={{ backgroundColor: `${CATEGORY_COLORS.letter_sent}1a`, color: CATEGORY_COLORS.letter_sent }}
+                  >
+                    {labels.letter_sent}
                   </span>
                 )}
                 <span className="truncate text-xs text-slate-500">{preview}</span>
