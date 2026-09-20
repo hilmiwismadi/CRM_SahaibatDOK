@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@react-pdf/renderer": "^4.9.0",
     "@sahaibat/shared": "*",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",

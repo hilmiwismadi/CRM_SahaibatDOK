@@ -10,12 +10,13 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { NAV_LABELS } from "@/lib/i18n/translations";
 
-export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "none";
+export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "letters" | "none";
 
 interface NavItem {
   page: Exclude<AppPage, "none">;
   href: string;
   Icon: (props: { muted: boolean }) => React.ReactElement;
+  newTab?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -23,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { page: "map", href: "/map", Icon: PinIcon },
   { page: "chat", href: "/chat", Icon: ChatIcon },
   { page: "templates", href: "/templates", Icon: TemplateIcon },
+  { page: "letters", href: "/letters", Icon: LetterIcon, newTab: true },
   { page: "reports", href: "/reports/overview", Icon: ReportIcon },
   { page: "scrapes", href: "/admin/scrapes", Icon: ScrapeIcon },
 ];
@@ -86,7 +88,7 @@ export default function AppSidebar({ active }: { active: AppPage }) {
       </div>
 
       <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        {NAV_ITEMS.map(({ page, href, Icon }) => {
+        {NAV_ITEMS.map(({ page, href, Icon, newTab }) => {
           const isActive = page === active;
           const label = NAV_LABELS[locale][page];
           const content = (
@@ -100,7 +102,13 @@ export default function AppSidebar({ active }: { active: AppPage }) {
               {content}
             </div>
           ) : (
-            <Link key={page} href={href} title={collapsed ? label : undefined} style={navItemStyle(false, collapsed)}>
+            <Link
+              key={page}
+              href={href}
+              title={collapsed ? label : undefined}
+              style={navItemStyle(false, collapsed)}
+              {...(newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
               {content}
             </Link>
           );
@@ -240,6 +248,16 @@ function TemplateIcon({ muted }: { muted: boolean }) {
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
       <rect x="4" y="3" width="16" height="18" rx="2" stroke={c} strokeWidth="2" />
       <path d="M8 8h8M8 12h8M8 16h5" stroke={c} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LetterIcon({ muted }: { muted: boolean }) {
+  const c = muted ? "#94a3b8" : "#f8fafc";
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <rect x="3" y="5" width="18" height="14" rx="2" stroke={c} strokeWidth="2" />
+      <path d="m4 6.5 8 6 8-6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

@@ -273,9 +273,28 @@ export const translations: Record<Locale, Translations> = dict;
 // Nav labels + activity-log type labels are keyed maps rather than flat
 // strings — separate exports so callers can still index by their own key
 // without a giant switch statement.
-export const NAV_LABELS: Record<Locale, Record<"dashboard" | "map" | "chat" | "templates" | "reports" | "scrapes", string>> = {
-  id: { dashboard: "Dashboard", map: "Peta", chat: "Chat", templates: "Templat", reports: "Laporan", scrapes: "Scrape Jobs" },
-  en: { dashboard: "Dashboard", map: "Map", chat: "Chat", templates: "Templates", reports: "Reports", scrapes: "Scrape Jobs" },
+export const NAV_LABELS: Record<
+  Locale,
+  Record<"dashboard" | "map" | "chat" | "templates" | "letters" | "reports" | "scrapes", string>
+> = {
+  id: {
+    dashboard: "Dashboard",
+    map: "Peta",
+    chat: "Chat",
+    templates: "Templat",
+    letters: "Surat",
+    reports: "Laporan",
+    scrapes: "Scrape Jobs",
+  },
+  en: {
+    dashboard: "Dashboard",
+    map: "Map",
+    chat: "Chat",
+    templates: "Templates",
+    letters: "Letters",
+    reports: "Reports",
+    scrapes: "Scrape Jobs",
+  },
 };
 
 export const ACTIVITY_TYPE_LABELS: Record<Locale, Record<string, string>> = {
@@ -289,6 +308,7 @@ export const ACTIVITY_TYPE_LABELS: Record<Locale, Record<string, string>> = {
     tag_change: "Ubah Tag",
     replied_marked: "Tandai Dibalas",
     note: "Catatan",
+    letter_generated: "Surat Dibuat",
   },
   en: {
     stage_change: "Stage Changed",
@@ -300,5 +320,6 @@ export const ACTIVITY_TYPE_LABELS: Record<Locale, Record<string, string>> = {
     tag_change: "Tag Changed",
     replied_marked: "Marked Replied",
     note: "Note",
+    letter_generated: "Letter Generated",
   },
 };
