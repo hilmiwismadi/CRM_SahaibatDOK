@@ -4,6 +4,8 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { db } from "@/lib/db";
 import { LetterDocument } from "@/app/letters/LetterDocument";
 
+const SESSION_MODES = ["online", "offline", "hybrid"] as const;
+
 /**
  * Fills the "Permohonan Partisipasi Riset Sistem Kesehatan" research-invite
  * letter (copy source: Dokumen/Template Persuratan Demo Invitation (1).docx;
@@ -26,6 +28,10 @@ const bodySchema = z.object({
   namaBD: z.string().min(1, "Nama Business Development wajib diisi"),
   whatsappBD: z.string().optional(),
   emailBD: z.string().optional(),
+  // Which wording of the "sesi diskusi" sentence to use — see
+  // LetterDocument.tsx's SESSION_MODE_TEXT. Defaults to "hybrid" (mentions
+  // both) when omitted, since that commits to the least.
+  modeSesi: z.enum(SESSION_MODES).optional(),
 });
 
 const INDO_DATE = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric" });
@@ -35,7 +41,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
-  const { leadId, nomorSurat, tanggal, namaPenerima, jabatanPenerima, namaKlinik, namaBD, whatsappBD, emailBD } =
+  const { leadId, nomorSurat, tanggal, namaPenerima, jabatanPenerima, namaKlinik, namaBD, whatsappBD, emailBD, modeSesi } =
     parsed.data;
 
   const lead = await db.lead.findUnique({ where: { id: leadId }, select: { id: true, name: true } });
@@ -57,6 +63,7 @@ export async function POST(req: NextRequest) {
         namaBD: namaBD.trim(),
         whatsappBD: whatsappBD?.trim() ?? "",
         emailBD: emailBD?.trim() ?? "",
+        modeSesi: modeSesi ?? "hybrid",
       },
     }),
   );
@@ -69,13 +76,21 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const fileSafeName = finalNamaKlinik.replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "lead";
+  // Keeps spaces and readable punctuation in the clinic name (unlike the
+  // old all-dashes slug) — only strips characters that are actually
+  // invalid in a filename/Content-Disposition header.
+  const fileSafeName =
+    finalNamaKlinik
+      .replace(/[\\/:*?"<>|]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 80) || "Lead";
 
   return new NextResponse(new Uint8Array(pdfBuffer), {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="Surat-Undangan-Riset-${fileSafeName}.pdf"`,
+      "Content-Disposition": `attachment; filename="Surat Permohonan Riset-${fileSafeName}.pdf"`,
     },
   });
 }

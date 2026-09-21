@@ -68,6 +68,8 @@ function loadLogoSource(file: string): { data: Buffer; format: "png" | "jpg" } {
   return source;
 }
 
+export type SessionMode = "online" | "offline" | "hybrid";
+
 export interface LetterData {
   nomorSurat: string;
   tanggal: string; // pre-formatted, e.g. "18 September 2026"
@@ -77,7 +79,32 @@ export interface LetterData {
   namaBD: string;
   whatsappBD: string;
   emailBD: string;
+  modeSesi: SessionMode;
 }
+
+// Three wordings for the "we'd like you to be a resource person" sentence,
+// each with its own bold span — set by the user's exact per-mode spec
+// (which word(s) are bold differs per mode, not just "bold the mode word").
+// `prefix`/`suffix` are the non-bold text immediately around `bold`;
+// concatenated they read "...sesi diskusi " + prefix + bold + suffix.
+const SESSION_MODE_TEXT: Record<SessionMode, { prefix: string; bold: string; suffix: string }> = {
+  online: {
+    prefix: "singkat secara ",
+    bold: "online",
+    suffix: " selama kurang lebih 20–30 menit, dengan waktu yang sepenuhnya menyesuaikan ketersediaan pihak klinik.",
+  },
+  offline: {
+    prefix: "singkat ",
+    bold: "secara berkunjung langsung",
+    suffix: " selama kurang lebih 20–30 menit, dengan waktu yang sepenuhnya menyesuaikan ketersediaan pihak klinik.",
+  },
+  hybrid: {
+    prefix: "",
+    bold: "singkat secara berkunjung langsung atau online",
+    suffix:
+      " selama kurang lebih 20–30 menit, dengan Waktu dan kondisi yang sepenuhnya menyesuaikan ketersediaan pihak klinik.",
+  },
+};
 
 // Brand palette — the only three colors fixed by the source logo SVG in
 // `Dokumen/lettertemplate.txt` (a deep green icon/wordmark stroke, a mint
@@ -331,6 +358,7 @@ export function LetterDocument({ data }: { data: LetterData }) {
   const namaBD = data.namaBD || "[Nama Business Development]";
   const whatsappBD = data.whatsappBD || "";
   const emailBD = data.emailBD || "";
+  const sessionText = SESSION_MODE_TEXT[data.modeSesi] ?? SESSION_MODE_TEXT.hybrid;
 
   return (
     <Document title={`Permohonan Partisipasi Riset - ${namaKlinik}`} author="SahAIbat DOK">
@@ -382,8 +410,9 @@ export function LetterDocument({ data }: { data: LetterData }) {
 
         <Text style={styles.para}>
           Sehubungan dengan hal tersebut, kami mengundang <Text style={styles.bold}>{namaKlinik}</Text> untuk
-          berkenan menjadi narasumber dalam sesi diskusi singkat selama kurang lebih 20–30 menit, dengan waktu yang
-          sepenuhnya menyesuaikan ketersediaan pihak klinik.
+          berkenan menjadi narasumber dalam sesi diskusi {sessionText.prefix}
+          <Text style={styles.bold}>{sessionText.bold}</Text>
+          {sessionText.suffix}
         </Text>
 
         <Text style={styles.para}>Sesi akan terdiri dari:</Text>

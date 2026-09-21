@@ -4,6 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import { CATEGORY_LABELS, CATEGORY_COLORS, type LeadCategory } from "@/lib/leadSegmentation";
 
+// Mirrors LetterDocument.tsx's SessionMode — kept as a separate local type
+// since that file is server-only (uses node:fs) and can't be imported into
+// this client component.
+type SessionMode = "online" | "offline" | "hybrid";
+
+const SESSION_MODE_OPTIONS: { value: SessionMode; label: string }[] = [
+  { value: "online", label: "Online" },
+  { value: "offline", label: "Offline" },
+  { value: "hybrid", label: "Offline/Online" },
+];
+
 interface LeadOption {
   id: string;
   name: string;
@@ -114,6 +125,7 @@ export default function LettersPage() {
   const [namaKlinik, setNamaKlinik] = useState("");
   const [namaPenerima, setNamaPenerima] = useState("");
   const [jabatanPenerima, setJabatanPenerima] = useState("");
+  const [modeSesi, setModeSesi] = useState<SessionMode>("hybrid");
   const [sender, setSender] = useState<SenderInfo>(DEFAULT_SENDER);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; lead: LeadOption } | null>(null);
 
@@ -287,6 +299,7 @@ Email: ${email}`;
           namaBD: sender.namaBD,
           whatsappBD: sender.whatsappBD,
           emailBD: sender.emailBD,
+          modeSesi,
         }),
       });
       if (!res.ok) {
@@ -303,7 +316,7 @@ Email: ${email}`;
       const match = disposition.match(/filename="([^"]+)"/);
       const a = document.createElement("a");
       a.href = url;
-      a.download = match?.[1] ?? `Surat-Undangan-Riset-${selected.name}.pdf`;
+      a.download = match?.[1] ?? `Surat Permohonan Riset-${selected.name}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -460,6 +473,25 @@ Email: ${email}`;
                       />
                     </Field>
                   </div>
+
+                  <Field label="Mode Sesi Diskusi">
+                    <div className="flex gap-1.5">
+                      {SESSION_MODE_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setModeSesi(option.value)}
+                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                            modeSesi === option.value
+                              ? "border-cyan-500 bg-cyan-50 text-cyan-700"
+                              : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </Field>
                 </div>
               )}
             </div>
