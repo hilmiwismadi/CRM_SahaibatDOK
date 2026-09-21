@@ -79,6 +79,7 @@ export default function LettersPage() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setSender(loadSavedSender());
@@ -135,6 +136,51 @@ export default function LettersPage() {
       }
       return next;
     });
+  }
+
+  // Cover-email draft that goes alongside the PDF attachment — same
+  // placeholders as the letter itself (klinik name, recipient, sender
+  // info), kept as a copy-pasteable block since Gmail/Outlook compose
+  // windows aren't something this app can write into directly.
+  function buildEmailDraft(): string {
+    const klinik = namaKlinik || selected?.name || "[Nama Klinik]";
+    const greeting = namaPenerima ? `Yth. Bapak/Ibu ${namaPenerima},` : "Yth. Bapak/Ibu,";
+    const bd = sender.namaBD || "[Nama Business Development]";
+    const wa = sender.whatsappBD || "[Nomor WhatsApp]";
+    const email = sender.emailBD || "[Email]";
+    return `${greeting}
+
+Menindaklanjuti komunikasi kami sebelumnya melalui WhatsApp, bersama email ini saya menyampaikan surat permohonan partisipasi riset dari SahAIbat untuk ${klinik}.
+
+Saat ini kami sedang melakukan riset dan validasi langsung dengan tenaga kesehatan dan pengelola klinik untuk memahami alur kerja, kebutuhan administrasi, serta kendala dalam pengelolaan layanan dan data pasien. Masukan dari pihak klinik akan menjadi bahan penting dalam pengembangan sistem agar sesuai dengan kebutuhan di lapangan.
+
+Kami berharap Bapak/Ibu berkenan menjadi narasumber dalam sesi diskusi singkat selama kurang lebih 20–30 menit. Waktu pelaksanaan sepenuhnya dapat menyesuaikan dengan ketersediaan pihak klinik.
+
+Secara umum, sesi akan mencakup diskusi mengenai alur kerja klinik, demonstrasi singkat sistem yang sedang kami kembangkan, serta tanggapan dan masukan dari pihak klinik.
+
+Surat permohonan partisipasi kami lampirkan sebagai informasi lebih lanjut.
+
+Mohon kesediaan Bapak/Ibu untuk menginformasikan waktu yang sekiranya tersedia untuk sesi tersebut.
+
+Terima kasih atas waktu dan kesediaannya.
+
+Hormat saya,
+
+${bd}
+Business Development Manager
+SahAIbat — sebuah brand dari Viantra Health
+WhatsApp: ${wa}
+Email: ${email}`;
+  }
+
+  async function handleCopyEmailDraft() {
+    try {
+      await navigator.clipboard.writeText(buildEmailDraft());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Gagal menyalin ke clipboard — salin manual dari kotak teks di atas.");
+    }
   }
 
   async function handleGenerate() {
@@ -360,6 +406,33 @@ export default function LettersPage() {
                 </div>
               </div>
             </div>
+
+            {selected && (
+              <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <h2 className="mb-1 text-sm font-semibold text-slate-900">Draft Email Pengantar</h2>
+                <p className="mb-3 text-xs text-slate-400">
+                  Kalimat pengantar untuk dikirim via email bersama lampiran PDF surat — sudah terisi otomatis dari data
+                  di atas, tinggal salin dan tempel.
+                </p>
+                <textarea
+                  readOnly
+                  value={buildEmailDraft()}
+                  rows={14}
+                  className="w-full resize-y rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs leading-relaxed text-slate-700 outline-none transition focus:border-cyan-500"
+                  onFocus={(e) => e.currentTarget.select()}
+                />
+                <button
+                  onClick={handleCopyEmailDraft}
+                  className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  {copied ? "Disalin!" : "Salin Teks"}
+                </button>
+              </div>
+            )}
 
             {error && (
               <div className="rounded-lg border border-red-100 bg-red-50 px-3 py-2 text-xs text-red-600">{error}</div>
