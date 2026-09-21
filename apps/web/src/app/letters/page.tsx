@@ -80,6 +80,7 @@ export default function LettersPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedSubject, setCopiedSubject] = useState(false);
 
   useEffect(() => {
     setSender(loadSavedSender());
@@ -138,17 +139,24 @@ export default function LettersPage() {
     });
   }
 
-  // Cover-email draft that goes alongside the PDF attachment — same
-  // placeholders as the letter itself (klinik name, recipient, sender
-  // info), kept as a copy-pasteable block since Gmail/Outlook compose
-  // windows aren't something this app can write into directly.
+  // Cover-email subject + body that go alongside the PDF attachment — same
+  // placeholders as the letter itself (klinik name, sender info), kept as
+  // copy-pasteable blocks since Gmail/Outlook compose windows aren't
+  // something this app can write into directly.
+  function emailKlinik(): string {
+    return namaKlinik || selected?.name || "[Nama Klinik]";
+  }
+
+  function buildEmailSubject(): string {
+    return `Tindak Lanjut Komunikasi – Mohon Partisipasi Riset ${emailKlinik()}`;
+  }
+
   function buildEmailDraft(): string {
-    const klinik = namaKlinik || selected?.name || "[Nama Klinik]";
-    const greeting = namaPenerima ? `Yth. Bapak/Ibu ${namaPenerima},` : "Yth. Bapak/Ibu,";
+    const klinik = emailKlinik();
     const bd = sender.namaBD || "[Nama Business Development]";
     const wa = sender.whatsappBD || "[Nomor WhatsApp]";
     const email = sender.emailBD || "[Email]";
-    return `${greeting}
+    return `Yth. ${klinik},
 
 Menindaklanjuti komunikasi kami sebelumnya melalui WhatsApp, bersama email ini saya menyampaikan surat permohonan partisipasi riset dari SahAIbat untuk ${klinik}.
 
@@ -171,6 +179,16 @@ Business Development Manager
 SahAIbat — sebuah brand dari Viantra Health
 WhatsApp: ${wa}
 Email: ${email}`;
+  }
+
+  async function handleCopySubject() {
+    try {
+      await navigator.clipboard.writeText(buildEmailSubject());
+      setCopiedSubject(true);
+      setTimeout(() => setCopiedSubject(false), 2000);
+    } catch {
+      setError("Gagal menyalin ke clipboard — salin manual dari kotak teks di atas.");
+    }
   }
 
   async function handleCopyEmailDraft() {
@@ -414,6 +432,29 @@ Email: ${email}`;
                   Kalimat pengantar untuk dikirim via email bersama lampiran PDF surat — sudah terisi otomatis dari data
                   di atas, tinggal salin dan tempel.
                 </p>
+
+                <Field label="Subject Email">
+                  <input
+                    readOnly
+                    value={buildEmailSubject()}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-cyan-500"
+                  />
+                </Field>
+                <button
+                  onClick={handleCopySubject}
+                  className="mb-3 mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                    <rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
+                    <path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  {copiedSubject ? "Disalin!" : "Salin Subjek"}
+                </button>
+
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  Isi Email
+                </label>
                 <textarea
                   readOnly
                   value={buildEmailDraft()}
