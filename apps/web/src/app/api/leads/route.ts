@@ -81,6 +81,16 @@ export async function GET(req: NextRequest) {
       // apps/wa-bridge's sock.onWhatsApp() check, manual or automatic on a
       // failed send) to have no WhatsApp account — drives /map's brown pin.
       noWaAccount: waContacts.some((wc) => wc.noWaAccount),
+      // Raw flags, kept alongside tagCategory below for the `tag` filter —
+      // needsOtherContact/needsFollowUp/letterSent all sit *below*
+      // needs_reply/replied_by_bot/etc. in classifyLead's priority order
+      // (see leadSegmentation.ts's CATEGORY_ORDER), so a lead with an
+      // unanswered message that's ALSO tagged Further Contact gets
+      // tagCategory "needs_reply", not "needs_other_contact" — filtering by
+      // tagCategory alone would wrongly hide it from ?tag=needs_other_contact.
+      needsOtherContact: waContacts.some((wc) => wc.needsOtherContact),
+      needsFollowUp: waContacts.some((wc) => wc.needsFollowUp),
+      letterSent: waContacts.some((wc) => wc.letterSent),
       tagCategory: classifyLead({
         pipelineStage: l.pipelineStage,
         contacts: waContacts.map((c) => ({
@@ -100,7 +110,19 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  if (tag) {
+  // Same masking as /chat's filter chips (see ConversationList.tsx) — these
+  // three categories are outranked by higher-priority tags in classifyLead,
+  // so matching the raw boolean instead of tagCategory is what makes a
+  // lead tagged Further Contact/Follow Up/Letter Sent actually show up
+  // under its own filter even while another tag is currently "winning" the
+  // single canonical badge.
+  if (tag === "needs_other_contact") {
+    enriched = enriched.filter((l) => l.needsOtherContact);
+  } else if (tag === "needs_follow_up") {
+    enriched = enriched.filter((l) => l.needsFollowUp);
+  } else if (tag === "letter_sent") {
+    enriched = enriched.filter((l) => l.letterSent);
+  } else if (tag) {
     enriched = enriched.filter((l) => l.tagCategory === (tag as LeadCategory));
   }
 
