@@ -10,6 +10,47 @@ interface LeadOption {
   address: string | null;
   category: string | null;
   tagCategory: LeadCategory;
+  // Raw flags behind tagCategory's single winning badge — see
+  // leadSegmentation.ts's CATEGORY_ORDER; a lead can have several of these
+  // true at once (e.g. Further Contact AND an unanswered message), and the
+  // lead list below shows a chip for every one that applies, not just the
+  // canonical pick.
+  appointment: boolean;
+  declined: boolean;
+  needsOtherContact: boolean;
+  needsFollowUp: boolean;
+  letterSent: boolean;
+  needsReply: boolean;
+  repliedByBot: boolean;
+  noReplyAfterPitch: boolean;
+  nonResponsive: boolean;
+  noWaAccount: boolean;
+}
+
+// Every tag chip a lead row can show, in leadSegmentation's CATEGORY_ORDER
+// (minus "untouched"/"active", which aren't real tags — a lead with none
+// of these true just falls back to tagCategory's label, see leadRowTags()).
+const TAG_CHIP_ORDER: { key: LeadCategory; flag: keyof LeadOption }[] = [
+  { key: "no_wa_account", flag: "noWaAccount" },
+  { key: "appointment", flag: "appointment" },
+  { key: "declined", flag: "declined" },
+  { key: "needs_reply", flag: "needsReply" },
+  { key: "replied_by_bot", flag: "repliedByBot" },
+  { key: "needs_other_contact", flag: "needsOtherContact" },
+  { key: "needs_follow_up", flag: "needsFollowUp" },
+  { key: "letter_sent", flag: "letterSent" },
+  { key: "no_reply_after_pitch", flag: "noReplyAfterPitch" },
+  { key: "non_responsive", flag: "nonResponsive" },
+];
+
+function leadRowTags(lead: LeadOption): { key: LeadCategory; label: string; color: string }[] {
+  const chips = TAG_CHIP_ORDER.filter(({ flag }) => lead[flag] === true).map(({ key }) => ({
+    key,
+    label: CATEGORY_LABELS[key],
+    color: CATEGORY_COLORS[key],
+  }));
+  if (chips.length > 0) return chips;
+  return [{ key: lead.tagCategory, label: CATEGORY_LABELS[lead.tagCategory], color: CATEGORY_COLORS[lead.tagCategory] }];
 }
 
 interface SenderInfo {
@@ -125,6 +166,32 @@ export default function LettersPage() {
     setNamaKlinik(lead.name);
     setSuccess(null);
     setError(null);
+  }
+
+  // Lead-level equivalent of /chat's "Letter Sent" toggle — this page only
+  // has a leadId per row (not a wa_contact id), so it goes through
+  // /api/leads/[id]/quick-tag (same route the Kanban boards use to move a
+  // lead by leadId) instead of /api/conversations/[id]/flag. Set-only (no
+  // untag here): quick-tag's boolean actions no-op if already true, so
+  // clicking again is harmless, just not a way to remove the tag.
+  async function handleMarkLetterSent(lead: LeadOption) {
+    setContextMenu(null);
+    try {
+      const res = await fetch(`/api/leads/${lead.id}/quick-tag`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "letterSent" }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error ?? "Gagal menandai Letter Sent.");
+        return;
+      }
+      setSuccess(`Letter Sent ditandai untuk ${lead.name}.`);
+      await load();
+    } catch {
+      setError("Gagal menandai Letter Sent — cek koneksi.");
+    }
   }
 
   function updateSender(patch: Partial<SenderInfo>) {
@@ -307,7 +374,7 @@ Email: ${email}`;
                         e.preventDefault();
                         setContextMenu({ x: e.clientX, y: e.clientY, lead });
                       }}
-                      className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition ${
+                      className={`flex w-full flex-col gap-1.5 rounded-lg px-3 py-2.5 text-left transition ${
                         isActive ? "bg-cyan-50 ring-1 ring-cyan-200" : "hover:bg-slate-50"
                       }`}
                     >
@@ -317,12 +384,17 @@ Email: ${email}`;
                           {lead.category ?? "—"} {lead.address ? `· ${lead.address}` : ""}
                         </div>
                       </div>
-                      <span
-                        className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold text-white"
-                        style={{ backgroundColor: CATEGORY_COLORS[lead.tagCategory] }}
-                      >
-                        {CATEGORY_LABELS[lead.tagCategory]}
-                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {leadRowTags(lead).map((chip) => (
+                          <span
+                            key={chip.key}
+                            className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold text-white"
+                            style={{ backgroundColor: chip.color }}
+                          >
+                            {chip.label}
+                          </span>
+                        ))}
+                      </div>
                     </button>
                   );
                 })}
@@ -522,6 +594,20 @@ Email: ${email}`;
               <path d="M4 4h16v12H8l-4 4V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
             </svg>
             Open Chat in New Tab
+          </button>
+          <div className="my-1 border-t border-slate-100" />
+          <button
+            onClick={() => handleMarkLetterSent(contextMenu.lead)}
+            className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+          >
+            <span className="flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-slate-400">
+                <path d="M4 4h16v12H8l-4 4V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                <path d="M8 9h8M8 12h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              Tandai Letter Sent
+            </span>
+            {contextMenu.lead.letterSent && <span className="text-emerald-500">✓</span>}
           </button>
         </div>
       )}

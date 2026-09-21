@@ -67,6 +67,26 @@ export async function GET(req: NextRequest) {
     getNonResponsiveContactIds(),
   ]);
 
+  // A contact "needs reply" / "was replied by bot" the same way
+  // /api/conversations computes it per-contact — reused here to aggregate
+  // to the lead level below, for /letters' "show every applicable tag"
+  // chip row (see leadSegmentation.ts's classifyLead, which only returns
+  // the single winning category, not every raw signal).
+  function contactNeedsReply(wc: { repliedOverrideAt: Date | null; messages: { direction: string; sentAt: Date }[] }) {
+    const lastMessage = wc.messages[0] ?? null;
+    const overrideActive = Boolean(wc.repliedOverrideAt) && (!lastMessage || wc.repliedOverrideAt! >= lastMessage.sentAt);
+    return lastMessage?.direction === "inbound" && !overrideActive;
+  }
+  function contactRepliedByBot(wc: {
+    repliedOverrideAt: Date | null;
+    repliedOverrideKind: string | null;
+    messages: { direction: string; sentAt: Date }[];
+  }) {
+    const lastMessage = wc.messages[0] ?? null;
+    const overrideActive = Boolean(wc.repliedOverrideAt) && (!lastMessage || wc.repliedOverrideAt! >= lastMessage.sentAt);
+    return overrideActive && wc.repliedOverrideKind === "bot";
+  }
+
   // Display-only fallback: derive from `address` for any row the bulk
   // backfill hasn't reached yet, so grouping/filtering by province is
   // useful immediately rather than waiting on that job. Doesn't persist —
@@ -81,16 +101,22 @@ export async function GET(req: NextRequest) {
       // apps/wa-bridge's sock.onWhatsApp() check, manual or automatic on a
       // failed send) to have no WhatsApp account — drives /map's brown pin.
       noWaAccount: waContacts.some((wc) => wc.noWaAccount),
-      // Raw flags, kept alongside tagCategory below for the `tag` filter —
-      // needsOtherContact/needsFollowUp/letterSent all sit *below*
-      // needs_reply/replied_by_bot/etc. in classifyLead's priority order
-      // (see leadSegmentation.ts's CATEGORY_ORDER), so a lead with an
+      // Raw flags, kept alongside tagCategory below so consumers (e.g.
+      // /letters' multi-badge row) can show every tag that applies, not
+      // just the single one classifyLead picked as canonical — several of
+      // these sit *below* needs_reply/replied_by_bot/etc. in its priority
+      // order (see leadSegmentation.ts's CATEGORY_ORDER), so a lead with an
       // unanswered message that's ALSO tagged Further Contact gets
-      // tagCategory "needs_reply", not "needs_other_contact" — filtering by
-      // tagCategory alone would wrongly hide it from ?tag=needs_other_contact.
+      // tagCategory "needs_reply", not "needs_other_contact".
+      appointment: waContacts.some((wc) => wc.appointment),
+      declined: waContacts.some((wc) => wc.declined),
       needsOtherContact: waContacts.some((wc) => wc.needsOtherContact),
       needsFollowUp: waContacts.some((wc) => wc.needsFollowUp),
       letterSent: waContacts.some((wc) => wc.letterSent),
+      needsReply: waContacts.some(contactNeedsReply),
+      repliedByBot: waContacts.some(contactRepliedByBot),
+      noReplyAfterPitch: waContacts.some((wc) => noReplyAfterPitchIds.has(wc.id)),
+      nonResponsive: waContacts.some((wc) => nonResponsiveIds.has(wc.id)),
       tagCategory: classifyLead({
         pipelineStage: l.pipelineStage,
         contacts: waContacts.map((c) => ({
