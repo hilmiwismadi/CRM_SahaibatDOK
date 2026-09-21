@@ -6,6 +6,11 @@ const schema = z
   .object({
     needsOtherContact: z.boolean().optional(),
     needsFollowUp: z.boolean().optional(),
+    // ISO date ("YYYY-MM-DD") picked in /chat's follow-up-date prompt when
+    // needsFollowUp is set to true — see schema.prisma's
+    // WaContact.followUpAt. Only meaningful alongside needsFollowUp: true;
+    // needsFollowUp: false always clears it below regardless of this.
+    followUpAt: z.string().optional().nullable(),
     letterSent: z.boolean().optional(),
     noWaAccount: z.boolean().optional(),
     appointment: z.boolean().optional(),
@@ -45,6 +50,12 @@ const schema = z
  * per-date/per-week breakdown). Skipped when the contact isn't linked to
  * a lead yet (lead_activities.lead_id is NOT NULL) or when a field is
  * sent but its value doesn't actually change.
+ *
+ * needsFollowUp additionally accepts `followUpAt` (an ISO date the rep
+ * picked in /chat's follow-up prompt) — stored on the contact and folded
+ * into that same tag_change entry's payload, and backs GET
+ * /api/leads/follow-up-reminders (the sidebar reminder popup). Always
+ * cleared when needsFollowUp goes back to false.
  */
 export async function PATCH(
   req: NextRequest,
@@ -56,8 +67,8 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { needsOtherContact, needsFollowUp, letterSent, noWaAccount, appointment, declined } = parsed.data;
-  const data: {
+  const { needsOtherContact, needsFollowUp, followUpAt, letterSent, noWaAccount, appointment, declined } = parsed.data;
+  const boolData: {
     needsOtherContact?: boolean;
     needsFollowUp?: boolean;
     letterSent?: boolean;
@@ -65,12 +76,20 @@ export async function PATCH(
     appointment?: boolean;
     declined?: boolean;
   } = {};
-  if (needsOtherContact !== undefined) data.needsOtherContact = needsOtherContact;
-  if (needsFollowUp !== undefined) data.needsFollowUp = needsFollowUp;
-  if (letterSent !== undefined) data.letterSent = letterSent;
-  if (noWaAccount !== undefined) data.noWaAccount = noWaAccount;
-  if (appointment !== undefined) data.appointment = appointment;
-  if (declined !== undefined) data.declined = declined;
+  if (needsOtherContact !== undefined) boolData.needsOtherContact = needsOtherContact;
+  if (needsFollowUp !== undefined) boolData.needsFollowUp = needsFollowUp;
+  if (letterSent !== undefined) boolData.letterSent = letterSent;
+  if (noWaAccount !== undefined) boolData.noWaAccount = noWaAccount;
+  if (appointment !== undefined) boolData.appointment = appointment;
+  if (declined !== undefined) boolData.declined = declined;
+
+  // A stale reminder date shouldn't linger behind a tag that's no longer
+  // active — clearing needsFollowUp always clears followUpAt too, whether
+  // or not the caller explicitly sent one.
+  const data: typeof boolData & { followUpAt?: Date | null } = { ...boolData };
+  if (needsFollowUp !== undefined) {
+    data.followUpAt = needsFollowUp && followUpAt ? new Date(followUpAt) : null;
+  }
 
   try {
     const contact = await db.$transaction(async (tx) => {
@@ -90,13 +109,22 @@ export async function PATCH(
       const updated = await tx.waContact.update({ where: { id }, data });
 
       if (updated.leadId) {
-        const changed = (Object.entries(data) as [keyof typeof data, boolean][]).filter(
+        const changed = (Object.entries(boolData) as [keyof typeof boolData, boolean][]).filter(
           ([tag, value]) => before[tag] !== value,
         );
         for (const [tag, value] of changed) {
-          await tx.leadActivity.create({
-            data: { leadId: updated.leadId, type: "tag_change", payload: { tag, value, waContactId: updated.id } },
-          });
+          // The follow-up date rides along in the same activity entry as
+          // the tag itself — /reports/history reads payload.followUpAt to
+          // show "dijadwalkan untuk <tanggal>" instead of a bare "ditandai".
+          const payload: { tag: string; value: boolean; waContactId: string; followUpAt?: string } = {
+            tag,
+            value,
+            waContactId: updated.id,
+          };
+          if (tag === "needsFollowUp" && value && data.followUpAt) {
+            payload.followUpAt = data.followUpAt.toISOString();
+          }
+          await tx.leadActivity.create({ data: { leadId: updated.leadId, type: "tag_change", payload } });
         }
       }
 

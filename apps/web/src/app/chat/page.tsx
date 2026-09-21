@@ -11,8 +11,18 @@ import UnlinkedContactsButton from "./UnlinkedContacts";
 import type { ConversationListItem, LeadBrief, Selected, WaMessageItem } from "./types";
 import { CATEGORY_COLORS, categoryLabels, REPLY_BRANCH_GROUPS, replyBranchLabel } from "@/lib/leadSegmentation";
 import { useLanguage } from "@/lib/i18n/context";
+import { formatDate } from "@/lib/i18n/locale";
 
 const POLL_MS = 4000;
+
+// Tomorrow, as "YYYY-MM-DD" — the default prefill for the follow-up date
+// prompt. Not today: if you're setting the tag right now, "follow up
+// today" isn't really a reminder for later, it's just doing it now.
+function defaultFollowUpDate(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
 
 export default function ChatPage() {
   const { locale, t } = useLanguage();
@@ -61,6 +71,11 @@ export default function ChatPage() {
   // to collapsed every time a fresh menu opens (see onContextMenu below).
   const [expandedBranch, setExpandedBranch] = useState<"no_reply" | "reply" | null>(null);
 
+  // Follow-up date prompt — opened by handleToggleFollowUp instead of
+  // applying the tag right away, see that function's comment.
+  const [followUpPrompt, setFollowUpPrompt] = useState<ConversationListItem | null>(null);
+  const [followUpDate, setFollowUpDate] = useState("");
+
   // Every tag action below closes the menu immediately and the list's
   // single canonical badge (see ConversationList) often doesn't change at
   // all — e.g. tagging "Further Contact" on a lead that's currently
@@ -90,7 +105,7 @@ export default function ChatPage() {
     };
   }, [contextMenu]);
 
-  async function applyFlag(item: ConversationListItem, body: Record<string, boolean>, successMsg: string) {
+  async function applyFlag(item: ConversationListItem, body: Record<string, boolean | string | null>, successMsg: string) {
     setContextMenu(null);
     try {
       const res = await fetch(`/api/conversations/${item.id}/flag`, {
@@ -136,11 +151,29 @@ export default function ChatPage() {
     );
   }
 
+  // Turning Follow Up ON opens a date prompt instead of applying right
+  // away — "when should I be reminded to follow up" is the whole point of
+  // this tag, so it's asked up front rather than left for the sidebar
+  // reminder popup to come up empty. Turning it OFF applies immediately
+  // (the flag route clears followUpAt server-side either way).
   function handleToggleFollowUp(item: ConversationListItem, needsFollowUp: boolean) {
+    if (needsFollowUp) {
+      setContextMenu(null);
+      setFollowUpPrompt(item);
+      setFollowUpDate(item.followUpAt ? item.followUpAt.slice(0, 10) : defaultFollowUpDate());
+      return Promise.resolve();
+    }
+    return applyFlag(item, { needsFollowUp: false }, t.chatTagRemoved(labels.needs_follow_up));
+  }
+
+  function handleConfirmFollowUp() {
+    if (!followUpPrompt || !followUpDate) return;
+    const item = followUpPrompt;
+    setFollowUpPrompt(null);
     return applyFlag(
       item,
-      { needsFollowUp },
-      needsFollowUp ? t.chatTagApplied(labels.needs_follow_up) : t.chatTagRemoved(labels.needs_follow_up),
+      { needsFollowUp: true, followUpAt: followUpDate },
+      t.chatFollowUpScheduled(formatDate(followUpDate, locale, { day: "2-digit", month: "long", year: "numeric" })),
     );
   }
 
@@ -546,7 +579,14 @@ export default function ChatPage() {
                           onClick={() => handleToggleFollowUp(contextMenu.item, !contextMenu.item.needsFollowUp)}
                           className="flex w-full items-center justify-between px-3 py-1.5 pl-8 text-left text-sm text-slate-700 transition hover:bg-slate-50"
                         >
-                          <span>{labels.needs_follow_up}</span>
+                          <span>
+                            {labels.needs_follow_up}
+                            {contextMenu.item.needsFollowUp && contextMenu.item.followUpAt && (
+                              <span className="ml-1.5 text-[11px] text-slate-400">
+                                ({formatDate(contextMenu.item.followUpAt, locale, { day: "2-digit", month: "short" })})
+                              </span>
+                            )}
+                          </span>
                           {contextMenu.item.needsFollowUp && <span className="text-emerald-500">✓</span>}
                         </button>
                         <button
@@ -589,6 +629,40 @@ export default function ChatPage() {
       {toast && (
         <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
           {toast}
+        </div>
+      )}
+      {followUpPrompt && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setFollowUpPrompt(null)}
+        >
+          <div className="w-full max-w-xs rounded-xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="mb-1 text-sm font-semibold text-slate-900">{t.chatFollowUpPromptTitle}</h3>
+            <p className="mb-3 truncate text-xs text-slate-400">{followUpPrompt.lead?.name ?? followUpPrompt.displayName}</p>
+            <input
+              type="date"
+              value={followUpDate}
+              onChange={(e) => setFollowUpDate(e.target.value)}
+              autoFocus
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+            />
+            <p className="mt-2 text-xs text-slate-400">{t.chatFollowUpPromptHint}</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setFollowUpPrompt(null)}
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+              >
+                {t.chatFollowUpCancel}
+              </button>
+              <button
+                onClick={handleConfirmFollowUp}
+                disabled={!followUpDate}
+                className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {t.chatFollowUpConfirm}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

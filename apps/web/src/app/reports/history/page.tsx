@@ -51,6 +51,9 @@ function describeActivity(a: Activity, locale: Locale, t: Translations): string 
   if (a.type === "tag_change" && a.payload) {
     const tag = typeof a.payload.tag === "string" ? a.payload.tag : "";
     const label = tagFieldLabels(locale)[tag] ?? tag;
+    if (a.payload.value && typeof a.payload.followUpAt === "string") {
+      return `${label}: ${t.activityFollowUpScheduledFor} ${formatDate(a.payload.followUpAt, locale, { day: "2-digit", month: "long", year: "numeric" })}`;
+    }
     return a.payload.value ? `${label}: ${t.activityTagMarked}` : `${label}: ${t.activityTagCleared}`;
   }
   if (a.type === "replied_marked" && a.payload) {

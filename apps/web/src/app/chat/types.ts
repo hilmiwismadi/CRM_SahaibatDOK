@@ -35,6 +35,9 @@ export interface ConversationListItem {
   repliedByBot: boolean;
   needsOtherContact: boolean;
   needsFollowUp: boolean;
+  // Date the rep picked when setting needsFollowUp — see schema.prisma's
+  // WaContact.followUpAt. Null if never set (or the tag was cleared since).
+  followUpAt: string | null;
   letterSent: boolean;
   noWaAccount: boolean;
   appointment: boolean;

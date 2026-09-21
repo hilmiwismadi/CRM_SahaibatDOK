@@ -15,6 +15,10 @@ const dict = {
     sidebarExpandTitle: "Expand sidebar",
     sidebarCollapseTitle: "Collapse sidebar",
     sidebarLanguage: "Bahasa",
+    sidebarReminders: "Pengingat Follow Up",
+    sidebarRemindersEmpty: "Tidak ada follow up yang perlu dilakukan.",
+    sidebarRemindersOverdue: (days: number) => `Terlambat ${days} hari`,
+    sidebarRemindersToday: "Hari ini",
 
     // Chat page
     chatSelectPrompt: "Pilih percakapan untuk mulai chat.",
@@ -35,6 +39,11 @@ const dict = {
     chatToastMarkedReplied: "Ditandai sudah dibalas.",
     chatToastMarkedRepliedByBot: "Ditandai dibalas oleh bot.",
     chatToastMarkedUnreplied: "Ditandai belum dibalas.",
+    chatFollowUpScheduled: (date: string) => `Follow up dijadwalkan untuk ${date}.`,
+    chatFollowUpPromptTitle: "Kapan mau di-follow up?",
+    chatFollowUpPromptHint: "Akan muncul di pengingat sidebar pada tanggal ini.",
+    chatFollowUpConfirm: "Simpan",
+    chatFollowUpCancel: "Batal",
 
     // Unlinked contacts (personal WA contacts / inbound-first leads)
     unlinkedButton: "Kontak Belum Terhubung",
@@ -130,6 +139,7 @@ const dict = {
     historyColDetail: "Detail",
     activityTagMarked: "ditandai",
     activityTagCleared: "dihapus",
+    activityFollowUpScheduledFor: "dijadwalkan untuk",
     activityRepliedBot: "Ditandai dibalas oleh bot",
     activityRepliedManual: "Ditandai sudah dibalas (manual)",
     activityRepliedCleared: "Tandai sudah dibalas: dihapus",
@@ -143,6 +153,10 @@ const dict = {
     sidebarExpandTitle: "Expand sidebar",
     sidebarCollapseTitle: "Collapse sidebar",
     sidebarLanguage: "Language",
+    sidebarReminders: "Follow-Up Reminders",
+    sidebarRemindersEmpty: "No follow-ups due right now.",
+    sidebarRemindersOverdue: (days: number) => `${days}d overdue`,
+    sidebarRemindersToday: "Today",
 
     // Chat page
     chatSelectPrompt: "Select a conversation to start chatting.",
@@ -163,6 +177,11 @@ const dict = {
     chatToastMarkedReplied: "Marked as replied.",
     chatToastMarkedRepliedByBot: "Marked as replied by bot.",
     chatToastMarkedUnreplied: "Marked as unreplied.",
+    chatFollowUpScheduled: (date: string) => `Follow-up scheduled for ${date}.`,
+    chatFollowUpPromptTitle: "When should this be followed up?",
+    chatFollowUpPromptHint: "Shows up in the sidebar reminder on this date.",
+    chatFollowUpConfirm: "Save",
+    chatFollowUpCancel: "Cancel",
 
     // Unlinked contacts (personal WA contacts / inbound-first leads)
     unlinkedButton: "Unlinked Contacts",
@@ -258,6 +277,7 @@ const dict = {
     historyColDetail: "Detail",
     activityTagMarked: "marked",
     activityTagCleared: "cleared",
+    activityFollowUpScheduledFor: "scheduled for",
     activityRepliedBot: "Marked as replied by bot",
     activityRepliedManual: "Marked as replied (manual)",
     activityRepliedCleared: "Marked as replied: cleared",

@@ -179,7 +179,14 @@ model WaContact {
   // said "call me later", waiting on something from them). Same standing
   // semantics as needsOtherContact above — does not auto-expire on a new
   // inbound message, cleared manually when no longer relevant.
-  needsFollowUp Boolean @default(false) @map("needs_follow_up")
+  needsFollowUp Boolean   @default(false) @map("needs_follow_up")
+  // Date the rep chose when setting needsFollowUp — backs the sidebar's
+  // reminder popup ("remind me when it's time to follow up"). Set together
+  // with needsFollowUp via a prompt in /chat's context menu; cleared
+  // automatically whenever needsFollowUp goes back to false, so a stale
+  // date never lingers behind a tag that's no longer active. Nullable:
+  // needsFollowUp can still be set without picking a date (no reminder).
+  followUpAt    DateTime? @map("follow_up_at")
   // Manual flag: confirmed this phone number has no WhatsApp account (e.g.
   // a landline scraped as the lead's only phone, or the number was
   // mistyped) — distinct from needsOtherContact ("WA isn't working, try

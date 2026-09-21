@@ -115,6 +115,7 @@ export async function GET(req: NextRequest) {
           repliedByBot,
           needsOtherContact: c.needsOtherContact,
           needsFollowUp: c.needsFollowUp,
+          followUpAt: c.followUpAt,
           letterSent: c.letterSent,
           noWaAccount: c.noWaAccount,
           appointment: c.appointment,
