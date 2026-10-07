@@ -67,6 +67,13 @@ model Lead {
   lostReason       String?           @map("lost_reason")
   customTags       String[]          @default([]) @map("custom_tags")
 
+  // Why a rep is deliberately NOT contacting this lead (set from /map's
+  // drawer). One of dental | aesthetic | low_rating | government_affiliate
+  // | other; "other" carries the free-text reason in labelNote. Never
+  // written by the staging-import upsert.
+  label     String? @map("label")
+  labelNote String? @map("label_note")
+
   // Trial sub-state — only meaningful while pipelineStage = "trial_accepted".
   // See docs/ARCHITECTURE.md "Pipeline stages" for the full state machine.
   trialStartedAt       DateTime? @map("trial_started_at")
@@ -77,7 +84,9 @@ model Lead {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   activities LeadActivity[]
+  appointments LeadAppointment[]
   waContacts WaContact[]
+  syncDailySummaries SyncDailySummary[]
 
   // Contact chain — CRM-owned pointer to whichever LeadContactNode is
   // currently "active" for chat purposes. Deliberately NOT phoneNormalized
@@ -130,6 +139,28 @@ model PipelineTransitionDef {
   @@map("pipeline_transition_defs")
 }
 
+/// One row per (lead, WIB calendar day) — Claude's own read of that day's WA
+/// chat for /sync/dailylog's "Ringkasan Claude" column, written by hand
+/// (not an automated API call: the rep decided 2026-10-01 that a paid
+/// Anthropic API key for an in-app button wasn't worth it when the Claude
+/// Code session already doing this work can just read the chats and write
+/// the row directly). `date` is a plain "YYYY-MM-DD" string, same WIB-day
+/// convention as src/lib/syncDateRange.ts, not a DateTime — there's no
+/// meaningful time-of-day for "today's summary". Unique per (leadId, date)
+/// so re-running a day's summaries upserts instead of duplicating.
+model SyncDailySummary {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId    String   @map("lead_id") @db.Uuid
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  date      String
+  summary   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([leadId, date])
+  @@map("sync_daily_summaries")
+}
+
 /// Timeline: stage changes, notes, WA send/receive events, scrape updates.
 model LeadActivity {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -141,6 +172,28 @@ model LeadActivity {
 
   @@index([leadId, createdAt(sort: Desc)], map: "lead_activities_lead_idx")
   @@map("lead_activities")
+}
+
+/// A scheduled meeting with a lead (GMeet demo, on-site visit, ...), shown
+/// next to follow-up reminders on /schedule. Follow-ups themselves live on
+/// WaContact (followUpAt); this table is only for meetings, which have a
+/// duration, a place/link and their own done/cancelled lifecycle.
+model LeadAppointment {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId      String   @map("lead_id") @db.Uuid
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  kind        String // demo_gmeet | visit | other
+  startsAt    DateTime @map("starts_at")
+  durationMin Int      @default(60) @map("duration_min")
+  location    String? // GMeet link or visit address
+  note        String?
+  status      String   @default("scheduled") // scheduled | done | cancelled
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([startsAt], map: "lead_appointments_starts_idx")
+  @@index([leadId], map: "lead_appointments_lead_idx")
+  @@map("lead_appointments")
 }
 
 /// Bridges WhatsApp JIDs to leads via normalized phone number. lead_id is
@@ -187,6 +240,16 @@ model WaContact {
   // date never lingers behind a tag that's no longer active. Nullable:
   // needsFollowUp can still be set without picking a date (no reminder).
   followUpAt    DateTime? @map("follow_up_at")
+  // Short "what needs to be done" note for the follow-up, shown under the
+  // lead's name in the sidebar reminder popup (and as its hover tooltip).
+  // Same lifecycle as followUpAt: set together with needsFollowUp, cleared
+  // whenever the follow-up is marked done or the tag is removed.
+  followUpNote  String?   @map("follow_up_note")
+  // True when followUpAt carries a specific time of day (set from the
+  // /schedule page or the chat prompt's optional time field); false means
+  // date-only, where followUpAt is that date at 00:00 UTC and its time
+  // component must be ignored. Reset to false whenever followUpAt clears.
+  followUpHasTime Boolean @default(false) @map("follow_up_has_time")
   // Manual flag: confirmed this phone number has no WhatsApp account (e.g.
   // a landline scraped as the lead's only phone, or the number was
   // mistyped) — distinct from needsOtherContact ("WA isn't working, try

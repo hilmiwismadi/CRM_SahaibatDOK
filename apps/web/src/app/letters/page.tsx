@@ -118,6 +118,9 @@ export default function LettersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [onlyFurtherContact, setOnlyFurtherContact] = useState(true);
+  // Client-side view over the loaded leads: which ones already have the
+  // "Letter Sent" tag vs still waiting for a letter.
+  const [letterFilter, setLetterFilter] = useState<"all" | "sent" | "unsent">("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [nomorSurat, setNomorSurat] = useState("");
@@ -170,6 +173,11 @@ export default function LettersPage() {
     const timeout = setTimeout(load, search ? 300 : 0);
     return () => clearTimeout(timeout);
   }, [load, search]);
+
+  const visibleLeads = leads.filter((l) =>
+    letterFilter === "all" ? true : letterFilter === "sent" ? l.letterSent : !l.letterSent,
+  );
+  const sentCount = leads.filter((l) => l.letterSent).length;
 
   const selected = leads.find((l) => l.id === selectedId) ?? null;
 
@@ -363,21 +371,38 @@ Email: ${email}`;
                   />
                   Hanya tag &quot;Further Contact&quot;
                 </label>
+                <select
+                  value={letterFilter}
+                  onChange={(e) => setLetterFilter(e.target.value as "all" | "sent" | "unsent")}
+                  aria-label="Filter status surat"
+                  className="rounded-lg border border-slate-200 px-2 py-2 text-xs font-medium text-slate-600 outline-none transition focus:border-cyan-500"
+                >
+                  <option value="all">Semua status surat</option>
+                  <option value="sent">Sudah dikirim ({sentCount})</option>
+                  <option value="unsent">Belum dikirim ({leads.length - sentCount})</option>
+                </select>
               </div>
-              <span className="text-xs text-slate-400">{leads.length} lead</span>
+              <span className="text-xs text-slate-400">
+                {visibleLeads.length}
+                {letterFilter !== "all" ? ` / ${leads.length}` : ""} lead
+              </span>
             </div>
 
             {loading ? (
               <div className="py-10 text-center text-sm text-slate-400">Memuat…</div>
-            ) : leads.length === 0 ? (
+            ) : visibleLeads.length === 0 ? (
               <div className="rounded-lg border border-dashed border-slate-200 py-10 text-center text-sm text-slate-400">
-                {onlyFurtherContact
-                  ? "Tidak ada lead bertag \"Further Contact\" saat ini."
-                  : "Tidak ada lead yang cocok."}
+                {letterFilter === "sent"
+                  ? "Belum ada lead yang ditandai surat terkirim."
+                  : letterFilter === "unsent"
+                    ? "Semua lead di daftar ini sudah ditandai surat terkirim."
+                    : onlyFurtherContact
+                      ? "Tidak ada lead bertag \"Further Contact\" saat ini."
+                      : "Tidak ada lead yang cocok."}
               </div>
             ) : (
               <div className="max-h-[calc(100vh-220px)] divide-y divide-slate-100 overflow-y-auto">
-                {leads.map((lead) => {
+                {visibleLeads.map((lead) => {
                   const isActive = lead.id === selectedId;
                   return (
                     <button

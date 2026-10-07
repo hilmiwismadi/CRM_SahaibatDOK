@@ -15,6 +15,7 @@ interface Segmentation {
     count: number;
     categories: { key: LeadCategory; label: string; count: number }[];
   };
+  letterSentTotal: number;
 }
 
 // One flat, non-nested card, sized the same everywhere (matching the
@@ -66,7 +67,16 @@ function SegmentationFlow({ segmentation, locale, t }: { segmentation: Segmentat
 
       <div className="grid gap-4 md:grid-cols-2">
         {REPLY_BRANCH_GROUPS.map((branch) => {
-          const branchTotal = branch.categories.reduce((sum, k) => sum + get(k), 0);
+          // "letter_sent" is excluded here on purpose: it's a standing
+          // outreach note, not a conversion outcome — a letter-sent lead
+          // still gets counted by whatever it actually became (Reject,
+          // Appointment, Follow Up, ...). Shown as its own total below
+          // instead of competing with those as a funnel branch leaf. See
+          // the 2026-09-21 conversation that requested this split — scoped
+          // to this page only, REPLY_BRANCH_GROUPS itself (shared with
+          // /chat) is untouched.
+          const visibleCategories = branch.categories.filter((k) => k !== "letter_sent");
+          const branchTotal = visibleCategories.reduce((sum, k) => sum + get(k), 0);
           return (
             <div key={branch.key} className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/60 p-4">
               <div className="mb-3 flex items-center justify-between">
@@ -76,10 +86,30 @@ function SegmentationFlow({ segmentation, locale, t }: { segmentation: Segmentat
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {branch.categories.map((key) => (
+                {visibleCategories.map((key) => (
                   <FlowCard key={key} label={labels[key]} count={get(key)} color={CATEGORY_COLORS[key]} />
                 ))}
               </div>
+
+              {/* Standalone tally, nested inside "Reply" (where letter_sent
+                  conceptually lives) but full-width and visually distinct
+                  from the grid above — NOT one of its cells, and NOT part
+                  of branchTotal, since it's a standing outreach note rather
+                  than a conversion outcome. See the filter note above. */}
+              {branch.key === "reply" && (
+                <div
+                  className="mt-3 flex items-center gap-3 rounded-xl border border-dashed p-3"
+                  style={{ borderColor: `${CATEGORY_COLORS.letter_sent}40` }}
+                >
+                  <div className="text-xl font-bold" style={{ color: CATEGORY_COLORS.letter_sent }}>
+                    {segmentation.letterSentTotal}
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-slate-600">{t.letterSentTotalLabel}</div>
+                    <div className="text-xs text-slate-400">{t.letterSentTotalDesc}</div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}

@@ -11,6 +11,25 @@ export interface LeadBrief {
   name: string;
   pipelineStage: string;
   pipelineStageDef: StageDefBrief | null;
+  // Extra fields from GET /api/leads/[id] (full Lead row) — shown in the chat
+  // header's "Lead info" tooltip. Optional: conversation-list leads only carry
+  // the brief fields above. `rating` is a Prisma Decimal, serialized as string.
+  category?: string | null;
+  address?: string | null;
+  province?: string | null;
+  rating?: string | number | null;
+  reviewCount?: number | null;
+  priceRange?: string | null;
+  googleMapsUrl?: string | null;
+  // "manual-<uuid>" for hand-added leads (no real Google place) — see
+  // POST /api/leads.
+  googlePlaceId?: string | null;
+  website?: string | null;
+  instagramUrl?: string | null;
+  email?: string | null;
+  phoneOffice?: string | null;
+  businessType?: string | null;
+  notes?: string | null;
 }
 
 export interface WaMessageItem {
@@ -38,6 +57,11 @@ export interface ConversationListItem {
   // Date the rep picked when setting needsFollowUp — see schema.prisma's
   // WaContact.followUpAt. Null if never set (or the tag was cleared since).
   followUpAt: string | null;
+  // Short "what to do" note saved with the follow-up — see
+  // schema.prisma's WaContact.followUpNote.
+  followUpNote: string | null;
+  // True when followUpAt includes a specific time of day (else date-only).
+  followUpHasTime: boolean;
   letterSent: boolean;
   noWaAccount: boolean;
   appointment: boolean;

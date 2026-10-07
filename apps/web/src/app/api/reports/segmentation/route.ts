@@ -90,6 +90,15 @@ export async function GET() {
   const touchedKeys = CATEGORY_ORDER.filter((k) => k !== "untouched");
   const touchedCount = touchedKeys.reduce((sum, k) => sum + buckets[k].length, 0);
 
+  // Standalone tally: how many leads have EVER been sent a letter, full
+  // stop — independent of classifyLead()'s exclusive bucketing above.
+  // "Letter sent" isn't a funnel outcome (a letter-sent lead can still end
+  // up Reject, Appointment, Follow Up, etc.), so it's deliberately reported
+  // here as its own count rather than as one of the `touched.categories`
+  // entries that /reports/overview renders as competing funnel stages. See
+  // the 2026-09-21 conversation that requested this split.
+  const letterSentTotal = leads.filter((l) => l.waContacts.some((c) => c.letterSent)).length;
+
   return NextResponse.json({
     total: leads.length,
     untouched: { count: buckets.untouched.length, leads: buckets.untouched },
@@ -102,5 +111,6 @@ export async function GET() {
         leads: buckets[key],
       })),
     },
+    letterSentTotal,
   });
 }

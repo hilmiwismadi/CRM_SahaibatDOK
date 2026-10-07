@@ -6,11 +6,16 @@ const schema = z
   .object({
     needsOtherContact: z.boolean().optional(),
     needsFollowUp: z.boolean().optional(),
-    // ISO date ("YYYY-MM-DD") picked in /chat's follow-up-date prompt when
+    // ISO date ("YYYY-MM-DD") or full ISO datetime (when a specific time was
+    // chosen — a "T" in the string is what marks it as timed) picked in /chat's follow-up-date prompt when
     // needsFollowUp is set to true — see schema.prisma's
     // WaContact.followUpAt. Only meaningful alongside needsFollowUp: true;
     // needsFollowUp: false always clears it below regardless of this.
     followUpAt: z.string().optional().nullable(),
+    // Short "what to do" note saved with the follow-up — see
+    // schema.prisma's WaContact.followUpNote. Same rule as followUpAt: only
+    // kept alongside needsFollowUp: true, always cleared when it goes false.
+    followUpNote: z.string().max(300).optional().nullable(),
     letterSent: z.boolean().optional(),
     noWaAccount: z.boolean().optional(),
     appointment: z.boolean().optional(),
@@ -67,7 +72,8 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { needsOtherContact, needsFollowUp, followUpAt, letterSent, noWaAccount, appointment, declined } = parsed.data;
+  const { needsOtherContact, needsFollowUp, followUpAt, followUpNote, letterSent, noWaAccount, appointment, declined } =
+    parsed.data;
   const boolData: {
     needsOtherContact?: boolean;
     needsFollowUp?: boolean;
@@ -86,9 +92,19 @@ export async function PATCH(
   // A stale reminder date shouldn't linger behind a tag that's no longer
   // active — clearing needsFollowUp always clears followUpAt too, whether
   // or not the caller explicitly sent one.
-  const data: typeof boolData & { followUpAt?: Date | null } = { ...boolData };
+  const data: typeof boolData & {
+    followUpAt?: Date | null;
+    followUpHasTime?: boolean;
+    followUpNote?: string | null;
+  } = { ...boolData };
   if (needsFollowUp !== undefined) {
-    data.followUpAt = needsFollowUp && followUpAt ? new Date(followUpAt) : null;
+    const at = needsFollowUp && followUpAt ? new Date(followUpAt) : null;
+    if (at && Number.isNaN(at.getTime())) {
+      return NextResponse.json({ error: "Invalid followUpAt" }, { status: 400 });
+    }
+    data.followUpAt = at;
+    data.followUpHasTime = !!at && !!followUpAt && followUpAt.includes("T");
+    data.followUpNote = needsFollowUp && followUpNote?.trim() ? followUpNote.trim() : null;
   }
 
   try {
@@ -116,13 +132,17 @@ export async function PATCH(
           // The follow-up date rides along in the same activity entry as
           // the tag itself — /reports/history reads payload.followUpAt to
           // show "dijadwalkan untuk <tanggal>" instead of a bare "ditandai".
-          const payload: { tag: string; value: boolean; waContactId: string; followUpAt?: string } = {
+          const payload: { tag: string; value: boolean; waContactId: string; followUpAt?: string; followUpHasTime?: boolean; followUpNote?: string } = {
             tag,
             value,
             waContactId: updated.id,
           };
           if (tag === "needsFollowUp" && value && data.followUpAt) {
             payload.followUpAt = data.followUpAt.toISOString();
+            payload.followUpHasTime = data.followUpHasTime;
+          }
+          if (tag === "needsFollowUp" && value && data.followUpNote) {
+            payload.followUpNote = data.followUpNote;
           }
           await tx.leadActivity.create({ data: { leadId: updated.leadId, type: "tag_change", payload } });
         }

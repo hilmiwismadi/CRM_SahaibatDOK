@@ -11,8 +11,12 @@ services:
       - ./db/init:/docker-entrypoint-initdb.d:ro
     ports:
       # Host port 5433, not 5432 — avoids clashing with a native Postgres
-      # install some machines already have listening on 5432.
-      - "5433:5432"
+      # install some machines already have listening on 5432. Bound to
+      # 127.0.0.1 only — this is a real Postgres port on a VPS with a
+      # public IP; without the loopback restriction it's reachable from
+      # the whole internet, not just this host. Local dev on Windows
+      # still reaches it fine at localhost:5433.
+      - "127.0.0.1:5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sahaibat}"]
       interval: 5s
@@ -29,11 +33,23 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-sahaibat}:${POSTGRES_PASSWORD:-sahaibat}@db:5432/${POSTGRES_DB:-sahaibat_mapping}
       WA_BRIDGE_INTERNAL_URL: http://wa-bridge:3001
+      # /sync/dailylog's "Ringkas dengan Claude" button (apps/web/src/app/api/sync/summarize/route.ts).
+      # Value comes from this stack's root .env (the one docker-compose itself reads for ${VAR}
+      # substitution, e.g. POSTGRES_USER above) — NOT apps/web/.env, which never makes it into this
+      # image (no COPY step for it in apps/web/Dockerfile, confirmed empty in the running container).
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "3000:3000"
+    volumes:
+      # POST /api/admin/import-staging reads scrape-output/<file>.json off
+      # disk (process.cwd() in the standalone image is /app, hence the
+      # container path below — see that route's SCRAPE_OUTPUT_DIRS comment).
+      # Without this mount the container can't see files run-scrape.sh
+      # wrote to the host, and import-staging 404s on every fileName.
+      - ./scrape-output:/app/scrape-output
     networks:
       - sahaibat-net
 

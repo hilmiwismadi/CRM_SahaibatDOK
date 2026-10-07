@@ -4,6 +4,7 @@ import { z } from "zod";
 import { normalizePhoneNumber } from "@sahaibat/shared";
 import { db } from "@/lib/db";
 import { extractProvince } from "@/lib/provinceExtract";
+import { ALL_REGIONS_KEY, termsForRegions } from "@/lib/mapRegions";
 import { classifyLead, type LeadCategory } from "@/lib/leadSegmentation";
 import { getNoReplyAfterPitchContactIds } from "@/lib/noReplyAfterPitch";
 import { getNonResponsiveContactIds } from "@/lib/nonResponsive";
@@ -24,6 +25,15 @@ export async function GET(req: NextRequest) {
   // — same classification /api/reports/segmentation and /reports/kanban
   // use, so this filter can never disagree with what those pages show.
   const tag = searchParams.get("tag") ?? "";
+  // /map's region picker: comma-separated MAP_REGIONS keys, or "all". A
+  // non-empty value that matches no known key returns nothing (rather than
+  // silently falling back to every lead — e.g. a stale remembered key).
+  const regionKeys = (searchParams.get("regions") ?? "").split(",").map((k) => k.trim()).filter(Boolean);
+  const allRegions = regionKeys.includes(ALL_REGIONS_KEY);
+  const regionTerms = allRegions ? [] : termsForRegions(regionKeys);
+  if (regionKeys.length > 0 && !allRegions && regionTerms.length === 0) {
+    return NextResponse.json({ leads: [] });
+  }
 
   const [leads, noReplyAfterPitchIds, nonResponsiveIds] = await Promise.all([
     db.lead.findMany({
@@ -33,6 +43,10 @@ export async function GET(req: NextRequest) {
         ...(businessType && businessType !== "all" ? { businessType } : {}),
         ...(city && city !== "all" ? { address: { contains: city, mode: "insensitive" } } : {}),
         ...(province && province !== "all" ? { province } : {}),
+        // Under AND so it can't collide with the `search` OR below.
+        ...(regionTerms.length > 0
+          ? { AND: [{ OR: regionTerms.map((t) => ({ address: { contains: t, mode: "insensitive" as const } })) }] }
+          : {}),
         ...(search
           ? {
               OR: [

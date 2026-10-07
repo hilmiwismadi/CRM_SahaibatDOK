@@ -116,6 +116,8 @@ export async function GET(req: NextRequest) {
           needsOtherContact: c.needsOtherContact,
           needsFollowUp: c.needsFollowUp,
           followUpAt: c.followUpAt,
+          followUpNote: c.followUpNote,
+          followUpHasTime: c.followUpHasTime,
           letterSent: c.letterSent,
           noWaAccount: c.noWaAccount,
           appointment: c.appointment,

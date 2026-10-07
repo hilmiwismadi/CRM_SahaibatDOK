@@ -28,6 +28,11 @@ const TYPE_COLORS: Record<string, string> = {
   tag_change: "text-fuchsia-700 bg-fuchsia-50",
   replied_marked: "text-rose-700 bg-rose-50",
   note: "text-slate-600 bg-slate-100",
+  follow_up_done: "text-emerald-700 bg-emerald-50",
+  follow_up_snoozed: "text-amber-700 bg-amber-50",
+  appointment_scheduled: "text-cyan-700 bg-cyan-50",
+  appointment_done: "text-emerald-700 bg-emerald-50",
+  appointment_cancelled: "text-slate-600 bg-slate-100",
 };
 
 // wa_contacts boolean column name -> the same label /chat and /reports use
@@ -59,6 +64,18 @@ function describeActivity(a: Activity, locale: Locale, t: Translations): string 
   if (a.type === "replied_marked" && a.payload) {
     if (a.payload.cleared) return t.activityRepliedCleared;
     return a.payload.kind === "bot" ? t.activityRepliedBot : t.activityRepliedManual;
+  }
+  if (a.type === "follow_up_done" && a.payload) {
+    const parts: string[] = [];
+    if (typeof a.payload.task === "string" && a.payload.task) parts.push(a.payload.task);
+    if (typeof a.payload.note === "string" && a.payload.note) parts.push(`→ ${a.payload.note}`);
+    return parts.length ? parts.join(" ") : t.activityFollowUpDone;
+  }
+  if (a.type === "follow_up_snoozed" && a.payload && typeof a.payload.to === "string") {
+    return `${t.activityFollowUpSnoozedTo} ${formatDate(a.payload.to, locale, { day: "2-digit", month: "long", year: "numeric" })}`;
+  }
+  if (a.type.startsWith("appointment_") && a.payload && typeof a.payload.startsAt === "string") {
+    return formatDate(a.payload.startsAt, locale, { day: "2-digit", month: "long", year: "numeric" });
   }
   if (a.type === "wa_message_sent" || a.type === "wa_message_received") {
     return "";

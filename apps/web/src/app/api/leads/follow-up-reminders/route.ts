@@ -22,6 +22,8 @@ export async function GET() {
     select: {
       id: true,
       followUpAt: true,
+      followUpNote: true,
+      followUpHasTime: true,
       lead: { select: { id: true, name: true } },
     },
     orderBy: { followUpAt: "asc" },
@@ -34,6 +36,8 @@ export async function GET() {
       leadId: c.lead!.id,
       leadName: c.lead!.name,
       followUpAt: c.followUpAt,
+      followUpNote: c.followUpNote,
+      followUpHasTime: c.followUpHasTime,
     }));
 
   return NextResponse.json({ reminders });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   applyTemplateVariables,
   defaultVariableValues,
@@ -30,6 +30,30 @@ export default function Composer({
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
+
+  // Auto-grow the textarea with its content (long templates like the pitch
+  // used to sit behind a 2-row box you had to scroll inside). Capped so the
+  // message thread above never gets squeezed out; beyond the cap it scrolls.
+  // The box is also drag-resizable (bottom-right handle). Once the rep drags
+  // it, auto-grow stops so it doesn't fight the size they picked.
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const autoHeight = useRef<number | null>(null);
+  const manualResize = useRef(false);
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el || manualResize.current) return;
+    el.style.height = "auto";
+    const next = Math.min(el.scrollHeight, 320);
+    el.style.height = `${next}px`;
+    autoHeight.current = next;
+  }, [text]);
+
+  function detectManualResize() {
+    const el = textareaRef.current;
+    if (el && autoHeight.current !== null && Math.abs(el.offsetHeight - autoHeight.current) > 2) {
+      manualResize.current = true;
+    }
+  }
 
   // Fill-in-the-blanks state for the currently-applied template. Adjusting
   // one of these regenerates `text` from the template + current values —
@@ -147,6 +171,9 @@ export default function Composer({
       )}
       <div className="flex items-end gap-2">
         <textarea
+          ref={textareaRef}
+          onMouseUp={detectManualResize}
+          onTouchEnd={detectManualResize}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -158,7 +185,7 @@ export default function Composer({
           disabled={disabled || sending}
           placeholder={disabled ? "Not available" : "Type a message… (Enter to send, Shift+Enter for new line)"}
           rows={2}
-          className="flex-1 resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 disabled:bg-slate-50"
+          className="min-h-[3.5rem] flex-1 resize-y overflow-y-auto rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 disabled:bg-slate-50"
         />
         <button
           onClick={handleSend}

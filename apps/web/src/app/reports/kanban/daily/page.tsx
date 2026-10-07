@@ -51,18 +51,22 @@ const byMetric = new Map(HISTORY_COLUMNS.map((c) => [c.key, c]));
 // the ones who did but haven't given a real answer yet — did a bot field
 // it or is it just sitting unclassified, then the two "needs more from
 // us" tags, then the two definitive outcomes.
+// Columns with real history come first (Perlu Lanjutan, Jawaban Pasti right
+// after Tidak Ada Kontak WA); the not-tracked / mostly-empty columns
+// (Tidak Reply, Dijawab Bot, Perlu Diklasifikasi) are pushed to the right so
+// the board doesn't open on a wall of placeholders.
 const HISTORY_FUNNEL_COLUMNS: { key: HistoryMetric | SyntheticKey; group?: GroupKey }[] = [
   { key: "untouchedToTouched" },
   { key: "noWaAccount" },
-  { key: "nonResponsive", group: "no_reply" },
-  { key: "notInterested", group: "no_reply" },
-  { key: "repliedByBot", group: "unanswered" },
-  { key: "onGoing", group: "unanswered" },
   { key: "needsFollowUp", group: "needs_more" },
   { key: "needsOtherContact", group: "needs_more" },
   { key: "letterSent", group: "needs_more" },
   { key: "appointment", group: "resolved" },
   { key: "declined", group: "resolved" },
+  { key: "nonResponsive", group: "no_reply" },
+  { key: "notInterested", group: "no_reply" },
+  { key: "repliedByBot", group: "unanswered" },
+  { key: "onGoing", group: "unanswered" },
 ];
 
 function groupLabels(t: Translations): Record<GroupKey, string> {

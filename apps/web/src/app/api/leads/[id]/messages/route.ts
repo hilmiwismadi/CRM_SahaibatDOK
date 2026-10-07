@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { phoneToJid } from "@sahaibat/shared";
 import { db } from "@/lib/db";
 import { getActiveContactNode } from "@/lib/contactChain";
 import { sendOutboundToPhone, WaSendError } from "@/lib/waSend";
@@ -15,14 +16,29 @@ export async function GET(
   }
 
   const contactNode = await getActiveContactNode(id);
-  if (!contactNode.waContactId) {
+
+  // lead_contact_nodes.wa_contact_id is UNIQUE, but several leads can share
+  // one phone number (e.g. two listings of the same clinic) and therefore
+  // one wa_contact — only one of their nodes can hold that link. A node
+  // without the link falls back to the wa_contact for its own phone, so
+  // every lead on a shared number sees the same conversation instead of an
+  // empty history.
+  let waContactId = contactNode.waContactId;
+  if (!waContactId && contactNode.phoneNormalized) {
+    const shared = await db.waContact.findUnique({
+      where: { jid: phoneToJid(contactNode.phoneNormalized) },
+      select: { id: true },
+    });
+    waContactId = shared?.id ?? null;
+  }
+  if (!waContactId) {
     return NextResponse.json({ contact: null, messages: [] });
   }
 
   const [contact, messages] = await Promise.all([
-    db.waContact.findUnique({ where: { id: contactNode.waContactId } }),
+    db.waContact.findUnique({ where: { id: waContactId } }),
     db.waMessage.findMany({
-      where: { waContactId: contactNode.waContactId },
+      where: { waContactId },
       orderBy: { sentAt: "asc" },
     }),
   ]);
@@ -65,11 +81,22 @@ export async function POST(
       leadId: id,
     });
 
+    // lead_contact_nodes.wa_contact_id is UNIQUE, but several leads can share
+    // one phone number (e.g. a clinic group's front-desk line) and therefore
+    // one wa_contact. If another node already owns this wa_contact, skip the
+    // link — the message is already sent and recorded at this point, so
+    // throwing here would show "failed" for a message that was delivered.
     if (!contactNode.waContactId) {
-      await db.leadContactNode.update({
-        where: { id: contactNode.id },
-        data: { waContactId: waContact.id },
+      const taken = await db.leadContactNode.findUnique({
+        where: { waContactId: waContact.id },
+        select: { id: true },
       });
+      if (!taken) {
+        await db.leadContactNode.update({
+          where: { id: contactNode.id },
+          data: { waContactId: waContact.id },
+        });
+      }
     }
 
     return NextResponse.json({ message, contact: waContact });

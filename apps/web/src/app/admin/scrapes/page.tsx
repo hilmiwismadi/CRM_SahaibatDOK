@@ -54,7 +54,7 @@ export default function ScrapesAdminPage() {
         setMessage(`Error: ${JSON.stringify(data.error ?? data)}`);
       } else {
         setMessage(
-          `Imported "${fileName}" — scanned ${data.mergeSummary.scannedCount}, new ${data.mergeSummary.newCount}, updated ${data.mergeSummary.updatedCount}, skipped ${data.mergeSummary.skippedCount}.`,
+          `Imported "${fileName}" — scanned ${data.mergeSummary.scannedCount}, new ${data.mergeSummary.newCount}, updated ${data.mergeSummary.updatedCount}, skipped ${data.mergeSummary.skippedCount}, excluded (Puskesmas/non-clinic) ${data.mergeSummary.excludedCount}.`,
         );
         setFileName("");
         setQueryText("");

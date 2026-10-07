@@ -9,13 +9,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { NAV_LABELS } from "@/lib/i18n/translations";
-import { formatDate } from "@/lib/i18n/locale";
+import { formatDate, formatTime } from "@/lib/i18n/locale";
 
 interface FollowUpReminder {
   waContactId: string;
   leadId: string;
   leadName: string;
   followUpAt: string;
+  followUpNote: string | null;
+  followUpHasTime: boolean;
 }
 
 const REMINDERS_POLL_MS = 60000;
@@ -29,7 +31,7 @@ function openInBackgroundTab(url: string) {
   window.focus();
 }
 
-export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "letters" | "none";
+export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "letters" | "sync" | "none";
 
 interface NavItem {
   page: Exclude<AppPage, "none">;
@@ -45,6 +47,7 @@ const NAV_ITEMS: NavItem[] = [
   { page: "templates", href: "/templates", Icon: TemplateIcon },
   { page: "letters", href: "/letters", Icon: LetterIcon, newTab: true },
   { page: "reports", href: "/reports/overview", Icon: ReportIcon },
+  { page: "sync", href: "/sync/leadinput", Icon: SyncIcon },
   { page: "scrapes", href: "/admin/scrapes", Icon: ScrapeIcon },
 ];
 
@@ -285,8 +288,8 @@ export default function AppSidebar({ active }: { active: AppPage }) {
             top: remindersPos.top,
             left: remindersPos.left,
             zIndex: 200,
-            width: 280,
-            maxHeight: 360,
+            width: 360,
+            maxHeight: 420,
             overflowY: "auto",
             background: "#fff",
             borderRadius: 10,
@@ -294,69 +297,342 @@ export default function AppSidebar({ active }: { active: AppPage }) {
             padding: "10px 0",
           }}
         >
-          <div style={{ padding: "0 14px 8px", fontSize: 12.5, fontWeight: 700, color: "#0f172a" }}>
-            {t.sidebarReminders}
+          <div
+            style={{
+              padding: "0 14px 8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: "#0f172a",
+            }}
+          >
+            <span>{t.sidebarReminders}</span>
+            <Link
+              href="/schedule"
+              onClick={() => setRemindersOpen(false)}
+              style={{
+                fontSize: 12,
+                fontWeight: 600,
+                color: "#fff",
+                background: "#0891b2",
+                borderRadius: 6,
+                padding: "3px 10px",
+                textDecoration: "none",
+              }}
+            >
+              {t.sidebarRemindersSchedule}
+            </Link>
           </div>
           {reminders.length === 0 ? (
             <div style={{ padding: "10px 14px", fontSize: 12.5, color: "#94a3b8" }}>{t.sidebarRemindersEmpty}</div>
           ) : (
             reminders.map((r) => (
-              <button
+              <ReminderItem
                 key={r.waContactId}
-                onClick={() => {
+                r={r}
+                locale={locale}
+                t={t}
+                onOpenChat={() => {
                   openInBackgroundTab(`/chat?leadId=${r.leadId}`);
                   setRemindersOpen(false);
                 }}
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 8,
-                  padding: "8px 14px",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#f1f5f9")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                <span style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 1 }}>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#0f172a",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {r.leadName}
-                  </span>
-                  <span style={{ fontSize: 11, color: "#94a3b8" }}>
-                    {formatDate(r.followUpAt, locale, { day: "2-digit", month: "short", year: "numeric" })}
-                  </span>
-                </span>
-                <span
-                  style={{
-                    flexShrink: 0,
-                    fontSize: 10.5,
-                    fontWeight: 700,
-                    color: reminderIsToday(r.followUpAt) ? "#0ea5e9" : "#dc2626",
-                    background: reminderIsToday(r.followUpAt) ? "#e0f2fe" : "#fee2e2",
-                    borderRadius: 999,
-                    padding: "2px 7px",
-                  }}
-                >
-                  {reminderIsToday(r.followUpAt) ? t.sidebarRemindersToday : t.sidebarRemindersOverdue(reminderOverdueDays(r.followUpAt))}
-                </span>
-              </button>
+                onChanged={loadReminders}
+              />
             ))
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// Local-time "YYYY-MM-DD", `days` from today (toISOString would shift the
+// date by the UTC offset around midnight).
+function localDateOffset(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+type ReminderPanel = "none" | "done" | "snooze" | "note";
+
+const reminderBtn: React.CSSProperties = {
+  fontSize: 11,
+  fontWeight: 600,
+  padding: "3px 8px",
+  borderRadius: 6,
+  border: "1px solid #e2e8f0",
+  background: "#fff",
+  color: "#334155",
+  cursor: "pointer",
+};
+
+const reminderInput: React.CSSProperties = {
+  width: "100%",
+  boxSizing: "border-box",
+  fontSize: 12,
+  padding: "5px 8px",
+  border: "1px solid #cbd5e1",
+  borderRadius: 6,
+  outline: "none",
+  fontFamily: "inherit",
+};
+
+// One row of the "Pengingat Follow Up" popup. Clicking the name/date opens the
+// chat (as before); the small buttons underneath act on the reminder itself:
+//  - Sudah:   done — for follow-ups handled outside the CRM (phone call, WA
+//             from the phone, in person). Optional "how" note goes to history.
+//  - Tunda:   snooze — moves the reminder to a later date, tag stays on.
+//  - Catatan: edit the short "what needs to be done" note. The note is shown
+//             under the name and in the hover tooltip.
+function ReminderItem({
+  r,
+  locale,
+  t,
+  onOpenChat,
+  onChanged,
+}: {
+  r: FollowUpReminder;
+  locale: ReturnType<typeof useLanguage>["locale"];
+  t: ReturnType<typeof useLanguage>["t"];
+  onOpenChat: () => void;
+  onChanged: () => void;
+}) {
+  const [panel, setPanel] = useState<ReminderPanel>("none");
+  const [text, setText] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function send(body: Record<string, string>) {
+    setBusy(true);
+    setError(false);
+    try {
+      const res = await fetch(`/api/conversations/${r.waContactId}/follow-up`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setPanel("none");
+      onChanged();
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function open(next: ReminderPanel) {
+    setError(false);
+    if (panel === next) {
+      setPanel("none");
+      return;
+    }
+    setPanel(next);
+    if (next === "done") setText("");
+    if (next === "note") setText(r.followUpNote ?? "");
+    if (next === "snooze") {
+      setDate(localDateOffset(1));
+      setTime("");
+    }
+  }
+
+  const overdue = !reminderIsToday(r.followUpAt);
+  // Date + optional time -> what the snooze API wants: a bare date, or a
+  // full ISO datetime when a time was picked.
+  const snoozeUntil = time && date ? new Date(`${date}T${time}`).toISOString() : date;
+  const tooltip = r.followUpNote ? `${r.leadName}\n${r.followUpNote}` : r.leadName;
+
+  return (
+    <div style={{ borderBottom: "1px solid #f1f5f9", padding: "8px 14px" }} title={tooltip}>
+      <button
+        onClick={onOpenChat}
+        style={{
+          display: "flex",
+          width: "100%",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 8,
+          padding: 0,
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        <span style={{ minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+          <span
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#0f172a",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              overflowWrap: "anywhere",
+            }}
+          >
+            {r.leadName}
+          </span>
+          <span style={{ fontSize: 11, color: "#94a3b8" }}>
+            {formatDate(r.followUpAt, locale, { day: "2-digit", month: "short", year: "numeric" })}
+            {r.followUpHasTime &&
+              ` · ${formatTime(r.followUpAt, locale, { hour: "2-digit", minute: "2-digit", hour12: false })}`}
+          </span>
+        </span>
+        <span
+          style={{
+            flexShrink: 0,
+            fontSize: 10.5,
+            fontWeight: 700,
+            color: overdue ? "#dc2626" : "#0ea5e9",
+            background: overdue ? "#fee2e2" : "#e0f2fe",
+            borderRadius: 999,
+            padding: "2px 7px",
+          }}
+        >
+          {overdue ? t.sidebarRemindersOverdue(reminderOverdueDays(r.followUpAt)) : t.sidebarRemindersToday}
+        </span>
+      </button>
+
+      <div
+        style={{
+          marginTop: 4,
+          fontSize: 12,
+          lineHeight: 1.35,
+          color: r.followUpNote ? "#334155" : "#cbd5e1",
+          fontStyle: r.followUpNote ? "normal" : "italic",
+          background: r.followUpNote ? "#f8fafc" : "transparent",
+          borderLeft: r.followUpNote ? "3px solid #94a3b8" : "none",
+          padding: r.followUpNote ? "3px 8px" : 0,
+          overflowWrap: "anywhere",
+        }}
+      >
+        {r.followUpNote ?? t.reminderNoNote}
+      </div>
+
+      <div style={{ display: "flex", gap: 6, marginTop: 6 }}>
+        <button style={reminderBtn} onClick={() => open("done")}>{t.reminderDone}</button>
+        <button style={reminderBtn} onClick={() => open("snooze")}>{t.reminderSnooze}</button>
+        <button style={reminderBtn} onClick={() => open("note")}>{t.reminderNote}</button>
+      </div>
+
+      {panel === "done" && (
+        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 6 }}>
+          <input
+            style={reminderInput}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t.reminderDonePlaceholder}
+            maxLength={300}
+            autoFocus
+            onKeyDown={(e) => e.key === "Enter" && !busy && send({ action: "done", note: text })}
+          />
+          <PanelActions
+            t={t}
+            busy={busy}
+            onSave={() => send({ action: "done", note: text })}
+            onCancel={() => setPanel("none")}
+          />
+        </div>
+      )}
+
+      {panel === "snooze" && (
+        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <button style={reminderBtn} disabled={busy} onClick={() => send({ action: "snooze", until: localDateOffset(1) })}>
+              {t.reminderSnoozeTomorrow}
+            </button>
+            <button style={reminderBtn} disabled={busy} onClick={() => send({ action: "snooze", until: localDateOffset(3) })}>
+              {t.reminderSnooze3d}
+            </button>
+            <button style={reminderBtn} disabled={busy} onClick={() => send({ action: "snooze", until: localDateOffset(7) })}>
+              {t.reminderSnooze1w}
+            </button>
+          </div>
+          <div style={{ display: "flex", gap: 6 }}>
+            <input
+              type="date"
+              style={{ ...reminderInput, flex: 1 }}
+              value={date}
+              min={localDateOffset(1)}
+              onChange={(e) => setDate(e.target.value)}
+              aria-label={t.reminderSnoozePick}
+            />
+            <input
+              type="time"
+              style={{ ...reminderInput, width: 92 }}
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              aria-label={t.reminderTimeOptional}
+              title={t.reminderTimeOptional}
+            />
+            <button
+              style={{ ...reminderBtn, background: "#0891b2", color: "#fff", border: "1px solid #0891b2" }}
+              disabled={busy || !date}
+              onClick={() => send({ action: "snooze", until: snoozeUntil })}
+            >
+              {t.reminderSave}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {panel === "note" && (
+        <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 6 }}>
+          <textarea
+            style={{ ...reminderInput, resize: "vertical" }}
+            rows={2}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t.reminderNotePlaceholder}
+            maxLength={300}
+            autoFocus
+          />
+          <PanelActions
+            t={t}
+            busy={busy}
+            onSave={() => send({ action: "note", note: text })}
+            onCancel={() => setPanel("none")}
+          />
+        </div>
+      )}
+
+      {error && <div style={{ marginTop: 4, fontSize: 11, color: "#dc2626" }}>{t.reminderActionFailed}</div>}
+    </div>
+  );
+}
+
+function PanelActions({
+  t,
+  busy,
+  onSave,
+  onCancel,
+}: {
+  t: ReturnType<typeof useLanguage>["t"];
+  busy: boolean;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+      <button style={reminderBtn} onClick={onCancel} disabled={busy}>
+        {t.reminderCancel}
+      </button>
+      <button
+        style={{ ...reminderBtn, background: "#0891b2", color: "#fff", border: "1px solid #0891b2" }}
+        onClick={onSave}
+        disabled={busy}
+      >
+        {t.reminderSave}
+      </button>
     </div>
   );
 }
@@ -462,6 +738,16 @@ function BellIcon({ muted }: { muted: boolean }) {
         strokeLinejoin="round"
       />
       <path d="M10 18a2 2 0 0 0 4 0" stroke={c} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SyncIcon({ muted }: { muted: boolean }) {
+  const c = muted ? "#94a3b8" : "#f8fafc";
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M4 12a8 8 0 0 1 14-5.3L21 9M21 9V4M21 9h-5" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M20 12a8 8 0 0 1-14 5.3L3 15M3 15v5M3 15h5" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

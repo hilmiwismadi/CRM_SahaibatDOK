@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import ContactChainTree, { type ContactChainNodeItem, type AddContactInput } from "@/app/components/ContactChainTree";
 import ConversationList from "./ConversationList";
@@ -22,6 +22,62 @@ function defaultFollowUpDate(): string {
   const d = new Date();
   d.setDate(d.getDate() + 1);
   return d.toISOString().slice(0, 10);
+}
+
+// Stored Google Maps URL when the lead has one; otherwise a name search
+// (pinned to the place id when it's a real one — hand-added leads carry
+// "manual-<uuid>"), same URL shape /map's drawer uses.
+function gmapsUrl(lead: LeadBrief): string {
+  if (lead.googleMapsUrl) return lead.googleMapsUrl;
+  const base = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lead.name)}`;
+  return lead.googlePlaceId && !lead.googlePlaceId.startsWith("manual-")
+    ? `${base}&query_place_id=${lead.googlePlaceId}`
+    : base;
+}
+
+function LeadInfoCard({ lead }: { lead: LeadBrief }) {
+  const rating = lead.rating != null ? Number(lead.rating) : null;
+  const rows: { label: string; value: ReactNode }[] = [];
+  if (rating != null && !Number.isNaN(rating)) {
+    rows.push({
+      label: "Rating",
+      value: `★ ${rating.toFixed(1)}${lead.reviewCount != null ? ` (${lead.reviewCount} ulasan)` : ""}`,
+    });
+  }
+  if (lead.category) rows.push({ label: "Kategori", value: lead.category });
+  if (lead.businessType) rows.push({ label: "Tipe", value: lead.businessType });
+  if (lead.priceRange) rows.push({ label: "Harga", value: lead.priceRange });
+  if (lead.address) rows.push({ label: "Alamat", value: lead.address });
+  if (lead.province) rows.push({ label: "Provinsi", value: lead.province });
+  if (lead.phoneOffice) rows.push({ label: "Telp kantor", value: lead.phoneOffice });
+  if (lead.email) rows.push({ label: "Email", value: lead.email });
+  const link = (href: string, text: string) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="break-all text-sky-600 hover:underline">
+      {text}
+    </a>
+  );
+  rows.push({ label: "Google Maps", value: link(gmapsUrl(lead), "Buka di Google Maps ↗") });
+  if (lead.website) rows.push({ label: "Website", value: link(lead.website, lead.website) });
+  if (lead.instagramUrl) rows.push({ label: "Instagram", value: link(lead.instagramUrl, lead.instagramUrl) });
+  if (lead.notes) rows.push({ label: "Catatan", value: <span className="whitespace-pre-wrap">{lead.notes}</span> });
+
+  return (
+    <div className="max-h-[70vh] w-80 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 text-left shadow-lg">
+      <div className="mb-2 text-xs font-semibold text-slate-900">{lead.name}</div>
+      {rows.length === 0 ? (
+        <div className="text-xs text-slate-400">Belum ada info tambahan.</div>
+      ) : (
+        <dl className="space-y-1.5 text-xs">
+          {rows.map((r) => (
+            <div key={r.label} className="grid grid-cols-[84px_1fr] gap-2">
+              <dt className="text-slate-400">{r.label}</dt>
+              <dd className="text-slate-700">{r.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
+  );
 }
 
 export default function ChatPage() {
@@ -75,6 +131,8 @@ export default function ChatPage() {
   // applying the tag right away, see that function's comment.
   const [followUpPrompt, setFollowUpPrompt] = useState<ConversationListItem | null>(null);
   const [followUpDate, setFollowUpDate] = useState("");
+  const [followUpTime, setFollowUpTime] = useState("");
+  const [followUpNote, setFollowUpNote] = useState("");
 
   // Every tag action below closes the menu immediately and the list's
   // single canonical badge (see ConversationList) often doesn't change at
@@ -160,7 +218,17 @@ export default function ChatPage() {
     if (needsFollowUp) {
       setContextMenu(null);
       setFollowUpPrompt(item);
-      setFollowUpDate(item.followUpAt ? item.followUpAt.slice(0, 10) : defaultFollowUpDate());
+      if (item.followUpAt && item.followUpHasTime) {
+        // Timed follow-up: show the local date/time it was set for, not the UTC slice.
+        const d = new Date(item.followUpAt);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        setFollowUpDate(`${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`);
+        setFollowUpTime(`${pad(d.getHours())}:${pad(d.getMinutes())}`);
+      } else {
+        setFollowUpDate(item.followUpAt ? item.followUpAt.slice(0, 10) : defaultFollowUpDate());
+        setFollowUpTime("");
+      }
+      setFollowUpNote(item.followUpNote ?? "");
       return Promise.resolve();
     }
     return applyFlag(item, { needsFollowUp: false }, t.chatTagRemoved(labels.needs_follow_up));
@@ -172,7 +240,13 @@ export default function ChatPage() {
     setFollowUpPrompt(null);
     return applyFlag(
       item,
-      { needsFollowUp: true, followUpAt: followUpDate },
+      {
+        needsFollowUp: true,
+        // Bare date, or a full ISO datetime when a time was picked (the flag
+        // route treats a "T" as "has a specific time").
+        followUpAt: followUpTime ? new Date(`${followUpDate}T${followUpTime}`).toISOString() : followUpDate,
+        followUpNote: followUpNote.trim(),
+      },
       t.chatFollowUpScheduled(formatDate(followUpDate, locale, { day: "2-digit", month: "long", year: "numeric" })),
     );
   }
@@ -208,9 +282,11 @@ export default function ChatPage() {
   // Passive notification: a lead replying while you're on a different tab
   // (or a different page in the app) still shows up as a badge on the
   // browser tab title, since there's no OS-level push notification wired
-  // up. "Needs reply" = the room's most recent message is inbound.
+  // up. "Needs reply" uses the server-computed c.needsReply — the same flag
+  // ConversationList's "N belum dibalas" badge counts — so rooms marked
+  // replied (manual/bot override) don't inflate the tab count.
   useEffect(() => {
-    const needsReply = conversations.filter((c) => c.lastMessage?.direction === "inbound").length;
+    const needsReply = conversations.filter((c) => c.needsReply).length;
     document.title = needsReply > 0 ? `(${needsReply}) Chat — SahAIbat DOK` : "Chat — SahAIbat DOK";
     return () => {
       document.title = "SahAIbat DOK";
@@ -421,17 +497,38 @@ export default function ChatPage() {
             {selected && (
               <>
                 <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3">
-                  <div>
-                    <div className="text-sm font-semibold text-slate-900">{title}</div>
-                    {displayPhone && <div className="text-xs text-slate-400">{displayPhone}</div>}
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-900">{title}</div>
+                      {displayPhone && <div className="text-xs text-slate-400">{displayPhone}</div>}
+                    </div>
+                    {selected.kind === "lead" && leadDetail && (
+                      <a
+                        href={gmapsUrl(leadDetail)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="whitespace-nowrap rounded-md bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-cyan-700"
+                      >
+                        Open Gmaps ↗
+                      </a>
+                    )}
                   </div>
                   {selected.kind === "lead" && (
-                    <button
-                      onClick={() => setInfoOpen((v) => !v)}
-                      className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-                    >
-                      {infoOpen ? t.chatHideInfo : t.chatLeadInfo}
-                    </button>
+                    <div className="group relative">
+                      <button
+                        onClick={() => setInfoOpen((v) => !v)}
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                      >
+                        {infoOpen ? t.chatHideInfo : t.chatLeadInfo}
+                      </button>
+                      {leadDetail && (
+                        // pt-2 (not margin) keeps the hover area continuous
+                        // between the button and the card so links stay clickable.
+                        <div className="invisible absolute right-0 top-full z-50 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                          <LeadInfoCard lead={leadDetail} />
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -646,7 +743,23 @@ export default function ChatPage() {
               autoFocus
               className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
             />
+            <label className="mt-2 block text-xs font-medium text-slate-600">{t.chatFollowUpTimeLabel}</label>
+            <input
+              type="time"
+              value={followUpTime}
+              onChange={(e) => setFollowUpTime(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+            />
             <p className="mt-2 text-xs text-slate-400">{t.chatFollowUpPromptHint}</p>
+            <label className="mt-3 block text-xs font-medium text-slate-600">{t.chatFollowUpNoteLabel}</label>
+            <textarea
+              value={followUpNote}
+              onChange={(e) => setFollowUpNote(e.target.value)}
+              maxLength={300}
+              rows={2}
+              placeholder={t.chatFollowUpNotePlaceholder}
+              className="mt-1 w-full resize-y rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+            />
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setFollowUpPrompt(null)}

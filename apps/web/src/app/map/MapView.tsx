@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import AppSidebar from "@/app/components/AppSidebar";
+import { CATEGORY_LABELS_EN, CATEGORY_ORDER, type LeadCategory } from "@/lib/leadSegmentation";
+import { ALL_REGIONS_KEY } from "@/lib/mapRegions";
 
 interface StageDef {
   key: string;
@@ -38,23 +40,77 @@ interface Lead {
   // NO_WA_COLOR/pinColor below — since "can't be reached on WA" is a more
   // urgent fact than whatever stage the lead happens to be in.
   noWaAccount: boolean;
+  // Real working status (same classification /reports/kanban uses) — what
+  // pin colors, the legend and the status filter are based on. pipelineStage
+  // is not used for this: reps never advance it, so it stays "new".
+  tagCategory: LeadCategory;
+  // Why a rep is deliberately not contacting this lead — see LABEL_OPTIONS.
+  label: string | null;
+  labelNote: string | null;
+}
+
+const LABEL_OPTIONS: { key: string; text: string }[] = [
+  { key: "dental", text: "Dental" },
+  { key: "aesthetic", text: "Aesthetic" },
+  { key: "low_rating", text: "Low rating" },
+  { key: "government_affiliate", text: "Government Affiliate" },
+  { key: "other", text: "Other options" },
+];
+
+function labelText(lead: Lead): string | null {
+  if (!lead.label) return null;
+  if (lead.label === "other") return lead.labelNote ? `Other: ${lead.labelNote}` : "Other";
+  return LABEL_OPTIONS.find((o) => o.key === lead.label)?.text ?? lead.label;
 }
 
 function hasCoords(l: Lead): l is Lead & { lat: number; lng: number } {
   return l.lat != null && l.lng != null;
 }
 
-const NO_WA_COLOR = "#8B4513"; // brown
+// The map shows four top-level groups. Everything a rep has actually
+// worked (Appointment, Reject, Follow Up, ...) is folded into "Contacted"
+// and only broken out when its legend row is expanded.
+type Group = "untouched" | "no_wa" | "later" | "contacted";
 
-// Brown pin covers two distinct "can't be WA-chatted" cases, both equally
-// worth spotting at a glance across the whole map: (1) noWaAccount — an
-// actual number exists but is confirmed (via sock.onWhatsApp()) to have no
-// WhatsApp account; (2) no phoneNormalized at all — nothing was ever
-// scraped to even attempt a chat with. A rep scanning the map shouldn't
-// have to click into each pin to tell "not contacted yet" (still has a
-// real chance) apart from "can't be reached at all" (a dead end for WA).
+const GROUP_ORDER: Group[] = ["untouched", "no_wa", "later", "contacted"];
+const GROUP_COLORS: Record<Group, string> = {
+  untouched: "#94a3b8", // slate
+  no_wa: "#8B4513", // brown
+  later: "#7c3aed", // purple
+  contacted: "#3b82f6", // blue
+};
+const GROUP_LABELS: Record<Group, string> = {
+  untouched: "Untouched",
+  no_wa: "Tidak Ada Kontak WA",
+  later: "Later",
+  contacted: "Contacted",
+};
+
+// The detailed statuses that live under "Contacted".
+const CONTACTED_STATUSES = CATEGORY_ORDER.filter((c) => c !== "untouched" && c !== "no_wa_account");
+
+function statusLabel(c: LeadCategory): string {
+  return CATEGORY_LABELS_EN[c];
+}
+
+// "Tidak Ada Kontak WA" covers two distinct "can't be WA-chatted" cases:
+// (1) noWaAccount — a number exists but is confirmed (via
+// sock.onWhatsApp()) to have no WhatsApp account; (2) no phoneNormalized at
+// all. Both are dead ends for WA. A label ("Later") wins over everything —
+// it means a rep deliberately set the lead aside.
+function groupOf(lead: Lead): Group {
+  if (lead.label) return "later";
+  if (lead.noWaAccount || !lead.phoneNormalized) return "no_wa";
+  // Untouched lead whose only number is a landline (+62<area code>, not
+  // +628...) can never be WA-chatted — auto-bucket it instead of waiting for
+  // a failed send to set noWaAccount. Touched leads keep their real status.
+  if (lead.tagCategory === "untouched" && isLikelyLandline(lead.phoneNormalized)) return "no_wa";
+  if (lead.tagCategory === "untouched") return "untouched";
+  return "contacted";
+}
+
 function pinColor(lead: Lead): string {
-  return lead.noWaAccount || !lead.phoneNormalized ? NO_WA_COLOR : lead.pipelineStageDef.color;
+  return GROUP_COLORS[groupOf(lead)];
 }
 
 // Indonesian mobile (WhatsApp-capable) numbers always take the form
@@ -74,11 +130,15 @@ function isLikelyLandline(phoneNormalized: string | null): boolean {
 interface Activity {
   id: string;
   type: string;
-  payload: { from?: string; to?: string } | null;
+  payload: { from?: string; to?: string | null; note?: string | null } | null;
   createdAt: string;
 }
 
-const TEXT_ON_DARK_STAGES = new Set(["new", "contacted", "trial_rejected", "offer_payment"]);
+function activityLabel(to: string | null | undefined, note: string | null | undefined): string {
+  if (!to) return "cleared";
+  if (to === "other") return note ? `Other — ${note}` : "Other";
+  return LABEL_OPTIONS.find((o) => o.key === to)?.text ?? to;
+}
 
 function pinIcon(color: string, selected: boolean) {
   const size = selected ? 40 : 30;
@@ -96,15 +156,48 @@ function pinIcon(color: string, selected: boolean) {
   });
 }
 
-function FitBounds({ leads }: { leads: (Lead & { lat: number; lng: number })[] }) {
+// Refits when `fitKey` (the region selection whose data is now loaded)
+// changes — not on the focus-triggered refetches, which keep the same key and
+// so don't yank the viewport away from wherever the rep has panned.
+function FitBounds({ leads, fitKey }: { leads: (Lead & { lat: number; lng: number })[]; fitKey: string }) {
   const map = useMap();
   useEffect(() => {
     if (leads.length === 0) return;
     const bounds = L.latLngBounds(leads.map((l) => [l.lat, l.lng] as [number, number]));
     map.fitBounds(bounds, { padding: [48, 48] });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [leads.length === 0]);
+  }, [fitKey, leads.length === 0]);
   return null;
+}
+
+interface RegionOption {
+  key: string;
+  label: string;
+  count: number;
+}
+
+const NO_LEADS: Lead[] = [];
+
+const REGION_STORAGE_KEY = "map.regions";
+
+// Remembered selection from the last visit. localStorage can throw or be
+// empty (private window, blocked site data) — fall back to "nothing picked".
+function readStoredRegions(): string[] {
+  try {
+    const raw = window.localStorage.getItem(REGION_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((k): k is string => typeof k === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+function storeRegions(keys: string[]) {
+  try {
+    window.localStorage.setItem(REGION_STORAGE_KEY, JSON.stringify(keys));
+  } catch {
+    // remembering the choice is a convenience only
+  }
 }
 
 function FlyToSelected({ lead }: { lead: Lead | null }) {
@@ -117,11 +210,31 @@ function FlyToSelected({ lead }: { lead: Lead | null }) {
 }
 
 export default function MapView() {
-  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loadedLeads, setLeads] = useState<Lead[]>([]);
   const [stages, setStages] = useState<StageDef[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Only the selected regions are fetched — loading every lead at once made
+  // the first paint slow. Nothing is fetched until a region is picked.
+  const [regionOptions, setRegionOptions] = useState<RegionOption[]>([]);
+  const [totalLeads, setTotalLeads] = useState(0);
+  const [regionSel, setRegionSel] = useState<string[]>(readStoredRegions);
+  const [draftRegions, setDraftRegions] = useState<string[]>(regionSel);
+  const [regionPickerOpen, setRegionPickerOpen] = useState(regionSel.length === 0);
+  const [loadedKey, setLoadedKey] = useState("");
+  const regionKey = regionSel.join(",");
+  // Derived rather than set from the fetch effect: nothing picked -> no leads,
+  // and "loading" is simply "the selection hasn't finished loading yet".
+  const leads = regionKey === "" ? NO_LEADS : loadedLeads;
+  const loading = regionKey !== "" && loadedKey !== regionKey;
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<string>("all");
+  // Legend doubles as the filter: anything in these sets is hidden from
+  // both the pins and the lead list.
+  const [hiddenGroups, setHiddenGroups] = useState<Set<Group>>(new Set());
+  const [hiddenStatuses, setHiddenStatuses] = useState<Set<LeadCategory>>(new Set());
+  const [hiddenLabels, setHiddenLabels] = useState<Set<string>>(new Set());
+  // Sub-lists (Later's labels, Contacted's statuses) start minimized.
+  const [expanded, setExpanded] = useState<Set<Group>>(new Set());
+  const [legendOpen, setLegendOpen] = useState(true);
+  const [otherReason, setOtherReason] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [applying, setApplying] = useState(false);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -129,10 +242,27 @@ export default function MapView() {
 
   useEffect(() => {
     let cancelled = false;
+    fetch("/api/leads/region-counts", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        setRegionOptions(data.regions ?? []);
+        setTotalLeads(data.total ?? 0);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (regionKey === "") return;
 
     function loadLeadsAndStages() {
       Promise.all([
-        fetch("/api/leads", { cache: "no-store" }).then((r) => r.json()),
+        fetch(`/api/leads?regions=${encodeURIComponent(regionKey)}`, { cache: "no-store" }).then((r) => r.json()),
         fetch("/api/pipeline-stages", { cache: "no-store" }).then((r) => r.json()),
       ])
         .then(([leadsData, stagesData]) => {
@@ -144,10 +274,10 @@ export default function MapView() {
           // only).
           setLeads(leadsData.leads ?? []);
           setStages(stagesData.stages ?? []);
-          setLoading(false);
+          setLoadedKey(regionKey);
         })
         .catch(() => {
-          if (!cancelled) setLoading(false);
+          if (!cancelled) setLoadedKey(regionKey);
         });
     }
 
@@ -171,7 +301,33 @@ export default function MapView() {
       window.removeEventListener("focus", onFocusOrVisible);
       document.removeEventListener("visibilitychange", onFocusOrVisible);
     };
-  }, []);
+  }, [regionKey]);
+
+  function applyRegions(keys: string[]) {
+    // "All" is exclusive — picking it alongside regions would be redundant.
+    const next = keys.includes(ALL_REGIONS_KEY) ? [ALL_REGIONS_KEY] : keys;
+    storeRegions(next);
+    setSelectedId(null);
+    setRegionSel(next);
+    setDraftRegions(next);
+    setRegionPickerOpen(next.length === 0);
+  }
+
+  function toggleDraft(key: string) {
+    setDraftRegions((d) => {
+      if (key === ALL_REGIONS_KEY) return d.includes(ALL_REGIONS_KEY) ? [] : [ALL_REGIONS_KEY];
+      const without = d.filter((k) => k !== ALL_REGIONS_KEY);
+      return without.includes(key) ? without.filter((k) => k !== key) : [...without, key];
+    });
+  }
+
+  const regionSummary =
+    regionSel.length === 0
+      ? "Pilih daerah"
+      : regionSel.includes(ALL_REGIONS_KEY)
+        ? "Semua daerah"
+        : regionSel.map((k) => regionOptions.find((r) => r.key === k)?.label ?? k).join(", ");
+  const draftChanged = draftRegions.join(",") !== regionKey;
 
   useEffect(() => {
     if (!selectedId) {
@@ -193,10 +349,27 @@ export default function MapView() {
     };
   }, [selectedId]);
 
-  const stageCounts = useMemo(() => {
+  const groupCounts = useMemo(() => {
+    const counts: Partial<Record<Group, number>> = {};
+    leads.forEach((l) => {
+      const g = groupOf(l);
+      counts[g] = (counts[g] ?? 0) + 1;
+    });
+    return counts;
+  }, [leads]);
+
+  const statusCounts = useMemo(() => {
+    const counts: Partial<Record<LeadCategory, number>> = {};
+    leads.forEach((l) => {
+      if (groupOf(l) === "contacted") counts[l.tagCategory] = (counts[l.tagCategory] ?? 0) + 1;
+    });
+    return counts;
+  }, [leads]);
+
+  const labelCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     leads.forEach((l) => {
-      counts[l.pipelineStage] = (counts[l.pipelineStage] ?? 0) + 1;
+      if (l.label) counts[l.label] = (counts[l.label] ?? 0) + 1;
     });
     return counts;
   }, [leads]);
@@ -204,12 +377,20 @@ export default function MapView() {
   const filteredLeads = useMemo(() => {
     const q = query.trim().toLowerCase();
     return leads.filter((l) => {
-      const matchesFilter = filter === "all" || l.pipelineStage === filter;
-      const matchesQuery =
-        q === "" || l.name.toLowerCase().includes(q) || (l.category ?? "").toLowerCase().includes(q);
-      return matchesFilter && matchesQuery;
+      const g = groupOf(l);
+      if (hiddenGroups.has(g)) return false;
+      if (g === "contacted" && hiddenStatuses.has(l.tagCategory)) return false;
+      if (g === "later" && l.label && hiddenLabels.has(l.label)) return false;
+      return q === "" || l.name.toLowerCase().includes(q) || (l.category ?? "").toLowerCase().includes(q);
     });
-  }, [leads, query, filter]);
+  }, [leads, query, hiddenGroups, hiddenStatuses, hiddenLabels]);
+
+  function toggleIn<T>(set: Set<T>, value: T): Set<T> {
+    const next = new Set(set);
+    if (next.has(value)) next.delete(value);
+    else next.add(value);
+    return next;
+  }
 
   // Map pins can only plot leads with coordinates — kept separate from
   // filteredLeads (which drives the sidebar list, search, and stage
@@ -223,18 +404,26 @@ export default function MapView() {
     return stages.find((s) => s.key === key)?.label ?? key;
   }
 
-  async function changeStage(toStage: string) {
-    if (!selected || toStage === selected.pipelineStage) return;
+  // Keep the "Other" reason box in sync with whichever lead is selected.
+  useEffect(() => {
+    setOtherReason(selected?.label === "other" ? (selected.labelNote ?? "") : "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected?.id]);
+
+  async function saveLabel(label: string | null, note?: string) {
+    if (!selected) return;
     setApplying(true);
     try {
-      const res = await fetch(`/api/leads/${selected.id}`, {
-        method: "PATCH",
+      const res = await fetch(`/api/leads/${selected.id}/label`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ toStage }),
+        body: JSON.stringify({ label, note }),
       });
       const data = await res.json();
       if (res.ok) {
-        setLeads((prev) => prev.map((l) => (l.id === selected.id ? { ...l, ...data.lead } : l)));
+        setLeads((prev) =>
+          prev.map((l) => (l.id === selected.id ? { ...l, label: data.lead.label, labelNote: data.lead.labelNote } : l)),
+        );
         const activityRes = await fetch(`/api/leads/${selected.id}/activities`);
         const activityData = await activityRes.json();
         setActivities(activityData.activities ?? []);
@@ -259,29 +448,64 @@ export default function MapView() {
             onChange={(e) => setQuery(e.target.value)}
             style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, fontFamily: "inherit" }}
           />
-          <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
-            <FilterPill
-              active={filter === "all"}
-              label={`All (${leads.length})`}
-              activeBg="#0f172a"
-              activeColor="#fff"
-              onClick={() => setFilter("all")}
-            />
-            {stages.map((s) => (
-              <FilterPill
-                key={s.key}
-                active={filter === s.key}
-                label={`${s.label} (${stageCounts[s.key] ?? 0})`}
-                activeBg={s.color}
-                activeColor={TEXT_ON_DARK_STAGES.has(s.key) ? "#fff" : "#1c1917"}
-                onClick={() => setFilter(s.key)}
-              />
-            ))}
+          <div style={{ fontSize: 11.5, color: "#94a3b8", marginTop: 8 }}>
+            Showing {filteredLeads.length} of {leads.length} · use the legend on the map to filter
+          </div>
+
+          {/* Region picker — only the selected regions are loaded. */}
+          <div style={{ marginTop: 10 }}>
+            <button
+              onClick={() => setRegionPickerOpen((o) => !o)}
+              style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", gap: 8, padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", cursor: "pointer", fontSize: 13, fontFamily: "inherit", textAlign: "left" }}
+            >
+              <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ color: "#94a3b8" }}>Daerah: </span>
+                <span style={{ fontWeight: 600 }}>{regionSummary}</span>
+              </span>
+              <span style={{ color: "#64748b", fontSize: 12 }}>{regionPickerOpen ? "▾" : "▸"}</span>
+            </button>
+            {regionPickerOpen && (
+              <div style={{ marginTop: 6, border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff" }}>
+                <div style={{ maxHeight: 260, overflowY: "auto", padding: "6px 4px" }}>
+                  <RegionRow
+                    label="Semua daerah (lambat)"
+                    count={totalLeads}
+                    checked={draftRegions.includes(ALL_REGIONS_KEY)}
+                    onClick={() => toggleDraft(ALL_REGIONS_KEY)}
+                  />
+                  {regionOptions.map((r) => (
+                    <RegionRow
+                      key={r.key}
+                      label={r.label}
+                      count={r.count}
+                      checked={draftRegions.includes(r.key)}
+                      onClick={() => toggleDraft(r.key)}
+                    />
+                  ))}
+                  {regionOptions.length === 0 && <div style={{ padding: "6px 8px", fontSize: 12, color: "#94a3b8" }}>Memuat daftar daerah…</div>}
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, padding: "8px 10px", borderTop: "1px solid #f1f5f9" }}>
+                  <button style={linkBtn} onClick={() => setDraftRegions([])}>
+                    Kosongkan
+                  </button>
+                  <button
+                    disabled={!draftChanged}
+                    onClick={() => applyRegions(draftRegions)}
+                    style={{ padding: "6px 14px", borderRadius: 8, border: "none", background: "#0891b2", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: draftChanged ? "pointer" : "default", opacity: draftChanged ? 1 : 0.5 }}
+                  >
+                    Tampilkan
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div style={{ flex: 1, overflowY: "auto" }}>
           {loading && <div style={{ padding: 18, fontSize: 13, color: "#94a3b8" }}>Loading leads…</div>}
-          {!loading && filteredLeads.length === 0 && (
+          {!loading && regionSel.length === 0 && (
+            <div style={{ padding: 18, fontSize: 13, color: "#94a3b8" }}>Pilih satu atau lebih daerah untuk menampilkan lead.</div>
+          )}
+          {!loading && regionSel.length > 0 && filteredLeads.length === 0 && (
             <div style={{ padding: 18, fontSize: 13, color: "#94a3b8" }}>No leads match.</div>
           )}
           {filteredLeads.map((lead) => (
@@ -309,6 +533,7 @@ export default function MapView() {
                   {isLikelyLandline(lead.phoneNormalized) && (
                     <span style={{ color: "#dc2626" }}> · bukan nomor WA</span>
                   )}
+                  {lead.label && <span style={{ color: "#7c3aed" }}> · {labelText(lead)}</span>}
                 </div>
               </div>
             </div>
@@ -318,13 +543,23 @@ export default function MapView() {
 
       {/* Map area */}
       <div style={{ flex: 1, position: "relative" }}>
-        {!loading && mappableLeads.length > 0 && (
+        {regionSel.length === 0 && (
+          <div style={{ position: "absolute", inset: 0, zIndex: 400, display: "flex", alignItems: "center", justifyContent: "center", background: "#f7f8fa", color: "#64748b", fontSize: 14, textAlign: "center", padding: 24 }}>
+            Pilih daerah di panel kiri untuk menampilkan titik di peta.
+          </div>
+        )}
+        {loading && regionSel.length > 0 && (
+          <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", zIndex: 600, background: "#fff", border: "1px solid #eef0f2", borderRadius: 999, padding: "6px 14px", fontSize: 12.5, color: "#334155", boxShadow: "0 4px 14px rgba(15,23,42,0.08)" }}>
+            Memuat lead…
+          </div>
+        )}
+        {regionSel.length > 0 && mappableLeads.length > 0 && (
           <MapContainer style={{ width: "100%", height: "100%" }} center={[mappableLeads[0].lat, mappableLeads[0].lng]} zoom={12} scrollWheelZoom>
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <FitBounds leads={mappableLeads} />
+            <FitBounds leads={mappableLeads} fitKey={loadedKey} />
             <FlyToSelected lead={selected} />
             {filteredMappableLeads.map((lead) => (
               <Marker
@@ -338,7 +573,7 @@ export default function MapView() {
           </MapContainer>
         )}
 
-        {/* Legend */}
+        {/* Legend + filter */}
         <div
           style={{
             position: "absolute",
@@ -350,23 +585,96 @@ export default function MapView() {
             borderRadius: 10,
             padding: "12px 14px",
             boxShadow: "0 4px 14px rgba(15,23,42,0.08)",
+            maxHeight: "calc(100% - 36px)",
+            overflowY: "auto",
+            minWidth: 220,
           }}
         >
-          <div style={{ fontSize: 10.5, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.03em", marginBottom: 8 }}>
-            Pipeline stage
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, auto)", gap: "6px 16px" }}>
-            {stages.map((s) => (
-              <div key={s.key} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
-                <div style={{ fontSize: 11.5, color: "#334155", whiteSpace: "nowrap" }}>{s.label}</div>
-              </div>
-            ))}
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div style={{ width: 8, height: 8, borderRadius: "50%", background: NO_WA_COLOR, flexShrink: 0 }} />
-              <div style={{ fontSize: 11.5, color: "#334155", whiteSpace: "nowrap" }}>Tidak Ada Kontak WA</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.03em" }}>
+              Status · click to show/hide
             </div>
+            <button
+              onClick={() => setLegendOpen((o) => !o)}
+              style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: 12, color: "#64748b" }}
+            >
+              {legendOpen ? "▾" : "▸"}
+            </button>
           </div>
+          {legendOpen && (
+            <>
+              <div style={{ display: "flex", gap: 10, margin: "6px 0 8px 0" }}>
+                <button
+                  style={linkBtn}
+                  onClick={() => {
+                    setHiddenGroups(new Set());
+                    setHiddenStatuses(new Set());
+                    setHiddenLabels(new Set());
+                  }}
+                >
+                  Show all
+                </button>
+                <button style={linkBtn} onClick={() => setHiddenGroups(new Set(GROUP_ORDER))}>
+                  Hide all
+                </button>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {GROUP_ORDER.map((g) => {
+                  const expandable = g === "later" || g === "contacted";
+                  const isOpen = expanded.has(g);
+                  return (
+                    <div key={g}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <div style={{ flex: 1 }}>
+                          <LegendRow
+                            color={GROUP_COLORS[g]}
+                            label={GROUP_LABELS[g]}
+                            count={groupCounts[g] ?? 0}
+                            visible={!hiddenGroups.has(g)}
+                            onClick={() => setHiddenGroups((h) => toggleIn(h, g))}
+                          />
+                        </div>
+                        {expandable && (
+                          <button
+                            onClick={() => setExpanded((e) => toggleIn(e, g))}
+                            title={isOpen ? "Minimize" : "Expand"}
+                            style={{ border: "none", background: "transparent", cursor: "pointer", fontSize: 12, color: "#64748b", padding: "0 2px" }}
+                          >
+                            {isOpen ? "▾" : "▸"}
+                          </button>
+                        )}
+                      </div>
+                      {expandable && isOpen && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4, margin: "4px 0 4px 22px" }}>
+                          {g === "later"
+                            ? LABEL_OPTIONS.map((o) => (
+                                <LegendRow
+                                  key={o.key}
+                                  color={GROUP_COLORS.later}
+                                  label={o.text}
+                                  count={labelCounts[o.key] ?? 0}
+                                  visible={!hiddenLabels.has(o.key)}
+                                  onClick={() => setHiddenLabels((h) => toggleIn(h, o.key))}
+                                />
+                              ))
+                            : CONTACTED_STATUSES.map((c) => (
+                                <LegendRow
+                                  key={c}
+                                  color={GROUP_COLORS.contacted}
+                                  label={statusLabel(c)}
+                                  count={statusCounts[c] ?? 0}
+                                  visible={!hiddenStatuses.has(c)}
+                                  onClick={() => setHiddenStatuses((h) => toggleIn(h, c))}
+                                />
+                              ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -404,34 +712,24 @@ export default function MapView() {
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           <span
             style={{
-              background: selected.pipelineStageDef.color,
-              color: TEXT_ON_DARK_STAGES.has(selected.pipelineStage) ? "#fff" : "#1c1917",
+              background: pinColor(selected),
+              color: "#fff",
               fontSize: 12,
               fontWeight: 600,
               padding: "5px 12px",
               borderRadius: 999,
             }}
           >
-            {selected.pipelineStageDef.label}
+            {groupOf(selected) === "contacted"
+              ? `Contacted · ${statusLabel(selected.tagCategory)}`
+              : groupOf(selected) === "later"
+                ? `Later · ${labelText(selected)}`
+                : GROUP_LABELS[groupOf(selected)]}
           </span>
-          {selected.noWaAccount && (
-            <span
-              style={{
-                background: NO_WA_COLOR,
-                color: "#fff",
-                fontSize: 12,
-                fontWeight: 600,
-                padding: "5px 12px",
-                borderRadius: 999,
-              }}
-            >
-              🚫 Tidak Ada Kontak WA
-            </span>
-          )}
           </div>
 
           <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid #f1f5f9", display: "flex", flexDirection: "column", gap: 12 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 500, color: selected.phoneNormalized ? undefined : NO_WA_COLOR }}>
+            <div style={{ fontSize: 13.5, fontWeight: 500, color: selected.phoneNormalized ? undefined : GROUP_COLORS.no_wa }}>
               {selected.phoneNormalized ?? "No phone number scraped"}
             </div>
             <div style={{ fontSize: 13.5, color: "#334155", lineHeight: 1.5 }}>{selected.address ?? "—"}</div>
@@ -464,12 +762,19 @@ export default function MapView() {
 
           <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid #f1f5f9" }}>
             <div style={{ fontSize: 11.5, fontWeight: 600, color: "#64748b", textTransform: "uppercase", letterSpacing: "0.03em", marginBottom: 10 }}>
-              Stage
+              Label
             </div>
             <select
-              value={selected.pipelineStage}
+              value={selected.label ?? ""}
               disabled={applying}
-              onChange={(e) => changeStage(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (v === "") saveLabel(null);
+                else if (v === "other") {
+                  // Wait for the reason before saving — just reveal the box.
+                  setLeads((prev) => prev.map((l) => (l.id === selected.id ? { ...l, label: "other" } : l)));
+                } else saveLabel(v);
+              }}
               style={{
                 width: "100%",
                 padding: "8px 10px",
@@ -481,12 +786,43 @@ export default function MapView() {
                 opacity: applying ? 0.6 : 1,
               }}
             >
-              {stages.map((s) => (
-                <option key={s.key} value={s.key}>
-                  {s.label}
+              <option value="">— No label —</option>
+              {LABEL_OPTIONS.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.text}
                 </option>
               ))}
             </select>
+            {selected.label === "other" && (
+              <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 6 }}>
+                <textarea
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                  placeholder="Reason for not contacting…"
+                  rows={3}
+                  maxLength={500}
+                  style={{ width: "100%", padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, fontFamily: "inherit", resize: "vertical" }}
+                />
+                <button
+                  disabled={applying || otherReason.trim() === "" || otherReason.trim() === (selected.labelNote ?? "")}
+                  onClick={() => saveLabel("other", otherReason.trim())}
+                  style={{
+                    alignSelf: "flex-end",
+                    padding: "6px 14px",
+                    borderRadius: 8,
+                    border: "none",
+                    background: "#0891b2",
+                    color: "#fff",
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    opacity: applying || otherReason.trim() === "" || otherReason.trim() === (selected.labelNote ?? "") ? 0.5 : 1,
+                  }}
+                >
+                  Save reason
+                </button>
+              </div>
+            )}
           </div>
 
           <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid #f1f5f9" }}>
@@ -505,7 +841,9 @@ export default function MapView() {
                     <div style={{ fontSize: 12.5, color: "#334155" }}>
                       {a.type === "stage_change" && a.payload
                         ? `${stageLabel(a.payload.from ?? "")} → ${stageLabel(a.payload.to ?? "")}`
-                        : a.type}
+                        : a.type === "label_change" && a.payload
+                          ? `Label: ${activityLabel(a.payload.to, a.payload.note)}`
+                          : a.type}
                     </div>
                     <div style={{ fontSize: 11.5, color: "#94a3b8", marginTop: 1 }}>
                       {new Date(a.createdAt).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" })}
@@ -521,34 +859,82 @@ export default function MapView() {
   );
 }
 
-function FilterPill({
-  active,
+const linkBtn: React.CSSProperties = {
+  border: "none",
+  background: "transparent",
+  padding: 0,
+  cursor: "pointer",
+  fontSize: 11.5,
+  fontWeight: 600,
+  color: "#0891b2",
+};
+
+function RegionRow({ label, count, checked, onClick }: { label: string; count: number; checked: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{ display: "flex", width: "100%", alignItems: "center", gap: 8, border: "none", background: checked ? "#f0f9fb" : "transparent", borderRadius: 6, padding: "5px 8px", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
+    >
+      <span
+        style={{ width: 14, height: 14, borderRadius: 4, border: "2px solid #0891b2", background: checked ? "#0891b2" : "transparent", color: "#fff", fontSize: 10, lineHeight: "10px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+      >
+        {checked ? "✓" : ""}
+      </span>
+      <span style={{ fontSize: 12.5, color: "#334155", flex: 1 }}>{label}</span>
+      <span style={{ fontSize: 11.5, color: "#94a3b8" }}>{count}</span>
+    </button>
+  );
+}
+
+function LegendRow({
+  color,
   label,
-  activeBg,
-  activeColor,
+  count,
+  visible,
   onClick,
 }: {
-  active: boolean;
+  color: string;
   label: string;
-  activeBg: string;
-  activeColor: string;
+  count: number;
+  visible: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
+      title={visible ? "Click to hide" : "Click to show"}
       style={{
-        background: active ? activeBg : "#f1f5f9",
-        color: active ? activeColor : "#475569",
-        fontSize: 11.5,
-        fontWeight: 600,
-        padding: "5px 9px",
-        borderRadius: 999,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
         border: "none",
+        background: "transparent",
+        padding: "2px 0",
         cursor: "pointer",
+        textAlign: "left",
+        opacity: visible ? 1 : 0.4,
       }}
     >
-      {label}
+      <span
+        style={{
+          width: 14,
+          height: 14,
+          borderRadius: 4,
+          border: `2px solid ${color}`,
+          background: visible ? color : "transparent",
+          color: "#fff",
+          fontSize: 10,
+          lineHeight: "10px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        {visible ? "✓" : ""}
+      </span>
+      <span style={{ fontSize: 12, color: "#334155", whiteSpace: "nowrap", flex: 1, textDecoration: visible ? "none" : "line-through" }}>{label}</span>
+      <span style={{ fontSize: 11.5, color: "#94a3b8", marginLeft: 8 }}>{count}</span>
     </button>
   );
 }

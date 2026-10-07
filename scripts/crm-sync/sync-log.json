@@ -1,0 +1,61 @@
+{
+  "lastSyncAt": "2026-09-28",
+  "runs": [
+    {
+      "date": "2026-09-21",
+      "queryType": "full-snapshot",
+      "queryNote": "First run — pulled everything with pipeline_stage <> 'new' (81 leads). Only use this query type once; every run after this should be incremental.",
+      "leadsChecked": 81,
+      "alreadyOk": 51,
+      "candidateOnly": 6,
+      "notFound": 24,
+      "imported": 24,
+      "staged": 24,
+      "conflicts": 1,
+      "importCsv": "imports/2026-09-21.csv"
+    },
+    {
+      "date": "2026-09-22",
+      "queryType": "wa-chat-today",
+      "queryNote": "Leads with any wa_messages.sent_at = CURRENT_DATE (24 leads).",
+      "leadsChecked": 24,
+      "alreadyOk": 4,
+      "candidateOnly": 0,
+      "notFound": 20,
+      "imported": 20,
+      "staged": 20,
+      "conflicts": 3,
+      "importCsv": "imports/2026-09-22.csv"
+    },
+    {
+      "date": "2026-09-24",
+      "status": "done",
+      "queryType": "incremental-updated_at",
+      "queryNote": "leads WHERE pipeline_stage <> 'new' AND updated_at > '2026-09-22' (28 leads).",
+      "leadsChecked": 28,
+      "alreadyOk": 22,
+      "candidateOnly": 0,
+      "notFound": 6,
+      "imported": 6,
+      "staged": 6,
+      "conflicts": 0,
+      "importCsv": "imports/2026-09-24.csv",
+      "note": "CSV built for the 6 notFound leads (Klinik Griya Sehat had a duplicate name in the DB with a different phone/address — used the one matching actual WA chat activity, phone 08887700700). 4 rows had no city (no address on file: Klinik Griya Sehat, Klinik Meira Medical Center, KUKIS — these look like manually-added leads with no geocoding). CSV pasted into /lead-engine and crm-team-sync.js re-run on 2026-09-29 — all 6 confirmed present and staged 'kontak' (3 staged in this run, 3 already correct from an earlier partial promote)."
+    },
+    {
+      "date": "2026-09-28",
+      "status": "done",
+      "queryType": "wa-chat-today",
+      "queryNote": "Leads with any wa_messages.sent_at = CURRENT_DATE, checked read-only against /api/leads + /api/lead-candidates before building the CSV (25 leads chatted; 11 already existed, 14 genuinely new).",
+      "leadsChecked": 25,
+      "alreadyOk": 11,
+      "candidateOnly": 0,
+      "notFound": 14,
+      "imported": 14,
+      "staged": 0,
+      "conflicts": 0,
+      "importCsv": "imports/2026-09-28.csv",
+      "note": "IMPORTANT — /lead-engine's 'Score & import' behavior changed since the 2026-09-24 batch: it now creates leads DIRECTLY at pipeline_stage 'prospek', not as candidates needing a separate promote+stage-to-kontak step. Verified all 14 rows landed as leads, stage 'prospek', right after pasting the CSV — do NOT add these 14 to crm-team-sync.js's MY_LEADS, since that script's promote+stage logic targets 'kontak' and would DOWNGRADE them from 'prospek' back to 'kontak'. One row ('Dokter BUDI HARTOYO, Jaten, Karanganyar', 08122982917) returned a 'duplicate' error on import (likely a double-submit) but is confirmed present at stage 'prospek' regardless — no data lost, no action needed."
+    }
+  ]
+}

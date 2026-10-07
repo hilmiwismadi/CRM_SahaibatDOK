@@ -1,10 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { normalizePhoneNumber } from "@sahaibat/shared";
 import { db } from "./db";
+import { autoLabelFor, isNonClinic, isPuskesmas } from "./leadAutoLabel";
 
 export interface UpsertSummary {
   scannedCount: number;
   skippedCount: number; // missing google_place_id or lat/lng — can't dedupe/place on map
+  excludedCount: number; // Puskesmas + non-clinic categories (bank/ATM/apotek/...) — deliberately not imported (see leadAutoLabel.ts)
   newCount: number;
   updatedCount: number;
 }
@@ -28,7 +30,7 @@ export async function upsertLeadsFromStaging(scrapeJobId: string): Promise<Upser
     where: { scrapeJobId, importedAt: null },
   });
 
-  const summary: UpsertSummary = { scannedCount: rows.length, skippedCount: 0, newCount: 0, updatedCount: 0 };
+  const summary: UpsertSummary = { scannedCount: rows.length, skippedCount: 0, excludedCount: 0, newCount: 0, updatedCount: 0 };
 
   for (const row of rows) {
     if (!row.googlePlaceId || row.lat == null || row.lng == null) {
@@ -36,7 +38,16 @@ export async function upsertLeadsFromStaging(scrapeJobId: string): Promise<Upser
       continue;
     }
 
+    if (isPuskesmas(row.name, row.category) || isNonClinic(row.category)) {
+      summary.excludedCount += 1;
+      await db.stgScrapeResult.update({ where: { id: row.id }, data: { importedAt: new Date() } });
+      continue;
+    }
+
     const phoneNormalized = normalizePhoneNumber(row.phone);
+    // Only applied on INSERT (not in DO UPDATE SET below): `label` is
+    // CRM-owned, so a re-scrape must never overwrite one a rep set or cleared.
+    const autoLabel = autoLabelFor(row.name, row.category);
 
     const result = await db.$queryRaw<{ inserted: boolean }[]>(Prisma.sql`
       INSERT INTO "leads" (
@@ -45,14 +56,14 @@ export async function upsertLeadsFromStaging(scrapeJobId: string): Promise<Upser
         "rating", "review_count", "price_range", "open_hours", "google_maps_url",
         "geom", "lat", "lng",
         "first_scraped_at", "last_scraped_at",
-        "pipeline_stage", "created_at", "updated_at"
+        "pipeline_stage", "label", "created_at", "updated_at"
       ) VALUES (
         gen_random_uuid(), ${row.googlePlaceId}, ${row.name ?? "Unknown"}, ${row.category}, ${row.address},
         ${row.phone}, ${phoneNormalized}, ${row.website}, ${row.email},
         ${row.rating}, ${row.reviewCount}, ${row.priceRange}, ${row.openHours ?? Prisma.JsonNull}::jsonb, NULL,
         ST_SetSRID(ST_MakePoint(${row.lng}, ${row.lat}), 4326), ${row.lat}, ${row.lng},
         now(), now(),
-        'new', now(), now()
+        'new', ${autoLabel}, now(), now()
       )
       ON CONFLICT ("google_place_id") DO UPDATE SET
         "name" = EXCLUDED."name",
