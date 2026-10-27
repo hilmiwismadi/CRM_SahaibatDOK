@@ -129,14 +129,55 @@ function PeriodBoard({
 
   return (
     <div className="mb-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-4 py-2.5">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50 px-3 py-2.5 md:px-4">
         <span className="text-sm font-semibold text-slate-700">{period.label}</span>
         <span className="text-xs text-slate-400">{total} {t.eventCountSuffix}</span>
       </div>
       {total === 0 ? (
         <div className="px-4 py-5 text-center text-xs text-slate-300">{t.noActivity}</div>
       ) : (
-        <div className="overflow-x-auto p-3">
+        <>
+        {/* Phones: the 11-column board becomes a vertical list of only the
+            columns that have leads this period (the "not tracked" synthetic
+            columns are always empty here, so they're skipped). Tap a lead
+            to open LeadPopup, whose "Pindahkan ke" buttons replace drag. */}
+        <div className="divide-y divide-slate-100 md:hidden">
+          {HISTORY_FUNNEL_COLUMNS.filter(({ key }) => !(key in SYNTHETIC_INFO) && period.leads[key as HistoryMetric].length > 0).map(
+            ({ key }) => {
+              const metricKey = key as HistoryMetric;
+              const col = byMetric.get(metricKey)!;
+              const colLabel = labels[metricKey];
+              const leads = period.leads[metricKey];
+              return (
+                <div key={metricKey} className="p-3">
+                  <div className="mb-2 flex items-center gap-2 px-0.5">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: col.color }} />
+                    <span className="min-w-0 truncate text-sm font-semibold text-slate-600">{colLabel}</span>
+                    <span className="ml-auto rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500">
+                      {leads.length}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    {leads.map((lead) => (
+                      <HistoryBoardCard
+                        key={lead.id}
+                        lead={lead}
+                        categoryLabel={colLabel}
+                        categoryColor={col.color}
+                        draggable={false}
+                        onOpen={onOpen}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            },
+          )}
+          {HISTORY_FUNNEL_COLUMNS.every(({ key }) => key in SYNTHETIC_INFO || period.leads[key as HistoryMetric].length === 0) && (
+            <div className="px-4 py-5 text-center text-xs text-slate-300">{t.empty}</div>
+          )}
+        </div>
+        <div className="hidden overflow-x-auto p-3 md:block">
           <div className="grid shrink-0 gap-3 pb-1.5" style={{ gridAutoFlow: "column", gridAutoColumns: BOARD_COLUMN_WIDTH }}>
             {HEADER_CELLS.map((cell, i) => (
               <div
@@ -227,6 +268,7 @@ function PeriodBoard({
             })}
           </div>
         </div>
+        </>
       )}
     </div>
   );
@@ -260,7 +302,7 @@ export default function KanbanHistoryPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
-      <div className="flex flex-1 flex-col overflow-hidden p-6">
+      <div className="flex flex-1 flex-col overflow-y-auto p-3 md:overflow-hidden md:p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
         <p className="mb-4 text-sm text-slate-500">
           {t.kanbanDailyDesc1}
@@ -282,7 +324,7 @@ export default function KanbanHistoryPage() {
             <button
               key={g}
               onClick={() => setGrouping(g)}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+              className={`rounded-md px-3 py-2.5 text-sm font-medium transition md:py-1.5 ${
                 grouping === g ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
               }`}
             >
@@ -293,7 +335,7 @@ export default function KanbanHistoryPage() {
 
         <p className="mb-3 text-xs text-slate-400">{t.kanbanDailyFootnote}</p>
 
-        <div className="flex-1 overflow-y-auto pb-4">
+        <div className="flex-1 pb-4 md:overflow-y-auto">
           {historyLoading && <div className="text-sm text-slate-400">{t.loading}</div>}
           {!historyLoading &&
             history &&
@@ -304,7 +346,7 @@ export default function KanbanHistoryPage() {
       </div>
       {selected && <LeadPopup selection={selected} onClose={() => setSelected(null)} onMoved={loadHistory} />}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+        <div className="fixed bottom-6 left-1/2 z-[110] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg md:z-[70] md:w-auto md:max-w-none">
           {toast}
         </div>
       )}

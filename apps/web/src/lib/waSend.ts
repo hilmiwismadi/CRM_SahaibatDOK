@@ -1,6 +1,7 @@
 import { phoneToJid } from "@sahaibat/shared";
 import { db } from "@/lib/db";
-import type { WaContact, WaMessage } from "@prisma/client";
+import type { ScheduledMessage, WaContact, WaMessage } from "@prisma/client";
+import { planSend } from "@/lib/sendGuard";
 
 export class WaSendError extends Error {
   status: number;
@@ -151,4 +152,55 @@ export async function sendOutboundToPhone(
 
     return { waContact, message };
   });
+}
+
+export type SendOrScheduleResult =
+  | { kind: "sent"; waContact: WaContact; message: WaMessage }
+  | { kind: "scheduled"; scheduled: ScheduledMessage; reasons: string[] };
+
+// Plan + (send | enqueue) must not interleave across concurrent requests, or
+// two simultaneous Sends would both see an empty history and both go out
+// immediately. One web process serves the CRM, so an in-process chain is enough.
+let guardChain: Promise<unknown> = Promise.resolve();
+
+/**
+ * The entry point for every rep-initiated send. Asks the send guard whether
+ * sending right now would look like bot behaviour (near-identical text to
+ * several people, a burst, outside working hours, …). If so the message is
+ * stored in scheduled_messages for the guard's suggested slot instead of
+ * being sent; otherwise it goes out immediately, exactly as before.
+ *
+ * `force` (the rep chose "Kirim sekarang") skips the guard. The guard fails
+ * open: if planning itself errors (e.g. the scheduled_messages migration is
+ * not applied yet) the message is sent as it always was — a broken guard must
+ * never stop sales from messaging.
+ */
+export function sendOrSchedule(params: SendOutboundParams & { force?: boolean }): Promise<SendOrScheduleResult> {
+  const run = async (): Promise<SendOrScheduleResult> => {
+    if (!params.force) {
+      try {
+        const plan = await planSend({ phone: params.phoneNormalized, body: params.body });
+        if (!plan.immediate) {
+          const scheduled = await db.scheduledMessage.create({
+            data: {
+              phoneNormalized: params.phoneNormalized,
+              leadId: params.leadId ?? null,
+              body: params.body,
+              scheduledFor: plan.slot,
+              reason: plan.reasons.join(" • ") || null,
+              outreach: plan.outreach,
+            },
+          });
+          return { kind: "scheduled", scheduled, reasons: plan.reasons };
+        }
+      } catch (err) {
+        console.error("[sendGuard] planning failed, sending immediately:", err);
+      }
+    }
+    const { waContact, message } = await sendOutboundToPhone(params);
+    return { kind: "sent", waContact, message };
+  };
+  const result = guardChain.then(run, run);
+  guardChain = result.catch(() => undefined);
+  return result;
 }

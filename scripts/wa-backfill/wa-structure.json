@@ -1,0 +1,861 @@
+{
+ "when": "2026-10-14T07:59:34.749Z",
+ "ua": "Mozilla/5.0 (Linux; Android 16; Pixel 10) AppleWebKit/537.36 (KHTML, like Gecko) Edg/155.0.0.0 Mobile Safari/537.36",
+ "lang": "en-US",
+ "w": 980,
+ "h": 830,
+ "inputs": [
+  {
+   "t": "input",
+   "a": {
+    "role": "textbox",
+    "data-tab": "9",
+    "type": "text",
+    "aria-label": "Search or start a new chat",
+    "placeholder": "Search or start a new chat",
+    "id": "_r_d_",
+    "dir": "ltr",
+    "class": "html-input xdj266r x14z9mp xat24cr x1lziwak xexx8yu x18d9i69 x1c1uobl x14ug900 x…(309)"
+   },
+   "box": [
+    133,
+    76,
+    303,
+    20
+   ],
+   "inMain": false,
+   "focused": false,
+   "parents": [
+    "div",
+    "div",
+    "div",
+    "div",
+    "div",
+    "div"
+   ]
+  },
+  {
+   "t": "input",
+   "a": {
+    "type": "file"
+   },
+   "box": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "inMain": false,
+   "focused": false,
+   "parents": [
+    "div",
+    "div[testid=intro-panel-empty-state-action-tile-group]",
+    "section[testid=intro-panel]",
+    "div",
+    "div",
+    "div[testid=wa-web-main-screen]"
+   ]
+  }
+ ],
+ "landmarks": {
+  "app": true,
+  "side": true,
+  "paneSide": true,
+  "main": false,
+  "ids": [
+   "whatsapp-web",
+   "envjson",
+   "asset-style",
+   "favicon",
+   "u_0_0_1k",
+   "u_0_1_0W",
+   "mount_0_0_P5",
+   "app",
+   "wa-popovers-bucket",
+   "expressions-panel-container",
+   "side",
+   "_r_d_",
+   "all-filter",
+   "label_item_1",
+   "label_item_2",
+   "additional-filters",
+   "label_item_3",
+   "label_item_5",
+   "label_item_6",
+   "pane-side",
+   "_r_iu_",
+   "_r_gh_",
+   "_r_gm_",
+   "_r_h5_",
+   "_r_ha_",
+   "_r_hl_",
+   "__lottie_element_2",
+   "wds-toast-container",
+   "has-finished-comet-page"
+  ]
+ },
+ "skeleton": {
+  "t": "div",
+  "a": {
+   "id": "app"
+  },
+  "box": [
+   0,
+   0,
+   980,
+   830
+  ],
+  "c": [
+   {
+    "t": "div",
+    "a": {
+     "class": "x78zum5 xdt5ytf x5yr21d"
+    },
+    "box": [
+     0,
+     0,
+     980,
+     830
+    ],
+    "c": [
+     {
+      "t": "div",
+      "a": {
+       "tabindex": "-9",
+       "class": "app-wrapper-web os-win x1n2onr6 xupqr0c xh8yej3 x5yr21d xsxifin x1vs4gjj"
+      },
+      "box": [
+       0,
+       0,
+       980,
+       830
+      ],
+      "c": [
+       {
+        "t": "div",
+        "a": {
+         "id": "wa-popovers-bucket"
+        },
+        "box": [
+         0,
+         0,
+         980,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "div",
+        "a": {
+         "id": "expressions-panel-container"
+        },
+        "box": [
+         0,
+         0,
+         980,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "span",
+        "a": {},
+        "box": [
+         0,
+         0,
+         0,
+         0
+        ]
+       },
+       {
+        "t": "div",
+        "a": {
+         "data-testid": "wa-web-main-screen",
+         "class": "x78zum5 xdt5ytf x5yr21d"
+        },
+        "box": [
+         0,
+         0,
+         980,
+         830
+        ],
+        "c": [
+         {
+          "t": "div",
+          "a": {
+           "tabindex": "-9",
+           "class": "two x1n2onr6 x13vifvy x1o0tod x78zum5 xh8yej3 x5yr21d x6ikm8r x10wlt62 x1h3rtpe …(183)"
+          },
+          "box": [
+           0,
+           0,
+           980,
+           830
+          ],
+          "c": [
+           {
+            "t": "header",
+            "a": {
+             "data-testid": "chatlist-header",
+             "data-tab": "9",
+             "tabindex": "9",
+             "class": "x12xzxwr x1n2onr6 x9f619 x78zum5 x6s0dn4 xq3y45c xbyj736 x5yr21d x1h3rtpe x1iw51…(107)"
+            },
+            "box": [
+             0,
+             0,
+             64,
+             830
+            ],
+            "c": [
+             {
+              "t": "div",
+              "a": {
+               "class": "x1c4vz4f xs83m0k xdl72j9 x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lw…(125)"
+              },
+              "box": [
+               12,
+               10,
+               40,
+               810
+              ],
+              "c": "…2 anak"
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "data-testid": "drawer-fullscreen",
+             "class": "x10l6tqk x13vifvy x78zum5 x5yr21d x6ikm8r x10wlt62 x47corl x8qhkwt xdmgpyl x1oy9…(83)"
+            },
+            "box": [
+             64,
+             0,
+             916,
+             830
+            ],
+            "c": [
+             {
+              "t": "span",
+              "a": {
+               "class": "x10l6tqk x13vifvy xtijo5x x1ey2m1c x1o0tod"
+              },
+              "box": [
+               64,
+               0,
+               916,
+               830
+              ]
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "class": "x10l6tqk x13vifvy x1o0tod x78zum5 xh8yej3 x5yr21d x6ikm8r x10wlt62 x47corl"
+            },
+            "box": [
+             0,
+             0,
+             980,
+             830
+            ],
+            "c": [
+             {
+              "t": "div",
+              "a": {
+               "data-testid": "drawer-left",
+               "class": "xevlxbw x9f619 x1n2onr6 x5yr21d x17dzmu4 x1i1dayz x2ipvbc xjdofhw x78zum5 xdt5yt…(209)"
+              },
+              "box": [
+               64,
+               0,
+               392,
+               830
+              ],
+              "c": "…1 anak"
+             },
+             {
+              "t": "div",
+              "a": {
+               "data-testid": "drawer-middle",
+               "class": "x9f619 x1n2onr6 x5yr21d x6ikm8r x10wlt62 x17dzmu4 x1i1dayz x2ipvbc xjdofhw xyyil…(126)"
+              },
+              "box": [
+               456,
+               0,
+               524,
+               830
+              ],
+              "c": "…1 anak"
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "class": "x9f619 x1n2onr6 x5yr21d x17dzmu4 x1i1dayz x2ipvbc xjdofhw x78zum5 xdt5ytf x12xzx…(184)"
+            },
+            "box": [
+             64,
+             0,
+             392,
+             830
+            ],
+            "c": [
+             {
+              "t": "header",
+              "a": {
+               "data-testid": "chatlist-header"
+              },
+              "box": [
+               65,
+               0,
+               391,
+               64
+              ],
+              "c": "…1 anak"
+             },
+             {
+              "t": "div",
+              "a": {
+               "id": "side",
+               "class": "x78zum5 x1n2onr6 xdt5ytf x5yr21d x6ikm8r x10wlt62 x1280gxy"
+              },
+              "box": [
+               65,
+               64,
+               391,
+               766
+              ],
+              "c": "…5 anak"
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "class": "x9f619 x1n2onr6 xupqr0c x5yr21d x6ikm8r x10wlt62 x17dzmu4 x1i1dayz x2ipvbc xjdof…(99)"
+            },
+            "box": [
+             456,
+             0,
+             524,
+             830
+            ],
+            "c": [
+             {
+              "t": "section",
+              "a": {
+               "data-testid": "intro-panel",
+               "class": "xs1q97v xh8yej3 x5yr21d x2b8uid x67bb7w x1n2onr6 x6s0dn4 xl56j7k x78zum5 xdt5ytf"
+              },
+              "box": [
+               456,
+               0,
+               524,
+               830
+              ],
+              "c": "…2 anak"
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "tabindex": "-9",
+             "class": "x10l6tqk x13vifvy xtijo5x x1ey2m1c x1o0tod"
+            },
+            "box": [
+             0,
+             0,
+             980,
+             830
+            ],
+            "c": [
+             {
+              "t": "div",
+              "a": {
+               "class": "xixxii4 x164b614 xnalus7 xqtp20y x1plvlek xryxfnj"
+              },
+              "box": [
+               0,
+               0,
+               0,
+               0
+              ]
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "data-testid": "drawer-right",
+             "class": "x9f619 x1n2onr6 xupqr0c x5yr21d x6ikm8r x10wlt62 x17dzmu4 x1i1dayz x2ipvbc xjdof…(117)"
+            },
+            "box": [
+             980,
+             0,
+             0,
+             830
+            ],
+            "c": [
+             {
+              "t": "span",
+              "a": {
+               "class": "x10l6tqk x13vifvy xtijo5x x1ey2m1c x1o0tod"
+              },
+              "box": [
+               980,
+               0,
+               0,
+               830
+              ]
+             }
+            ]
+           },
+           {
+            "t": "div",
+            "a": {},
+            "box": [
+             980,
+             0,
+             0,
+             830
+            ]
+           },
+           {
+            "t": "div",
+            "a": {
+             "id": "wds-toast-container",
+             "class": "xixxii4 x191j7n5 xzwoauc xz4gtu xevlxbw xc9l9hb x47corl"
+            },
+            "box": [
+             80,
+             814,
+             836,
+             0
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "t": "div",
+        "a": {},
+        "box": [
+         0,
+         830,
+         980,
+         0
+        ],
+        "c": [
+         {
+          "t": "div",
+          "a": {},
+          "box": [
+           0,
+           830,
+           980,
+           0
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "listItems": [
+  {
+   "t": "div",
+   "a": {
+    "data-testid": "cell-frame-container",
+    "class": "xlr9sxt xvvg52n xwd4zgb xq8v1ta x78zum5 x1q0g3np x1hm9lzh x1sa5p1d x71s49j x1n2o…(108)"
+   },
+   "box": [
+    75,
+    238,
+    371,
+    49
+   ],
+   "c": [
+    {
+     "t": "div",
+     "a": {
+      "class": "x78zum5"
+     },
+     "box": [
+      75,
+      238,
+      77,
+      49
+     ],
+     "c": [
+      {
+       "t": "div",
+       "a": {
+        "class": "x6s0dn4 x78zum5 x1c4vz4f x2lah0s xdj266r xexx8yu x18d9i69 x1q3ajuy xbmws1g"
+       },
+       "box": [
+        75,
+        238,
+        77,
+        49
+       ],
+       "c": [
+        {
+         "t": "div",
+         "a": {
+          "class": "x1c4vz4f xs83m0k xdl72j9 x1g77sc7 x78zum5 xozqiw3 x1oa3qoh x12fk4p8 xeuugli x2lw…(133)"
+         },
+         "box": [
+          88,
+          238,
+          49,
+          49
+         ],
+         "c": [
+          {
+           "t": "span",
+           "a": {},
+           "box": [
+            101,
+            251,
+            24,
+            24
+           ],
+           "c": [
+            {
+             "t": "svg",
+             "a": {},
+             "box": [
+              101,
+              251,
+              24,
+              24
+             ],
+             "c": "…2 anak"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "t": "div",
+     "a": {
+      "class": "x78zum5 xdl72j9 xdt5ytf x1iyjqo2 xl56j7k xeuugli x1n1b19v"
+     },
+     "box": [
+      152,
+      238,
+      259,
+      49
+     ],
+     "c": [
+      {
+       "t": "div",
+       "a": {
+        "role": "group",
+        "class": "x6s0dn4 x78zum5 xggjnk3 x1yc453h"
+       },
+       "box": [
+        152,
+        251,
+        244,
+        24
+       ],
+       "c": [
+        {
+         "t": "div",
+         "a": {
+          "data-testid": "cell-frame-title",
+          "class": "x14ug900 x78zum5 x1iyjqo2 x1jchvi3 xdod15v x6ikm8r x10wlt62 x1mzt3pk x1yc453h xo…(85)"
+         },
+         "box": [
+          152,
+          251,
+          244,
+          24
+         ],
+         "c": [
+          {
+           "t": "span",
+           "a": {
+            "class": "x140p0ai x1gufx9m x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x193iq5w …(182)"
+           },
+           "box": [
+            152,
+            251,
+            62,
+            24
+           ],
+           "text": "#8"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "t": "div",
+     "a": {
+      "class": "xl56j7k xeuugli x6s0dn4 xamitd3 x9f619 x78zum5 xdl72j9 x1c4vz4f x2lah0s x5yr21d …(97)"
+     },
+     "box": [
+      411,
+      238,
+      35,
+      49
+     ],
+     "c": [
+      {
+       "t": "div",
+       "a": {
+        "class": "x1rg5ohu xnnr8r"
+       },
+       "box": [
+        411,
+        253,
+        20,
+        20
+       ],
+       "c": [
+        {
+         "t": "span",
+         "a": {
+          "data-testid": "icon-unread-count",
+          "aria-label": "9 unread messages",
+          "class": "x1rg5ohu x1gxa6cn x1j8ymqv xa0aww2 x4tra6z x1pse0pq x16dsc37 xlup9mm x15kz4h8 x2…(128)"
+         },
+         "box": [
+          411,
+          253,
+          20,
+          20
+         ],
+         "c": [
+          {
+           "t": "span",
+           "a": {
+            "class": "x140p0ai x1gufx9m x1s928wv xhkezso x1gmr53x x1cpjm7i x1fgarty x1943h6x x193iq5w …(180)"
+           },
+           "box": [
+            413,
+            255,
+            16,
+            16
+           ],
+           "text": "#1"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "div",
+   "a": {
+    "role": "row",
+    "data-testid": "list-item-9",
+    "class": "x10l6tqk xh8yej3 x1g42fcv"
+   },
+   "box": [
+    65,
+    298,
+    391,
+    76
+   ],
+   "c": [
+    {
+     "t": "div",
+     "a": {
+      "role": "gridcell",
+      "tabindex": "9",
+      "class": "x1n2onr6"
+     },
+     "box": [
+      65,
+      298,
+      391,
+      72
+     ],
+     "c": [
+      {
+       "t": "div",
+       "a": {
+        "aria-selected": "false",
+        "tabindex": "-9"
+       },
+       "box": [
+        65,
+        298,
+        391,
+        72
+       ],
+       "c": [
+        {
+         "t": "div",
+         "a": {
+          "data-testid": "cell-frame-container",
+          "class": "x1280gxy xlr9sxt xvvg52n xwd4zgb xq8v1ta x78zum5 x1q0g3np xy75621 x1hm9lzh x1sa5…(151)"
+         },
+         "box": [
+          75,
+          298,
+          371,
+          72
+         ],
+         "c": [
+          {
+           "t": "div",
+           "a": {
+            "class": "x78zum5"
+           },
+           "box": [
+            75,
+            298,
+            76,
+            72
+           ],
+           "c": [
+            {
+             "t": "div",
+             "a": {
+              "class": "x6s0dn4 x78zum5 x1c4vz4f x2lah0s x1y332i5 x18d9i69 xexx8yu x1n1b19v xbmws1g"
+             },
+             "box": [
+              75,
+              297,
+              76,
+              73
+             ],
+             "c": "…1 anak"
+            }
+           ]
+          },
+          {
+           "t": "div",
+           "a": {
+            "class": "x78zum5 xdl72j9 xdt5ytf x1iyjqo2 xl56j7k xeuugli x1n1b19v"
+           },
+           "box": [
+            151,
+            298,
+            295,
+            72
+           ],
+           "c": [
+            {
+             "t": "div",
+             "a": {
+              "role": "gridcell",
+              "class": "x6s0dn4 x78zum5 xggjnk3 x1yc453h"
+             },
+             "box": [
+              151,
+              311,
+              280,
+              24
+             ],
+             "c": "…2 anak"
+            },
+            {
+             "t": "div",
+             "a": {
+              "data-testid": "cell-frame-secondary",
+              "class": "x6s0dn4 x78zum5 x1nxh6w3 x1fc57z9 xr9ek0c xisnujt xhslqc4 x1fcty0u"
+             },
+             "box": [
+              151,
+              337,
+              280,
+              20
+             ],
+             "c": "…2 anak"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "messageRows": [],
+ "messageRowCount": 0,
+ "header": null
+}

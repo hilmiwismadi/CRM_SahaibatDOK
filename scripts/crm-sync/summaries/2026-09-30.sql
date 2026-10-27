@@ -1,0 +1,43 @@
+-- sync_daily_summaries 2026-09-30 (37 rows)
+BEGIN;
+INSERT INTO sync_daily_summaries (lead_id, date, summary) VALUES
+  ('d2e7847c-7e83-46bf-aec3-51840697272b', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Hari ini tidak bisa karena sedang pelayanan; klinik sedang persiapan rekredensialing dan akan menanyakan dulu. Kami akan tanya lagi minggu depan.$q$),
+  ('5f30e657-dd36-4345-afb8-59c5be2f0124', '2026-09-30', $q$Follow-up: praktik tidak bekerja sama dengan BPJS dan sudah memakai RME Assist sejak Desember 2023. Kami minta izin bertanya soal pengalaman memakai Assist, belum dijawab.$q$),
+  ('80711a42-048e-4451-b5b9-cd0506823bdf', '2026-09-30', $q$Nomor dikonfirmasi (ada balasan otomatis). Menanyakan apakah wawancara lewat WA atau telepon, dijawab online meeting; menanyakan dokumen resmi. Akhirnya menyatakan belum bersedia.$q$),
+  ('1ca6ad55-4f95-4502-8dd4-3e782b3135ea', '2026-09-30', $q$Follow-up surat: diminta bersurat resmi dulu untuk administrasi. Surat sudah kami lampirkan.$q$),
+  ('da060eba-ceb3-4ece-93ac-f9ab1f2851ef', '2026-09-30', $q$Follow-up: dijawab otomatis (jam operasional), lalu menjawab belum ada kabar. Kami akan tanya ulang minggu depan.$q$),
+  ('bde8af6e-5179-42f7-988d-a3d870449fbc', '2026-09-30', $q$Konfirmasi nomor terkirim; baru ada balasan otomatis salam, belum dari orangnya.$q$),
+  ('be1f860c-feb2-4912-a982-1980c432b88b', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Ditanyakan ke atasan dan klinik menyatakan belum diperkenankan membantu (surat resmi pun tidak mengubah). Pertanyaan terakhir soal RME dijawab tidak tahu karena ini nomor klinik.$q$),
+  ('763c888e-4058-4226-84e4-15adc37dd05b', '2026-09-30', $q$Dokter masih sibuk beberapa hari ke depan dan minta dihubungi lagi. Kami follow-up minggu depan.$q$),
+  ('dae27e78-5232-4277-8eff-021434a6ded8', '2026-09-30', $q$Hanya balasan otomatis (klinik skincare, jam operasional). Belum ada balasan dari orangnya.$q$),
+  ('12af5002-7545-4923-ba1d-034506fd9da0', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch terkirim. Admin meminta menunggu sebentar.$q$),
+  ('9dc1e238-4297-4a53-99fd-5a0d8a78ffc1', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Klinik sedang pelayanan dan menyarankan dihubungi lagi sekitar jam 12 siang; kami tanya ulang besok.$q$),
+  ('02886d42-464f-430d-9777-8aa6c31ef903', '2026-09-30', $q$Nomor dikonfirmasi (ada balasan otomatis); pitch terkirim. Admin akan menyampaikan ke manajemen dulu.$q$),
+  ('8380792f-d420-4a04-a51a-8bed19a3ee91', '2026-09-30', $q$Follow-up: akan dikonfirmasikan ke manajemen dan diminta surat/proposal. Surat sudah kami lampirkan.$q$),
+  ('5b689a68-00d6-420a-aefa-7d7997572fbc', '2026-09-30', $q$Klinik baru mencoba sistem satu kali, belum ada kendala dan besok mau coba lagi. Menanyakan setting integrasi SatuSehat dan setuju dibantu. Kami tawarkan online meeting Senin depan.$q$),
+  ('9923d92d-3232-48eb-bfa6-2bc5c70d678c', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('a9b98885-0eb9-4ac0-a648-2af4d5cb1a95', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('a297652f-002b-4aa6-ab39-cce0c55e099a', '2026-09-30', $q$Hanya balasan otomatis terima kasih; kami kirim konfirmasi nomor ulang, belum ada balasan dari orangnya.$q$),
+  ('3b48146f-8c86-4a8d-b86b-9481b2c22256', '2026-09-30', $q$Nomor dikonfirmasi benar (ada balasan otomatis); pitch riset terkirim.$q$),
+  ('f6930a4d-d3c1-49b9-958a-942751e9b396', '2026-09-30', $q$Nomor dikonfirmasi; admin menanyakan apakah ini pribadi, lembaga, LSM, atau kampus. Kami jelaskan dari startup Sahaibat.$q$),
+  ('2fda3702-7a7c-4391-aa06-6451fd2f36d0', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('6377380b-349d-4450-a4b8-de73cdd530f9', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('3d7df820-f6f3-41a9-87d1-a367293e53db', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('50f0ba5c-797f-4d41-9604-748cc578b574', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('65f397cc-93c3-4245-8019-18d4c66e1d65', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('d9261919-9ea0-4be7-a7a2-c3df1a69483e', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('c0c97113-749d-4994-b07f-ce9e97590cc1', '2026-09-30', $q$Nomor dikonfirmasi (PIC klinik UPN); pitch riset terkirim.$q$),
+  ('735c42b9-d238-4b34-91e3-56f43af5e098', '2026-09-30', $q$Bukan nomor klinik UPN ("bukan kak"); kami berterima kasih dan menutup.$q$),
+  ('78b71aa4-5179-4671-b27e-fe2f710edc5d', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Akan disampaikan ke pimpinan dulu, kami minta dikabari.$q$),
+  ('0916b0da-dc2d-4f9f-9664-c473ca256a75', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('6fbf7340-7da2-478d-a9e3-3986d81c6288', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Klinik menyarankan datang langsung; konsultasi online tidak bisa dilayani (buka 24 jam).$q$),
+  ('fc9a3ec1-fce8-4694-953f-0359b95b0447', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$),
+  ('e54d57c5-63de-4c66-bc43-2c0ee139405d', '2026-09-30', $q$Nomor dikonfirmasi; pitch terkirim. Belum bisa membantu.$q$),
+  ('4fc49db8-73dd-420c-a932-9a7f4c1e33e5', '2026-09-30', $q$Nomor dikonfirmasi. Menanyakan riset untuk apa dan menyebut ini praktik mandiri, bukan klinik. Kami jelaskan dari startup Sahaibat.$q$),
+  ('fdda4292-3a69-4f93-8be2-8a7302f1eed2', '2026-09-30', $q$Meminta surat permohonan dulu; surat sudah kami kirim. Dokter berkenan diwawancara hari Jumat setelah jam 3 siang.$q$),
+  ('ee3a268f-deba-4e68-a482-0358e65f2399', '2026-09-30', $q$Hari ini belum bisa; Jumat jam 8 pagi bisa. Kami akan konfirmasi ulang Jumat pagi.$q$),
+  ('e033075e-17fc-4324-8ae2-dc05b236f382', '2026-09-30', $q$Follow-up: hanya balasan otomatis pendaftaran pasien. Belum ada balasan dari orangnya.$q$),
+  ('05fbf0ff-a448-48c4-9841-11044386c5f0', '2026-09-30', $q$Nomor dikonfirmasi benar; pitch riset terkirim.$q$)
+ON CONFLICT (lead_id, date) DO NOTHING;
+COMMIT;
+SELECT count(*) AS rows_for_date FROM sync_daily_summaries WHERE date='2026-09-30';

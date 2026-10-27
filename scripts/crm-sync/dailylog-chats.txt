@@ -1,0 +1,173 @@
+2026-10-23|5f30e657-dd36-4345-afb8-59c5be2f0124|dokter praktek mandiri dr.Lisa Linda Sari pindah Lokasi ke pelemsewu RT 3, praktek lama ke utara masuk kampung rt 3|08:39|outbound|Selamat pagi  Dok, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|029f7741-0931-487f-9676-16c22b3c6a6f|Klinik Ary Farma|08:48|outbound|Selamat pagi  Dok, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|8f173ab2-9f9f-43ca-ad12-e3431a9cafe5|Klinik dr.Sri Widatik|08:22|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|5b689a68-00d6-420a-aefa-7d7997572fbc|Klinik Pratama Asy-Syifa|10:33|outbound|Oiya kak, untuk fitur yang diperlukan dari klinik berarti hanya Konsultasi (untuk membantu
+2026-10-23|5b689a68-00d6-420a-aefa-7d7997572fbc|Klinik Pratama Asy-Syifa|10:33|inbound|
+2026-10-23|34bb7ec6-b62e-4892-8f39-4744140c17b9|Klinik Pratama Qanita|08:43|outbound|Selamat pagi Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|f7cf5d75-5706-48ab-9afa-d89174ad976f|Klinik Rawat Inap Sahabat Sehat (Bu Lina)|08:55|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|e504beca-96ed-4ae9-824c-c6ffdae6670e|KLINIK RAWAT INAP SIDODADI WARASE|13:04|outbound|Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏
+2026-10-23|6d103db4-83c4-43de-9c5c-5b3f693b573d|Losari Medika|12:56|outbound|Selamat siang  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|17a1b95f-8c28-4f98-834e-446d827b6421|Praktek Dokter Victor Prayogi|07:51|inbound|
+2026-10-23|2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a|PRAKTEK MANDIRI BIDAN & DOKTER SEHATI|13:39|outbound|Halo Kak Arini, Untuk akun trial sudah kami siapkan nggih DOK email kliniksehatimalang@gma
+2026-10-23|2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a|PRAKTEK MANDIRI BIDAN & DOKTER SEHATI|14:31|outbound|Lalu kami izin bertanya, untuk Praktik Bidan Sehai termasuk praktik PMB atau berbentuk fas
+2026-10-23|05482f63-2a0d-40d3-8efe-222534c3a245|PRAKTEK MANDIRI DOKTER ASTRI RIANA SARI|08:27|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-26|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|10:46|outbound|Halo Dok, berikut link untuk jam 11 nanti nggih https://meet.google.com/xpz-yhpk-vnk
+2026-10-26|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|10:52|inbound|Oke
+2026-10-26|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|12:24|outbound|melanjutkan tadi Dok, supaya kami bisa buatkan akun untuk akses ke fitur companion kita. d
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:14|outbound|Selamat Siang, apakah benar ini kontak nomer Bidan Nungki Amalia?
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:34|inbound|Siang  Betul ad ayg bisa dibantu
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:54|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:56|inbound|Selamat siang mas Zaki... Maaf kami sedang sibuk... Terima kasih atas perhatian nya 🙏🏻 Kami sedang fulll jdwl🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:57|outbound|Kalau bulan depan saya izin tanyakan ulang nggih 🙏
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:58|inbound|Nggih...🙏🏻 Atau mungkin bisa Dengan klinik lain nggih mass🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:58|inbound|Saya fokus ke pasien dulu saat ini...🙏🏻 Tidak wawancara dulu nggihh Maaf🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|14:59|outbound|baik, kalau boleh tau praktik bidan Bu Nungki Amalia ini apakah dijalankan sendiri atau ad
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:05|inbound|Maaf mass... Mohon ijin dengan hormat  Kami saat ini kurang berkenan untuk wawancara🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:05|inbound|Terima kasih 🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:05|inbound|Kami fokus pelayanan 🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:06|outbound|Baik, terima kasih banyak atas konfirmasinya🙏
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:06|inbound|Terima kasih kembali 🙏🏻
+2026-10-26|e203b04a-457d-4441-9aed-5d8aafd5ec40|Bidan Nungki Amalia, S.Tr.Keb|15:06|inbound|Semoga sukses selalu 🙏🏻
+2026-10-26|a049f63d-035a-4dff-8f23-b467d36eba6d|DOKTER 24 JAM|14:55|outbound|Selamat Siang, apakah benar ini kontak nomer Dokter 24 Jam?
+2026-10-26|6724230d-fb49-4095-b4e4-6b4d702049ec|dokter Rochip Mursidi|15:12|outbound|Selamat Siang, apakah benar ini kontak nomer dokter Rochip Mursidi?
+2026-10-26|6724230d-fb49-4095-b4e4-6b4d702049ec|dokter Rochip Mursidi|15:12|inbound|
+2026-10-26|6724230d-fb49-4095-b4e4-6b4d702049ec|dokter Rochip Mursidi|15:20|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|6724230d-fb49-4095-b4e4-6b4d702049ec|dokter Rochip Mursidi|15:20|inbound|
+2026-10-26|6724230d-fb49-4095-b4e4-6b4d702049ec|dokter Rochip Mursidi|15:24|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|bbe6ec05-6021-4bdc-a9dd-968c9e671f8b|dr. Meriawati Wibowo|15:25|outbound|Selamat Siang, apakah benar ini kontak nomer dr. Meriawati Wibowo?
+2026-10-26|bbe6ec05-6021-4bdc-a9dd-968c9e671f8b|dr. Meriawati Wibowo|18:12|inbound|,kenapa ya
+2026-10-26|bbe6ec05-6021-4bdc-a9dd-968c9e671f8b|dr. Meriawati Wibowo|18:41|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|bbe6ec05-6021-4bdc-a9dd-968c9e671f8b|dr. Meriawati Wibowo|19:59|inbound|Mohon maaf saya tidak bisa krn sibuk🙏
+2026-10-26|94132df5-235e-4108-a097-0c4547297769|Havva Medika (Praktek dr. Ardiyani Heri Ristanti) /Akupuntur medis|14:26|outbound|Selamat Siang, apakah benar ini kontak nomer Havva Medika?
+2026-10-26|94132df5-235e-4108-a097-0c4547297769|Havva Medika (Praktek dr. Ardiyani Heri Ristanti) /Akupuntur medis|14:34|inbound|Selamat siang
+2026-10-26|94132df5-235e-4108-a097-0c4547297769|Havva Medika (Praktek dr. Ardiyani Heri Ristanti) /Akupuntur medis|14:34|inbound|Betul
+2026-10-26|94132df5-235e-4108-a097-0c4547297769|Havva Medika (Praktek dr. Ardiyani Heri Ristanti) /Akupuntur medis|14:55|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|7b2c26e8-0bde-49ef-9fb0-a898deed03cf|Klinik Ben Waras|15:03|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Ben Waras?
+2026-10-26|7b2c26e8-0bde-49ef-9fb0-a898deed03cf|Klinik Ben Waras|16:03|inbound|benar kak, ada yang bisa dibantu?
+2026-10-26|7b2c26e8-0bde-49ef-9fb0-a898deed03cf|Klinik Ben Waras|16:13|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|10:22|outbound|Selamat siang Kak Rizka, kalau hari ini di jam 12.30 apakah bisa? karena takutnya menabrak
+2026-10-26|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|10:30|inbound|Boleh
+2026-10-26|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|12:14|inbound|untuk linknya apa sudah ada?
+2026-10-26|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|12:17|outbound|https://meet.google.com/vyg-bzbg-cop berikut link untuk jam 12.30 nanti ya kakk
+2026-10-26|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|12:28|inbound|baik
+2026-10-26|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|14:01|outbound|Selamat siang, melanjutkan informasi dari komunikasi kemarin. berikut saya lampirkan surat
+2026-10-26|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|14:03|inbound|Selamat siang. Baik, saya sampaikan suratnya terlebih dahulu ngggeh🙏🏻
+2026-10-26|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|14:28|outbound|Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏
+2026-10-26|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|14:30|inbound|Baik kak🙏🏻
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:23|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Bintang?
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:35|inbound|selamat siang, benar ada yang bisa dibantu??
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:45|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:46|inbound|+62 895-4220-82255
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:46|inbound|bisa menghubungi penangung jawab klinik nggeh
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:48|outbound|Baik, terima kasih banyak atas informasi dan kontaknya nggih 🙏
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:58|outbound|Selamat Sore, apakah benar ini kontak nomer penanggung jawab Klinik Bintang Medika?
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|15:58|inbound|Selamat sore ada yang bisa kami bantu ?
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:11|inbound|Dengan siapa ya kak ?
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:12|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:18|inbound|Sedang kuliah apa perusahaan ya
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:25|outbound|Saya dari startup https://www.sahaibat.com/ yang sebelumnya kami bekerja sama pada program
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:28|inbound|benefit apa yang kami dapat ?
+2026-10-26|7db61163-28a1-449b-ad97-43faf9338e76|Klinik Bintang Medika|16:43|outbound|Dari kami sejujurnya belum bisa memberi banyak karena juga masih merintis, namun apabila t
+2026-10-26|bde8af6e-5179-42f7-988d-a3d870449fbc|Klinik Cita Sehat Yogyakarta (Pleret)|14:05|outbound|untuk nama ERM apakah pihak klinik membuat sendiri atau kemitraan? jika kemitraan kalo bol
+2026-10-26|e83e944b-46a3-4ce7-b79e-1e3a99988856|Klinik Graha Syifa|14:22|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Graha Syifa?
+2026-10-26|e83e944b-46a3-4ce7-b79e-1e3a99988856|Klinik Graha Syifa|14:22|inbound|Halo!   *Ada yang bisa dibantu??* Chat kamu akan kami baca dan akan kami balas😇.  (Mohon Maaf Jika kami slowrespon 🙏)   📌Kami informasikan bahwa nomer ini tidak menerima,Pendaftaran online Peserta BPJS.Untuk peserta BPJS silahkan melakukan pendaftaran online m
+2026-10-26|054682dd-4307-4072-a693-6dddac6da186|KLINIK KUSUMA MEDIKA|14:24|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Kusuma Medika?
+2026-10-26|054682dd-4307-4072-a693-6dddac6da186|KLINIK KUSUMA MEDIKA|14:24|inbound|Terima kasih telah menghubungi Klinik Kusuma Medika. Silakan beri tahu apa yang dapat kami bantu.
+2026-10-26|435723f1-01f1-4404-8484-1ecb5cd8a59e|Klinik Nadi Medika dan Apotek|14:17|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Nadi Medika dan Apotek?
+2026-10-26|435723f1-01f1-4404-8484-1ecb5cd8a59e|Klinik Nadi Medika dan Apotek|14:17|inbound|Halo, Bapak/Ibu! 👋🏻😊 Terima kasih telah menghubungi Klinik Nadi Medika 💛  *LAYANAN KAMI* Poli Umum, Poli Gigi, Apotek, Pelayanan Suntik KB, Vaksinasi Haji & Umroh, Facial, PRP (Platelet-Rich Plasma), Microdermabrasi, Cauter  🕒 JAM OPERASIONAL 📅 Senin – Sabtu: 
+2026-10-26|435723f1-01f1-4404-8484-1ecb5cd8a59e|Klinik Nadi Medika dan Apotek|15:03|inbound|siang kak, benar ya
+2026-10-26|435723f1-01f1-4404-8484-1ecb5cd8a59e|Klinik Nadi Medika dan Apotek|15:19|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|3af74f9b-9529-4681-a5f5-dff53c8833c2|Klinik Nurul Salaf|14:40|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Nurul Salaf?
+2026-10-26|3af74f9b-9529-4681-a5f5-dff53c8833c2|Klinik Nurul Salaf|14:47|inbound|Selamat siang   Iya benar
+2026-10-26|3af74f9b-9529-4681-a5f5-dff53c8833c2|Klinik Nurul Salaf|14:55|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|5b689a68-00d6-420a-aefa-7d7997572fbc|Klinik Pratama Asy-Syifa|08:58|inbound|halo kak, maaf baru sempat nyimak mou nya.. insyaaAllah sudah oke, aman bisa dilanjutkan
+2026-10-26|5b689a68-00d6-420a-aefa-7d7997572fbc|Klinik Pratama Asy-Syifa|08:58|inbound|iya kak, tidak perlu kasir
+2026-10-26|5b689a68-00d6-420a-aefa-7d7997572fbc|Klinik Pratama Asy-Syifa|12:55|inbound|dr. Suriadie, penanggungjawab klinik
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|14:30|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Bina Medika?
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|16:53|inbound|iya betul
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|17:20|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|17:27|inbound|Maaf kami sudah pake Simkes yg lain
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|18:38|outbound|apakah dari saya boleh tanya-tanya pengalaman menggunakan simkes yang sekarang?
+2026-10-26|4f012cf5-2788-41b0-8e37-6dd494464a2f|Klinik Pratama Bina Medika|18:40|inbound|silahkan datang saja jika  ingin bertanya2
+2026-10-26|3b48146f-8c86-4a8d-b86b-9481b2c22256|KLINIK PRATAMA DELIMA|14:06|outbound|Baik, apakah sudah ada informasi terbaru  🙏?
+2026-10-26|e7178a0f-0468-4d8e-91ca-261d5a49a2de|Klinik Pratama D’Maryam|13:51|outbound|Halo kak, apakah sudah sempat mencoba-coba fitur kami? Kira-kira minggu ini jika kami ajak
+2026-10-26|e7178a0f-0468-4d8e-91ca-261d5a49a2de|Klinik Pratama D’Maryam|17:30|inbound|Halo kak, kalau besok selasa apakah bisa?
+2026-10-26|f83b6b7a-7ce6-4728-8756-7ed982aa008c|Klinik Pratama dr. Ferika I|15:20|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Pratama dr. Ferika?
+2026-10-26|f83b6b7a-7ce6-4728-8756-7ed982aa008c|Klinik Pratama dr. Ferika I|15:30|inbound|Siang..Ya betul..ada yg bisa dibantu?
+2026-10-26|f83b6b7a-7ce6-4728-8756-7ed982aa008c|Klinik Pratama dr. Ferika I|15:45|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|939cf075-b05a-48f6-ba23-5a5e6ca1b98e|Klinik Pratama dr. Sutarti|15:14|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Pratama dr. Sutarti?
+2026-10-26|939cf075-b05a-48f6-ba23-5a5e6ca1b98e|Klinik Pratama dr. Sutarti|15:14|inbound|Gmn ngih ?
+2026-10-26|939cf075-b05a-48f6-ba23-5a5e6ca1b98e|Klinik Pratama dr. Sutarti|15:23|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|8dbdaed2-fdc5-4c5f-91cd-6ddfd3b18b71|Klinik Pratama LC Medika|13:55|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|a562749e-8226-40f8-ab1b-b17a2084f852|Klinik Pratama Merah Putih|14:52|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Merah Putih?
+2026-10-26|a562749e-8226-40f8-ab1b-b17a2084f852|Klinik Pratama Merah Putih|14:52|inbound|Terima kasih telah menghubungi Klinik Pratama Merah Putih, silahkan beri tahu apa yang dapat kami bantu 😊🙏🏻
+2026-10-26|a562749e-8226-40f8-ab1b-b17a2084f852|Klinik Pratama Merah Putih|14:52|inbound|Terima kasih telah menghubungi Klinik Merah Putih. Pesan Anda akan kami balas pada jam Operasional Pagi (07.30-11.30)  &  Sore (16.30-20.30)   Hari Minggu dan Hari Besar Tutup  Silahkan tinggalkan pesan 🙏😊
+2026-10-26|f0e9394b-bfc1-44f3-aec8-52877ac48410|Klinik Pratama Mitra Medika|14:12|outbound|Baik kak, kira-kira kembali praktik kapan nggih?
+2026-10-26|e5c6b133-f8c5-4f02-b070-dca0d7051acd|Klinik Rahmatika|14:15|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Rahmatika?
+2026-10-26|e5c6b133-f8c5-4f02-b070-dca0d7051acd|Klinik Rahmatika|14:15|inbound|PESERTA BPJS KESEHATAN WAJIB MELAKUKAN : 1. *PENDAFTARAN PELAYANAN MELALUI APLIKASI JKN MOBILE* 2. *SKRINING RIWAYAT KESEHATAN MELALUI APLIKASI JKN MOBILE*  *PELAYANAN RUJUKAN* SENIN - SABTU JAM 16.00 - 19.00  *PELAYANAN RESEP PRB* SENIN - SABTU JAM 07.00 - 11
+2026-10-26|e5c6b133-f8c5-4f02-b070-dca0d7051acd|Klinik Rahmatika|14:15|inbound|*JADWAL PRAKTEK DOKTER KLINIK RAHMATIKA*  DR LIANNA SENIN - SABTU  JAM 08.00 - 12.00  DR TUTI HAPSARI PUJADI, M.KES SENIN - SABTU JAM 15.00 - 20.00  drg. Tira Hamdillah Skripsa M.Kes SENIN - SABTU JAM 16.00 - 20.00  BIDAN HERLINA  *Dengan perjanjian* SELASA JA
+2026-10-26|14684889-f47e-415f-a9c6-24bd17317248|Klinik Rizki Putri Husada|15:06|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Rizki Putri Husada?
+2026-10-26|14684889-f47e-415f-a9c6-24bd17317248|Klinik Rizki Putri Husada|15:06|inbound|Terima kasih telah menghubungi Klinik Rizky Putri Husada   Silahkan beritahu apa yang dapat kami bantu dengan format :   Nama :  No BPJS / No KTP :  Informasi yang diinginkan :   Pesan ini akan dikirimkan secara otomatis dan admin kami akan membalas pesan anda
+2026-10-26|1e5d1889-6272-4c7a-89b0-b1beef441a5c|Klinik Sehati|14:32|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Sehati?
+2026-10-26|1e5d1889-6272-4c7a-89b0-b1beef441a5c|Klinik Sehati|16:50|inbound|
+2026-10-26|1e5d1889-6272-4c7a-89b0-b1beef441a5c|Klinik Sehati|16:51|inbound|Silahkan menghubungi admin klinik Sehati 🙏🏻
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|14:57|outbound|Selamat Siang, apakah benar ini kontak nomer Klinik Setya husada?
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|16:25|inbound|siang kak benar, ada yang bisa kami bantu?
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|16:41|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|17:06|inbound|Mohon maaf sekali kami belum bisa membantu 🙏 terimakasih kerjasamanya
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|17:20|outbound|Oh baik, sebelumnya kalo boleh tau untuk rekam medis Praktik apakah sudah menggunakan sist
+2026-10-26|cb0f9770-be0c-4048-ba24-0a853c5e8265|Klinik Setya husada|19:37|inbound|kami digital kak
+2026-10-26|11819651-9df1-405b-aea8-e2104e7c4d9f|Klinik Sumber Sekar Lawang|14:03|outbound|Halo kak, melanjutkan kemarin minggu. Kira-kira dari owner klinik senggang dan saya bisa b
+2026-10-26|6bc696e9-c5ce-47a7-950c-09a71bb3525e|Medico Dental Center|13:25|inbound|Selamat siang Mas, mohon maaf baru respon 🙏  Kebetulan utk drg Ortho skrg hanya drg Andi aja mas, utk drg Ayu pindah ke Prima Medika Terban 🙏
+2026-10-26|6bc696e9-c5ce-47a7-950c-09a71bb3525e|Medico Dental Center|16:12|inbound|Bisa ketemu drg Andi dlu saja tidak apa2 Mas , supaya di buatkan surat rujukan utk pindah dokter .
+2026-10-26|6bc696e9-c5ce-47a7-950c-09a71bb3525e|Medico Dental Center|16:13|inbound|Atau mungkin jika berkenan, bisa ke RS tempat drg Andi praktek Mas. Di RSA UGM .
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|18:41|outbound|Selamat malam Dok, ingin konfirmasi lagi untuk malam ini jam 8 apakah senggang untuk wawan
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:48|inbound|Njih monggo
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:48|inbound|Ini baru selesai
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:53|inbound|Sekarang bisa  Sblm sy pulang njih
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:53|outbound|https://meet.google.com/ccp-rmrc-vcb berikut linknya nggih Dok
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:54|inbound|Ini dg hp bisa?
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:54|outbound|Bisa Dok
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:54|inbound|Atau pake laptop? Krn msh di pakai input data
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:54|outbound|Bisa keduanya nggih, senyamannya
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:55|inbound|Bentar mah ada 1 pasien datang
+2026-10-26|1a811489-c928-4b39-ab8c-95ecb12b555a|Praktek Dokter Umum dr. Muslikha Triastuti|19:55|outbound|Oke Baik
+2026-10-26|3a3a409d-f3b3-46e4-b416-bb63de8cd67c|Praktek dr. Iga Febriyanti|15:02|outbound|Selamat Siang, apakah benar ini kontak nomer Praktek dr. Iga Febriyanti?
+2026-10-26|3a3a409d-f3b3-46e4-b416-bb63de8cd67c|Praktek dr. Iga Febriyanti|15:04|inbound|Iy
+2026-10-26|3a3a409d-f3b3-46e4-b416-bb63de8cd67c|Praktek dr. Iga Febriyanti|15:04|inbound|Ada yg bs dibantu?
+2026-10-26|3a3a409d-f3b3-46e4-b416-bb63de8cd67c|Praktek dr. Iga Febriyanti|15:19|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|d7ea2cc7-d754-4abc-ae55-babfa20206b1|Praktek Dr. Mira SpOG|14:50|outbound|Selamat Siang, apakah benar ini kontak nomer Praktek Dr. Mira?
+2026-10-26|d7ea2cc7-d754-4abc-ae55-babfa20206b1|Praktek Dr. Mira SpOG|14:50|inbound|Terima kasih telah menghubungi Klinik Edelweiss by dr. Mira, SpOG. Ada yang bisa kami bantu bunda? 😊🙏🏻
+2026-10-26|d7ea2cc7-d754-4abc-ae55-babfa20206b1|Praktek Dr. Mira SpOG|14:57|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|1ba5456d-2f6b-4357-9f32-3213f46691fe|Praktek dr. Namira Farhayati Lubis|15:46|outbound|Halo Dok, apakah sudah ada informasi terbaru terkait jadwal senggang 🙏
+2026-10-26|8c4d2c77-b3a9-4c8b-9580-f26ab09e5c95|Praktek DR. Rr.Rifana Indrasakti|15:22|outbound|Selamat Siang, apakah benar ini kontak nomer Praktek dr. Rr.Rifana Indrasakti?
+2026-10-26|8c4d2c77-b3a9-4c8b-9580-f26ab09e5c95|Praktek DR. Rr.Rifana Indrasakti|15:23|inbound|iya
+2026-10-26|8c4d2c77-b3a9-4c8b-9580-f26ab09e5c95|Praktek DR. Rr.Rifana Indrasakti|15:23|inbound|bisa saya bantu
+2026-10-26|8c4d2c77-b3a9-4c8b-9580-f26ab09e5c95|Praktek DR. Rr.Rifana Indrasakti|15:30|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|048085a4-73f7-42d1-abd5-7cd546c4e10b|Praktek Mandiri Bidan Asrini Widayati, S.Tr.Keb, CHTT|15:47|outbound|Selamat siang, izin menanyakan ulang waktu senggang untuk wawancara nggih 🙏
+2026-10-26|048085a4-73f7-42d1-abd5-7cd546c4e10b|Praktek Mandiri Bidan Asrini Widayati, S.Tr.Keb, CHTT|16:14|inbound|Untuk hari apa y
+2026-10-26|048085a4-73f7-42d1-abd5-7cd546c4e10b|Praktek Mandiri Bidan Asrini Widayati, S.Tr.Keb, CHTT|16:25|outbound|Mengikut ketersediaan senggangnya admin atau bidan nggih  ☺️
+2026-10-26|2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a|PRAKTEK MANDIRI BIDAN & DOKTER SEHATI|14:01|outbound|Oh baik kak, Lalu apakah sudah sempat mencoba-coba fitur kami? Kira-kira minggu ini jika k
+2026-10-26|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|13:39|outbound|Halo Bu Efi, izin menanyakan ulang informasi diatas supaya bisa kita buatkan akun uji coba
+2026-10-26|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|13:40|inbound|siap wait ya
+2026-10-26|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|13:41|inbound|maaf baru respon
+2026-10-26|cdac41e5-b899-4984-9fa7-466a267713cb|Praktik Dokter (dr. Dea Pristy Amanda, M.M., M.A.R.S.)|13:49|outbound|Halo Dok, untuk akun companion sudah kami setup dan untuk menginstall chrome extension kam
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:13|outbound|Selamat Siang, apakah benar ini kontak nomer Praktik Dokter dr. M. Reza Wijoko Ekaputera?
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:16|inbound|Selamat siang betul kak ada yang bisa dibantu
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:23|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:24|inbound|Oo iya kalau boleh tahu mas dzaki mahasiswa kah sedang penelitian atau bagaimana ya ?
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:29|outbound|Saya dari startup https://www.sahaibat.com/ yang sebelumnya kami bekerja sama pada program
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:43|inbound|Oiya kak boleh
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|14:51|inbound|Saya terbuka untuk berdiskusi mengenai alur pelayanan dan administrasi praktik secara umum. Sebelum menentukan jadwal, boleh dibantu informasi lebih lanjut mengenai identitas dan posisi Mas di SahAIbat, profil singkat perusahaan, serta tujuan dan penggunaan ha
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:04|outbound|Berikut kami persiapkan surat yang mencakup informasi tentang kami dan tujuan wawancara  l
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:14|inbound|Baik mas dzaki boleh, kalau berkenan saya free di besok  Selasa malam jam 19 wib 🙏
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:24|outbound|Baik Dok, dari saya bisa besok selasa jam 19.00. Sebelumnya terima kasih atas ketersediaan
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:26|inbound|Sama sama mas Dzaki nanti boleh di info link zoom / online meet nya 🙏
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:29|outbound|Baik Dok, sekitar 18.30an besok akan saya kirimkan linknya
+2026-10-26|63a899aa-70e3-4e0b-8430-5cddaa9b34d3|Praktik Dokter dr. M. Reza Wijoko Ekaputera, AIFO-K|15:30|inbound|Okee
+2026-10-26|45478cb8-ef44-4f2f-931f-27dfbc003824|Praktik Mandiri Bidan Siti Maryam|13:56|outbound|Halo kak, apakah sudah sempat mencoba-coba fitur kami? Kira-kira minggu ini jika kami ajak
+2026-10-26|45478cb8-ef44-4f2f-931f-27dfbc003824|Praktik Mandiri Bidan Siti Maryam|14:18|inbound|sudsh akk
+2026-10-26|a2b8676b-c142-460e-a869-1c1eeda8e692|Spesialis THT Dr. Rikha Limiyah Bawen Semarang|15:07|outbound|Selamat Siang, apakah benar ini kontak nomer Spesialis THT Dr. Rikha Limiyah?
+2026-10-26|a2b8676b-c142-460e-a869-1c1eeda8e692|Spesialis THT Dr. Rikha Limiyah Bawen Semarang|15:07|inbound|Halo, Sahabat Attin Hospital  Bawen👋🏻🌷 Terima kasih telah menghubungi Attin Hospital Bawen  Pesan Anda sudah kami terima dan akan segera kami bantu. 💬 *Silakan sampaikan kebutuhan atau pertanyaan Anda melalui pesan ini. Kami akan memberikan informasi sebaik mu
+2026-10-26|95efc272-494c-4c4c-8a81-c8f7b70f9bb5|TEMPAT PRAKTEK DR.ANI RAHARJO.MPPM|15:04|outbound|Selamat Siang, apakah benar ini kontak nomer Tempat Praktek Dr.Ani Raharjo?
+2026-10-26|95efc272-494c-4c4c-8a81-c8f7b70f9bb5|TEMPAT PRAKTEK DR.ANI RAHARJO.MPPM|15:05|inbound|Bukan

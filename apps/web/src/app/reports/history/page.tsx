@@ -119,16 +119,16 @@ export default function HistoryPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-3 pb-6 md:p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
         <p className="mb-4 text-sm text-slate-500">{t.historySubtitle}</p>
         <ReportsTabs />
 
-        <div className="mb-4 flex gap-3">
+        <div className="mb-3 grid grid-cols-2 gap-2 md:mb-4 md:flex md:gap-3">
           <select
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
+            className="h-11 w-full min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 md:h-auto md:w-auto"
           >
             <option value={7}>{t.historyDays7}</option>
             <option value={30}>{t.historyDays30}</option>
@@ -137,7 +137,7 @@ export default function HistoryPage() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
+            className="h-11 w-full min-w-0 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 md:h-auto md:w-auto"
           >
             <option value="all">{t.historyAllTypes}</option>
             {Object.entries(TYPE_LABELS).map(([key, label]) => (
@@ -153,8 +153,42 @@ export default function HistoryPage() {
           {!loading && activities.length === 0 && (
             <div className="p-6 text-center text-sm text-slate-400">{t.historyNoActivity}</div>
           )}
+          {/* Phones: one stacked card per activity instead of a 4-column
+              table (which would need ~700px). Desktop keeps the table. */}
           {!loading && activities.length > 0 && (
-            <table className="w-full text-sm">
+            <ul className="divide-y divide-slate-100 md:hidden">
+              {activities.map((a) => {
+                const detail = describeActivity(a, locale, t);
+                return (
+                  <li key={a.id} className="px-3 py-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={`min-w-0 truncate rounded-full px-2 py-0.5 text-xs font-semibold ${TYPE_COLORS[a.type] ?? "bg-slate-100 text-slate-600"}`}
+                      >
+                        {TYPE_LABELS[a.type] ?? a.type}
+                      </span>
+                      <span className="shrink-0 text-xs whitespace-nowrap text-slate-400">
+                        {formatDate(a.createdAt, locale, { dateStyle: "medium" })}{" "}
+                        {formatTime(a.createdAt, locale, { timeStyle: "short" })}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 min-w-0 text-sm">
+                      {a.lead ? (
+                        <Link href={`/chat?leadId=${a.lead.id}`} className="font-medium break-words text-cyan-700 hover:underline">
+                          {a.lead.name}
+                        </Link>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
+                    </div>
+                    {detail && <div className="mt-0.5 text-sm break-words text-slate-500">{detail}</div>}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+          {!loading && activities.length > 0 && (
+            <table className="hidden w-full text-sm md:table">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left text-slate-500">
                   <th className="px-4 py-2.5 font-medium">{t.historyColTime}</th>

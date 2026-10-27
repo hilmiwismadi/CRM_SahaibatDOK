@@ -8,10 +8,11 @@ import MessageThread from "./MessageThread";
 import Composer from "./Composer";
 import WaStatusBadge from "./WaStatusBadge";
 import UnlinkedContactsButton from "./UnlinkedContacts";
-import type { ConversationListItem, LeadBrief, Selected, WaMessageItem } from "./types";
+import type { ConversationListItem, LeadBrief, ScheduledItem, Selected, WaMessageItem } from "./types";
 import { CATEGORY_COLORS, categoryLabels, REPLY_BRANCH_GROUPS, replyBranchLabel } from "@/lib/leadSegmentation";
 import { useLanguage } from "@/lib/i18n/context";
 import { formatDate } from "@/lib/i18n/locale";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 const POLL_MS = 4000;
 
@@ -35,7 +36,9 @@ function gmapsUrl(lead: LeadBrief): string {
     : base;
 }
 
-function LeadInfoCard({ lead }: { lead: LeadBrief }) {
+// "popover" = the desktop hover card; "sheet" = the same rows laid out
+// full-width inside the phone bottom sheet (no hover on touch screens).
+function LeadInfoCard({ lead, variant = "popover" }: { lead: LeadBrief; variant?: "popover" | "sheet" }) {
   const rating = lead.rating != null ? Number(lead.rating) : null;
   const rows: { label: string; value: ReactNode }[] = [];
   if (rating != null && !Number.isNaN(rating)) {
@@ -62,14 +65,22 @@ function LeadInfoCard({ lead }: { lead: LeadBrief }) {
   if (lead.notes) rows.push({ label: "Catatan", value: <span className="whitespace-pre-wrap">{lead.notes}</span> });
 
   return (
-    <div className="max-h-[70vh] w-80 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 text-left shadow-lg">
-      <div className="mb-2 text-xs font-semibold text-slate-900">{lead.name}</div>
+    <div
+      className={
+        variant === "sheet"
+          ? "w-full text-left"
+          : "max-h-[70vh] w-80 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 text-left shadow-lg"
+      }
+    >
+      <div className={variant === "sheet" ? "mb-2 text-sm font-semibold text-slate-900" : "mb-2 text-xs font-semibold text-slate-900"}>
+        {lead.name}
+      </div>
       {rows.length === 0 ? (
         <div className="text-xs text-slate-400">Belum ada info tambahan.</div>
       ) : (
-        <dl className="space-y-1.5 text-xs">
+        <dl className={variant === "sheet" ? "space-y-2 text-sm" : "space-y-1.5 text-xs"}>
           {rows.map((r) => (
-            <div key={r.label} className="grid grid-cols-[84px_1fr] gap-2">
+            <div key={r.label} className={variant === "sheet" ? "grid grid-cols-[96px_minmax(0,1fr)] gap-2" : "grid grid-cols-[84px_1fr] gap-2"}>
               <dt className="text-slate-400">{r.label}</dt>
               <dd className="text-slate-700">{r.value}</dd>
             </div>
@@ -103,7 +114,9 @@ export default function ChatPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const leadId = params.get("leadId");
+    const conversationId = params.get("conversationId");
     if (leadId) setSelected({ kind: "lead", leadId });
+    else if (conversationId) setSelected({ kind: "conversation", conversationId });
     // Lets "Contact Chain" links (e.g. the dashboard's lead modal) land
     // straight on the Lead info panel already built into this page,
     // instead of navigating to the separate /leads/[id]/contacts route —
@@ -115,6 +128,9 @@ export default function ChatPage() {
 
   const [messages, setMessages] = useState<WaMessageItem[]>([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
+  // Messages the send guard is holding back for this chat, plus the banner shown right after one was queued.
+  const [scheduled, setScheduled] = useState<ScheduledItem[]>([]);
+  const [queueNotice, setQueueNotice] = useState<{ scheduledFor: string; reasons: string[] } | null>(null);
   const [conversationPhone, setConversationPhone] = useState<string | null>(null);
 
   const [leadDetail, setLeadDetail] = useState<LeadBrief | null>(null);
@@ -147,6 +163,60 @@ export default function ChatPage() {
     setTimeout(() => setToast((cur) => (cur === msg ? null : cur)), 3000);
   }, []);
 
+  // Phones get master→detail navigation (list OR thread, never side by
+  // side), a bottom-sheet tag menu and a bottom-sheet lead info panel.
+  // Layout switching itself is pure CSS (`max-md:`), this only drives the
+  // pieces whose structure/behaviour differs.
+  const isMobile = useIsMobile();
+  // On phones opening a thread pushes a history entry, so the hardware /
+  // browser Back button returns to the list instead of leaving /chat.
+  const threadPushed = useRef(false);
+
+  function openThread(next: Selected) {
+    setSelected(next);
+    if (!isMobile) return;
+    const qs =
+      next.kind === "lead"
+        ? `leadId=${encodeURIComponent(next.leadId)}`
+        : `conversationId=${encodeURIComponent(next.conversationId)}`;
+    const url = `${window.location.pathname}?${qs}`;
+    if (threadPushed.current) {
+      window.history.replaceState(null, "", url);
+    } else {
+      window.history.pushState(null, "", url);
+      threadPushed.current = true;
+    }
+  }
+
+  function closeThread() {
+    setInfoOpen(false);
+    setContextMenu(null);
+    if (threadPushed.current) {
+      // The popstate handler below clears the selection.
+      window.history.back();
+      return;
+    }
+    setSelected(null);
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+
+  useEffect(() => {
+    if (!isMobile) return;
+    const onPop = () => {
+      threadPushed.current = false;
+      const params = new URLSearchParams(window.location.search);
+      const leadId = params.get("leadId");
+      const conversationId = params.get("conversationId");
+      setSelected(
+        leadId ? { kind: "lead", leadId } : conversationId ? { kind: "conversation", conversationId } : null,
+      );
+      setInfoOpen(false);
+      setContextMenu(null);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [isMobile]);
+
   useEffect(() => {
     if (!contextMenu) return;
     const close = () => setContextMenu(null);
@@ -154,14 +224,16 @@ export default function ChatPage() {
       if (e.key === "Escape") close();
     };
     window.addEventListener("click", close);
-    window.addEventListener("scroll", close, true);
+    // The phone bottom sheet scrolls internally, so "close on scroll"
+    // (which keeps the desktop popover from floating away) is desktop-only.
+    if (!isMobile) window.addEventListener("scroll", close, true);
     window.addEventListener("keydown", closeOnEscape);
     return () => {
       window.removeEventListener("click", close);
       window.removeEventListener("scroll", close, true);
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [contextMenu]);
+  }, [contextMenu, isMobile]);
 
   async function applyFlag(item: ConversationListItem, body: Record<string, boolean | string | null>, successMsg: string) {
     setContextMenu(null);
@@ -328,6 +400,7 @@ export default function ChatPage() {
   const loadMessages = useCallback(async () => {
     if (!selected) {
       setMessages([]);
+      setScheduled([]);
       setConversationPhone(null);
       return;
     }
@@ -343,11 +416,13 @@ export default function ChatPage() {
       if (!res.ok) throw new Error(`Failed to load messages (HTTP ${res.status})`);
       const data = await res.json();
       setMessages(data.messages ?? []);
+      setScheduled(data.scheduled ?? []);
       setConversationPhone(data.contact?.phoneNormalized ?? null);
     } catch (err) {
       if (requestId === messagesRequestId.current) {
         console.error(err);
         setMessages([]);
+        setScheduled([]);
         setConversationPhone(null);
       }
     } finally {
@@ -358,6 +433,11 @@ export default function ChatPage() {
   useEffect(() => {
     loadMessages();
   }, [loadMessages]);
+
+  // The "queued" banner belongs to the chat it was shown in.
+  useEffect(() => {
+    setQueueNotice(null);
+  }, [selected]);
 
   useEffect(() => {
     if (!selected) return;
@@ -400,7 +480,7 @@ export default function ChatPage() {
   }, [loadLeadInfo]);
 
   function handleSelect(item: ConversationListItem) {
-    setSelected(item.lead ? { kind: "lead", leadId: item.lead.id } : { kind: "conversation", conversationId: item.id });
+    openThread(item.lead ? { kind: "lead", leadId: item.lead.id } : { kind: "conversation", conversationId: item.id });
   }
 
   async function handleSend(body: string) {
@@ -419,6 +499,27 @@ export default function ChatPage() {
       window.alert(typeof err.error === "string" ? err.error : "Failed to send message");
       return;
     }
+    if (res.status === 202) {
+      // Not sent: the send guard saw similar / too-frequent outreach and queued it for a safer time.
+      const data = await res.json().catch(() => ({}));
+      if (data.scheduled) setQueueNotice({ scheduledFor: data.scheduled.scheduledFor, reasons: data.scheduled.reasons ?? [] });
+    } else {
+      setQueueNotice(null);
+    }
+    await Promise.all([loadMessages(), loadConversations()]);
+  }
+
+  async function handleScheduledAction(id: string, action: "cancel" | "send_now") {
+    const res = await fetch(`/api/scheduled-messages/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      window.alert(typeof err.error === "string" ? err.error : "Gagal memproses pesan terjadwal");
+    }
+    setQueueNotice(null);
     await Promise.all([loadMessages(), loadConversations()]);
   }
 
@@ -458,12 +559,18 @@ export default function ChatPage() {
       <AppSidebar active="chat" />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-5">
-          <h1 className="text-sm font-bold text-slate-900">Chat</h1>
-          <div className="flex items-center gap-2">
+        {/* Phones: hidden while a thread is open (thread is full-screen). */}
+        <div
+          className={`flex h-14 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-5 max-md:h-12 max-md:justify-end max-md:px-3 ${
+            selected ? "max-md:hidden" : ""
+          }`}
+        >
+          {/* The phone top bar already says "Chat". */}
+          <h1 className="text-sm font-bold text-slate-900 max-md:hidden">Chat</h1>
+          <div className="flex min-w-0 items-center gap-2">
             <UnlinkedContactsButton
               onPromoted={(leadId) => {
-                setSelected({ kind: "lead", leadId });
+                openThread({ kind: "lead", leadId });
                 loadConversations();
               }}
             />
@@ -472,22 +579,29 @@ export default function ChatPage() {
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          <div className="w-[340px] shrink-0 border-r border-slate-100 bg-white">
+          {/* Master pane: fixed 340px column on desktop, full screen on phones
+              until a conversation is picked. */}
+          <div
+            className={`w-[340px] shrink-0 border-r border-slate-100 bg-white max-md:w-full max-md:min-w-0 max-md:max-w-full max-md:overflow-hidden max-md:border-r-0 ${
+              selected ? "max-md:hidden" : ""
+            }`}
+          >
             <ConversationList
               conversations={conversations}
               loading={convLoading}
               search={search}
               onSearchChange={setSearch}
-              onContextMenu={(e, item) => {
+              onContextMenu={(pos, item) => {
                 setExpandedBranch(null);
-                setContextMenu({ x: e.clientX, y: e.clientY, item });
+                setContextMenu({ x: pos.x, y: pos.y, item });
               }}
               selected={selected}
               onSelect={handleSelect}
             />
           </div>
 
-          <div className="flex flex-1 flex-col overflow-hidden">
+          {/* Detail pane: on phones only rendered visibly once selected. */}
+          <div className={`flex min-w-0 flex-1 flex-col overflow-hidden ${selected ? "" : "max-md:hidden"}`}>
             {!selected && (
               <div className="flex flex-1 items-center justify-center text-sm text-slate-400">
                 {t.chatSelectPrompt}
@@ -496,35 +610,51 @@ export default function ChatPage() {
 
             {selected && (
               <>
-                <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-900">{title}</div>
-                      {displayPhone && <div className="text-xs text-slate-400">{displayPhone}</div>}
+                <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3 max-md:gap-1 max-md:px-1 max-md:py-1.5">
+                  <div className="flex min-w-0 items-center gap-3 max-md:gap-1.5">
+                    <button
+                      type="button"
+                      onClick={closeThread}
+                      aria-label="Kembali ke daftar chat"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-slate-600 active:bg-slate-100 md:hidden"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-slate-900 max-md:truncate">{title}</div>
+                      {displayPhone && <div className="text-xs text-slate-400 max-md:truncate">{displayPhone}</div>}
                     </div>
                     {selected.kind === "lead" && leadDetail && (
                       <a
                         href={gmapsUrl(leadDetail)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="whitespace-nowrap rounded-md bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-cyan-700"
+                        aria-label="Open Gmaps"
+                        className="whitespace-nowrap rounded-md bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-cyan-700 max-md:flex max-md:h-10 max-md:shrink-0 max-md:items-center max-md:px-2.5"
                       >
-                        Open Gmaps ↗
+                        <span className="md:hidden">Maps ↗</span>
+                        <span className="max-md:hidden">Open Gmaps ↗</span>
                       </a>
                     )}
                   </div>
                   {selected.kind === "lead" && (
-                    <div className="group relative">
+                    <div className="group relative max-md:shrink-0">
                       <button
                         onClick={() => setInfoOpen((v) => !v)}
-                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 max-md:h-10 max-md:whitespace-nowrap max-md:px-2.5"
                       >
-                        {infoOpen ? t.chatHideInfo : t.chatLeadInfo}
+                        {/* On phones the button opens a bottom sheet, which
+                            has its own close control. */}
+                        <span className="md:hidden">{t.chatLeadInfo}</span>
+                        <span className="max-md:hidden">{infoOpen ? t.chatHideInfo : t.chatLeadInfo}</span>
                       </button>
                       {leadDetail && (
                         // pt-2 (not margin) keeps the hover area continuous
                         // between the button and the card so links stay clickable.
-                        <div className="invisible absolute right-0 top-full z-50 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                        // Desktop only: touch has no hover, phones use the sheet.
+                        <div className="invisible absolute right-0 top-full z-50 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 max-md:hidden">
                           <LeadInfoCard lead={leadDetail} />
                         </div>
                       )}
@@ -532,17 +662,36 @@ export default function ChatPage() {
                   )}
                 </div>
 
-                <MessageThread messages={messages} loading={messagesLoading} />
+                <MessageThread
+                  messages={messages}
+                  loading={messagesLoading}
+                  scheduled={scheduled}
+                  onScheduledAction={handleScheduledAction}
+                />
+
+                {queueNotice && (
+                  <div className="shrink-0 border-t border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-900">
+                    <span className="font-semibold">
+                      Pesan dijadwalkan pukul{" "}
+                      {new Date(queueNotice.scheduledFor).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}
+                      , belum terkirim.
+                    </span>{" "}
+                    {queueNotice.reasons.length > 0 && <span>{queueNotice.reasons.join(" • ")}. </span>}
+                    <span>Dijeda otomatis agar tidak terlihat seperti bot spam. </span>
+                    <a href="/queue" className="underline">Lihat antrean</a>
+                  </div>
+                )}
 
                 <Composer
                   disabled={!canSend}
                   disabledReason={!canSend ? t.chatNoPhoneYet : undefined}
                   contactName={title !== "…" ? title : null}
+                  contactAddress={selected.kind === "lead" ? leadDetail?.address : null}
                   onSend={handleSend}
                 />
 
                 {selected.kind === "lead" && infoOpen && (
-                  <div className="max-h-64 overflow-y-auto border-t border-slate-100 bg-white p-4">
+                  <div className="max-h-64 overflow-y-auto border-t border-slate-100 bg-white p-4 max-md:hidden">
                     <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t.chatContactChain}</div>
                     <ContactChainTree
                       contacts={contacts}
@@ -558,13 +707,60 @@ export default function ChatPage() {
         </div>
       </div>
 
+      {/* Phones: lead info + contact chain as a bottom sheet (the desktop
+          hover card and the under-composer panel don't work on touch). */}
+      {isMobile && selected?.kind === "lead" && infoOpen && (
+        <div className="fixed inset-0 z-[100] flex items-end bg-black/40" onClick={() => setInfoOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+            className="flex max-h-[90dvh] w-full flex-col rounded-t-2xl bg-white shadow-2xl"
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-100 py-1 pl-4 pr-1">
+              <span className="text-sm font-semibold text-slate-900">{t.chatLeadInfo}</span>
+              <button
+                type="button"
+                onClick={() => setInfoOpen(false)}
+                aria-label={t.close}
+                className="flex h-11 w-11 items-center justify-center rounded-full text-slate-400 active:bg-slate-100"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="overflow-y-auto overscroll-contain px-4 pb-[calc(16px+env(safe-area-inset-bottom))] pt-3">
+              {leadDetail ? (
+                <LeadInfoCard lead={leadDetail} variant="sheet" />
+              ) : (
+                <div className="text-sm text-slate-400">…</div>
+              )}
+              <div className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-slate-400">{t.chatContactChain}</div>
+              <ContactChainTree
+                contacts={contacts}
+                activeContactId={activeContactId}
+                onActivate={handleActivateContact}
+                onAdd={handleAddContact}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Phones: a dimmed backdrop behind the tag bottom sheet. A tap on it
+          bubbles to the window "click" listener, which closes the menu. */}
+      {contextMenu && isMobile && <div className="fixed inset-0 z-[99] bg-black/40" />}
       {contextMenu && (
         <div
           onClick={(e) => e.stopPropagation()}
-          style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 100 }}
-          className="min-w-[230px] max-h-[80vh] overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+          style={isMobile ? undefined : { position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 100 }}
+          className={
+            isMobile
+              ? "fixed inset-x-0 bottom-0 [&_button]:min-h-[46px] z-[100] max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-2xl bg-white pb-[calc(8px+env(safe-area-inset-bottom))] pt-2 shadow-2xl"
+              : "min-w-[230px] max-h-[80vh] overflow-y-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+          }
         >
-          <div className="truncate px-3 py-1.5 text-xs font-medium text-slate-400">
+          {isMobile && <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-slate-200" />}
+          <div className="truncate px-3 py-1.5 text-xs font-medium text-slate-400 max-md:px-4 max-md:py-2 max-md:text-sm">
             {contextMenu.item.lead?.name ?? contextMenu.item.displayName ?? contextMenu.item.phoneNormalized}
           </div>
           {contextMenu.item.needsReply ? (
@@ -724,16 +920,21 @@ export default function ChatPage() {
         </div>
       )}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+        // Phones: lifted above the composer and capped to the screen width.
+        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg max-md:bottom-[calc(104px+env(safe-area-inset-bottom))] max-md:z-[110] max-md:w-max max-md:max-w-[calc(100vw-32px)] max-md:text-center">
           {toast}
         </div>
       )}
       {followUpPrompt && (
         <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4 max-md:z-[100] max-md:items-end max-md:p-0"
           onClick={() => setFollowUpPrompt(null)}
         >
-          <div className="w-full max-w-xs rounded-xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+          {/* Phones: bottom sheet, scrollable when the keyboard is up. */}
+          <div
+            className="w-full max-w-xs rounded-xl bg-white p-5 shadow-xl max-md:max-h-[90dvh] max-md:max-w-none max-md:overflow-y-auto max-md:rounded-b-none max-md:rounded-t-2xl max-md:pb-[calc(20px+env(safe-area-inset-bottom))]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h3 className="mb-1 text-sm font-semibold text-slate-900">{t.chatFollowUpPromptTitle}</h3>
             <p className="mb-3 truncate text-xs text-slate-400">{followUpPrompt.lead?.name ?? followUpPrompt.displayName}</p>
             <input
@@ -763,14 +964,14 @@ export default function ChatPage() {
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setFollowUpPrompt(null)}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+                className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 max-md:min-h-[44px] max-md:flex-1 max-md:border max-md:border-slate-200"
               >
                 {t.chatFollowUpCancel}
               </button>
               <button
                 onClick={handleConfirmFollowUp}
                 disabled={!followUpDate}
-                className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50 max-md:min-h-[44px] max-md:flex-1"
               >
                 {t.chatFollowUpConfirm}
               </button>

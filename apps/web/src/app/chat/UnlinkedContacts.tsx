@@ -69,14 +69,18 @@ export default function UnlinkedContactsButton({ onPromoted }: { onPromoted: (le
     <>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 max-md:min-h-[40px] max-md:min-w-0 max-md:truncate"
       >
         {t.unlinkedButton}
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setOpen(false)}>
+        // Phones: bottom sheet above the fixed top bar (z-60), safe-area aware.
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 max-md:z-[100] max-md:items-end max-md:p-0"
+          onClick={() => setOpen(false)}
+        >
           <div
-            className="max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl"
+            className="max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-xl max-md:max-h-[90dvh] max-md:max-w-none max-md:overscroll-contain max-md:rounded-b-none max-md:rounded-t-2xl max-md:px-4 max-md:pb-[calc(20px+env(safe-area-inset-bottom))] max-md:pt-3"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-start justify-between gap-3">
@@ -84,7 +88,7 @@ export default function UnlinkedContactsButton({ onPromoted }: { onPromoted: (le
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 max-md:-mr-2 max-md:-mt-1 max-md:flex max-md:h-11 max-md:w-11 max-md:items-center max-md:justify-center"
                 aria-label={t.close}
               >
                 ✕
@@ -114,13 +118,13 @@ export default function UnlinkedContactsButton({ onPromoted }: { onPromoted: (le
                       placeholder={t.unlinkedNamePlaceholder}
                       value={nameDraft[c.id] ?? ""}
                       onChange={(e) => setNameDraft((d) => ({ ...d, [c.id]: e.target.value }))}
-                      className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1 text-xs outline-none focus:border-cyan-500"
+                      className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1 text-xs outline-none focus:border-cyan-500 max-md:min-h-[44px] max-md:px-3"
                     />
                     <button
                       type="button"
                       disabled={pending === c.id || !(nameDraft[c.id] ?? "").trim()}
                       onClick={() => handlePromote(c.id)}
-                      className="shrink-0 rounded-lg bg-cyan-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-cyan-700 disabled:opacity-50"
+                      className="shrink-0 rounded-lg bg-cyan-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-cyan-700 disabled:opacity-50 max-md:min-h-[44px] max-md:px-4 max-md:text-sm"
                     >
                       {pending === c.id ? "…" : t.unlinkedPromoteAction}
                     </button>

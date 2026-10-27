@@ -347,21 +347,21 @@ export default function DailyLogPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="sync" />
-      <div className="flex-1 overflow-y-auto p-6">
-        <h1 className="mb-1 text-lg font-bold text-slate-900">CRM Sync</h1>
+      <div className="flex-1 overflow-y-auto px-3 pb-6 md:p-6">
+        <h1 className="mt-3 mb-1 text-lg font-bold text-slate-900 md:mt-0">CRM Sync</h1>
         <p className="mb-4 text-sm text-slate-500">
           Lead yang dichat pada tanggal terpilih — satu script untuk catat note + naikkan stage. Edit teks di bawah, lalu paste ke console sales.sahaibat.com.
         </p>
         <SyncTabs />
 
-        <div className="mb-4 flex items-center gap-3">
-          <label className="text-sm font-medium text-slate-600">
+        <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+          <label className="flex items-center text-sm font-medium text-slate-600 md:block">
             Tanggal
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="ml-2 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+              className="ml-2 h-11 min-w-0 flex-1 rounded-lg border border-slate-300 px-2 py-1 text-sm md:h-auto md:flex-none"
             />
           </label>
           {!loading && <span className="text-sm text-slate-500">{rows.length} lead dichat tanggal ini</span>}
@@ -377,21 +377,24 @@ export default function DailyLogPage() {
 
         {!loading && rows.length > 0 && (
           <>
-            <div className="mb-2 flex items-center justify-between">
-              <div className="text-sm font-semibold text-slate-700">
+            {/* Phones: the wrapper dissolves (display: contents) so the button
+                row can stick to the top of the page scroller while the rep
+                scrolls through the script + lead list — Copy stays one tap away. */}
+            <div className="contents md:mb-2 md:flex md:items-center md:justify-between">
+              <div className="mb-2 text-sm font-semibold text-slate-700 md:mb-0">
                 Script — edit &quot;body&quot; tiap lead, lalu paste ke DevTools Console di sales.sahaibat.com
               </div>
-              <div className="flex gap-2">
+              <div className="sticky top-0 z-10 -mx-3 mb-2 flex gap-2 bg-[#f7f8fa] px-3 py-2 md:static md:mx-0 md:mb-0 md:bg-transparent md:p-0">
                 <button
                   onClick={resetTemplate}
-                  className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                  className="h-11 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 md:h-auto md:flex-none md:bg-transparent"
                   title="Buang semua editan, mulai ulang dari template kosong"
                 >
                   Reset ke template
                 </button>
                 <button
                   onClick={copyScript}
-                  className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-cyan-700"
+                  className="h-11 flex-[2] rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-cyan-700 md:h-auto md:flex-none md:font-medium"
                 >
                   {copied ? "Tersalin ✓" : "Copy script"}
                 </button>
@@ -416,7 +419,40 @@ export default function DailyLogPage() {
               klik &quot;Pakai&quot; buat nyuntik ke baris lead itu di script di atas
             </div>
             <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white">
-              <table className="w-full text-sm">
+              {/* Phones: one card per lead instead of a 4-column table. */}
+              <ul className="divide-y divide-slate-100 md:hidden">
+                {rows.map((r) => (
+                  <li key={r.leadId} className="px-3 py-3 text-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="font-medium break-words text-slate-800">{r.name}</div>
+                        <div className="text-xs text-slate-400">{r.phone}</div>
+                      </div>
+                      {r.suggestedStage && (
+                        <span
+                          className="shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white"
+                          style={{ background: STAGE_COLORS[r.suggestedStage] }}
+                        >
+                          → {r.suggestedStage}
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-0.5 text-xs text-slate-500">{r.categoryLabel}</div>
+                    <div className="mt-2 break-words text-slate-600">
+                      {r.claudeSummary || <span className="text-slate-300">— belum diringkas —</span>}
+                    </div>
+                    {r.claudeSummary && (
+                      <button
+                        onClick={() => useSummary(r)}
+                        className="mt-2 h-11 w-full rounded-lg border border-cyan-600 text-sm font-medium text-cyan-700 active:bg-cyan-50"
+                      >
+                        Pakai →
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <table className="hidden w-full text-sm md:table">
                 <thead className="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
                   <tr>
                     <th className="px-3 py-2">Lead</th>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { WaMessageItem } from "./types";
+import type { ScheduledItem, WaMessageItem } from "./types";
 
 function dateLabel(iso: string) {
   const d = new Date(iso);
@@ -16,15 +16,24 @@ function dateLabel(iso: string) {
 export default function MessageThread({
   messages,
   loading,
+  scheduled = [],
+  onScheduledAction,
 }: {
   messages: WaMessageItem[];
   loading: boolean;
+  /** Messages the send guard is holding back; rendered after the sent ones. */
+  scheduled?: ScheduledItem[];
+  onScheduledAction?: (id: string, action: "cancel" | "send_now") => void;
 }) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Scroll only the thread's own container. scrollIntoView() also scrolls
+  // every scrollable ancestor (including overflow-hidden page roots), which
+  // on phones makes the whole layout jump — especially with the keyboard up.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+    const el = scrollRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [messages.length, scheduled.length]);
 
   const items = messages.map((m, i) => ({
     message: m,
@@ -33,9 +42,9 @@ export default function MessageThread({
   }));
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-50 p-4">
+    <div ref={scrollRef} className="flex-1 overflow-y-auto bg-slate-50 p-4 max-md:overscroll-contain max-md:px-3">
       {loading && <div className="text-sm text-slate-400">Loading messages…</div>}
-      {!loading && messages.length === 0 && (
+      {!loading && messages.length === 0 && scheduled.length === 0 && (
         <div className="text-sm text-slate-400">No messages yet — send the first one below.</div>
       )}
 
@@ -54,7 +63,7 @@ export default function MessageThread({
               )}
               <div className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm shadow-sm ${
+                  className={`max-w-[70%] rounded-2xl max-md:max-w-[85%] px-3 py-2 text-sm shadow-sm ${
                     isOutgoing ? "bg-cyan-600 text-white" : "bg-white text-slate-800"
                   }`}
                 >
@@ -67,7 +76,34 @@ export default function MessageThread({
             </div>
           );
         })}
-        <div ref={bottomRef} />
+
+        {scheduled.map((s) => (
+          <div key={s.id} className="flex justify-end">
+            <div className="max-w-[70%] rounded-2xl border border-dashed border-amber-400 bg-amber-50 px-3 py-2 text-sm text-slate-800 max-md:max-w-[85%]">
+              <div className="whitespace-pre-wrap break-words">{s.body}</div>
+              <div className="mt-1 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[11px] text-amber-800">
+                <span>
+                  {s.status === "failed"
+                    ? `Gagal: ${s.lastError ?? "tidak diketahui"}`
+                    : s.status === "sending"
+                      ? "Sedang dikirim…"
+                      : `Terjadwal ${new Date(s.scheduledFor).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`}
+                </span>
+                {s.reason && s.status === "queued" && <span className="text-amber-700/80">({s.reason})</span>}
+                {onScheduledAction && s.status !== "sending" && (
+                  <>
+                    <button className="font-semibold underline" onClick={() => onScheduledAction(s.id, "send_now")}>
+                      Kirim sekarang
+                    </button>
+                    <button className="font-semibold underline" onClick={() => onScheduledAction(s.id, "cancel")}>
+                      Batalkan
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

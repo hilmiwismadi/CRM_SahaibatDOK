@@ -69,15 +69,15 @@ export default function ScrapesAdminPage() {
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="scrapes" />
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-3 md:p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">Scrape Jobs</h1>
-        <p className="mb-6 text-sm text-slate-500">
+        <p className="mb-4 break-words text-sm text-slate-500 md:mb-6">
           Run a scrape with <code className="rounded bg-slate-100 px-1 py-0.5">scripts/run-scrape.ps1</code> (see{" "}
           <code className="rounded bg-slate-100 px-1 py-0.5">docs/SCRAPER_GUIDE.md</code>), then import the resulting
           file from <code className="rounded bg-slate-100 px-1 py-0.5">scrape-output/</code> here.
         </p>
 
-        <form onSubmit={handleImport} className="mb-8 max-w-xl rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+        <form onSubmit={handleImport} className="mb-6 max-w-xl rounded-xl border border-slate-100 bg-white p-4 shadow-sm md:mb-8 md:p-5">
           <div className="mb-3 flex flex-col gap-1.5">
             <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">File name (in scrape-output/)</label>
             <input
@@ -101,11 +101,11 @@ export default function ScrapesAdminPage() {
           <button
             type="submit"
             disabled={busy}
-            className="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50"
+            className="min-h-11 w-full rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50 md:min-h-0 md:w-auto"
           >
             {busy ? "Importing…" : "Import"}
           </button>
-          {message && <p className="mt-3 text-sm text-slate-600">{message}</p>}
+          {message && <p className="mt-3 break-words text-sm text-slate-600">{message}</p>}
         </form>
 
         <h2 className="mb-2 text-sm font-semibold text-slate-900">Recent jobs</h2>
@@ -113,7 +113,33 @@ export default function ScrapesAdminPage() {
           {jobs.length === 0 ? (
             <div className="p-6 text-center text-sm text-slate-400">No scrape jobs yet.</div>
           ) : (
-            <table className="w-full text-sm">
+            <>
+            {/* Phones: one stacked card per job instead of a 6-column table. */}
+            <ul className="divide-y divide-slate-100 md:hidden">
+              {jobs.map((job) => (
+                <li key={job.id} className="px-3 py-3">
+                  <div className="flex items-start gap-2">
+                    <div className="min-w-0 flex-1 break-words text-sm font-medium text-slate-800">{job.queryText}</div>
+                    <span className="max-w-[40%] shrink-0 truncate rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                      {job.status}
+                    </span>
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                    <span>
+                      Raw <b className="font-semibold text-slate-700">{job.rawResultCount ?? "-"}</b>
+                    </span>
+                    <span>
+                      New <b className="font-semibold text-slate-700">{job.newLeadCount ?? "-"}</b>
+                    </span>
+                    <span>
+                      Updated <b className="font-semibold text-slate-700">{job.updatedLeadCount ?? "-"}</b>
+                    </span>
+                  </div>
+                  <div className="mt-1 text-xs text-slate-400">{new Date(job.startedAt).toLocaleString("id-ID")}</div>
+                </li>
+              ))}
+            </ul>
+            <table className="hidden w-full text-sm md:table">
               <thead>
                 <tr className="border-b border-slate-100 bg-slate-50 text-left text-slate-500">
                   <th className="px-4 py-2.5 font-medium">Query</th>
@@ -137,6 +163,7 @@ export default function ScrapesAdminPage() {
                 ))}
               </tbody>
             </table>
+            </>
           )}
         </div>
       </div>

@@ -427,7 +427,7 @@ export const translations: Record<Locale, Translations> = dict;
 // without a giant switch statement.
 export const NAV_LABELS: Record<
   Locale,
-  Record<"dashboard" | "map" | "chat" | "templates" | "letters" | "reports" | "sync" | "scrapes", string>
+  Record<"dashboard" | "map" | "chat" | "templates" | "letters" | "reports" | "sync" | "scrapes" | "queue", string>
 > = {
   id: {
     dashboard: "Dashboard",
@@ -438,6 +438,7 @@ export const NAV_LABELS: Record<
     reports: "Laporan",
     sync: "CRM Sync",
     scrapes: "Scrape Jobs",
+    queue: "Antrean Kirim",
   },
   en: {
     dashboard: "Dashboard",
@@ -448,6 +449,7 @@ export const NAV_LABELS: Record<
     reports: "Reports",
     sync: "CRM Sync",
     scrapes: "Scrape Jobs",
+    queue: "Send Queue",
   },
 };
 

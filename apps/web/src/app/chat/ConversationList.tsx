@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ConversationListItem, Selected } from "./types";
 import { CATEGORY_COLORS, categoryLabels, type LeadCategory } from "@/lib/leadSegmentation";
 import { useLanguage } from "@/lib/i18n/context";
@@ -53,12 +53,51 @@ export default function ConversationList({
   onSearchChange: (v: string) => void;
   selected: Selected | null;
   onSelect: (item: ConversationListItem) => void;
-  onContextMenu: (e: React.MouseEvent, item: ConversationListItem) => void;
+  /** Opens the tag menu — right-click on desktop; long-press or the "⋯" button on touch. */
+  onContextMenu: (pos: { x: number; y: number }, item: ConversationListItem) => void;
 }) {
   const [tagFilter, setTagFilter] = useState<TagFilter>("all");
   const { locale, t } = useLanguage();
   const labels = categoryLabels(locale);
   const TAG_FILTERS = tagFilters(locale, t.convAll);
+
+  // Touch has no right-click (iOS never fires `contextmenu`), so a 500ms
+  // long-press on a row opens the same tag menu. The click that follows the
+  // press is swallowed so it doesn't also open the thread.
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pressStart = useRef<{ x: number; y: number } | null>(null);
+  const longPressed = useRef(false);
+  function cancelPress() {
+    if (pressTimer.current) clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+  }
+  function startPress(e: React.TouchEvent, item: ConversationListItem) {
+    longPressed.current = false;
+    cancelPress();
+    const touch = e.touches[0];
+    if (!touch) return;
+    const pos = { x: touch.clientX, y: touch.clientY };
+    pressStart.current = pos;
+    pressTimer.current = setTimeout(() => {
+      pressTimer.current = null;
+      longPressed.current = true;
+      navigator.vibrate?.(10);
+      onContextMenu(pos, item);
+    }, 500);
+  }
+  function movePress(e: React.TouchEvent) {
+    const touch = e.touches[0];
+    const start = pressStart.current;
+    if (!touch || !start) return;
+    if (Math.abs(touch.clientX - start.x) > 10 || Math.abs(touch.clientY - start.y) > 10) cancelPress();
+  }
+  function endPress(e: React.TouchEvent) {
+    cancelPress();
+    pressStart.current = null;
+    // Suppresses the synthetic click (which would also hit the window
+    // "click" listener that closes the menu we just opened).
+    if (longPressed.current && e.cancelable) e.preventDefault();
+  }
 
   // Name/phone/message-body matching already happened server-side (see
   // /api/conversations' `?q=` handling) — `conversations` here is already
@@ -88,8 +127,8 @@ export default function ConversationList({
   const needsReplyCount = conversations.filter((c) => c.needsReply).length;
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-slate-100 p-4">
+    <div className="flex h-full min-w-0 max-w-full flex-col overflow-hidden">
+      <div className="border-b border-slate-100 p-4 max-md:px-4 max-md:pb-3 max-md:pt-3">
         <div className="mb-3 flex items-center gap-2">
           <h1 className="text-lg font-bold text-slate-900">Chat</h1>
           {needsReplyCount > 0 && (
@@ -105,12 +144,14 @@ export default function ConversationList({
           onChange={(e) => onSearchChange(e.target.value)}
           className="mb-3 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500"
         />
-        <div className="flex flex-wrap gap-1.5">
+        {/* Phones: one horizontally-scrolling row instead of ~4 wrapped
+            rows of chips eating the list's height. */}
+        <div className="flex flex-wrap gap-1.5 max-md:-mx-4 max-md:flex-nowrap max-md:overflow-x-auto max-md:px-4 max-md:pb-1 max-md:[scrollbar-width:none]">
           {TAG_FILTERS.map((f) => (
             <button
               key={f.key}
               onClick={() => setTagFilter(f.key)}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors max-md:shrink-0 max-md:whitespace-nowrap max-md:px-3 max-md:py-2 max-md:text-xs ${
                 tagFilter === f.key
                   ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -122,7 +163,7 @@ export default function ConversationList({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
         {loading && <div className="p-4 text-sm text-slate-400">{t.convLoading}</div>}
         {!loading && filtered.length === 0 && (
           <div className="p-4 text-sm text-slate-400">
@@ -142,18 +183,33 @@ export default function ConversationList({
           const categoryLabel = c.tagCategory ? labels[c.tagCategory] : null;
 
           return (
+            <div key={c.id} className="relative min-w-0 max-w-full overflow-hidden">
             <button
-              key={c.id}
-              onClick={() => onSelect(c)}
+              onClick={() => {
+                if (longPressed.current) {
+                  longPressed.current = false;
+                  return;
+                }
+                onSelect(c);
+              }}
               onContextMenu={(e) => {
                 e.preventDefault();
-                onContextMenu(e, c);
+                // Android fires contextmenu on long-press too — don't open twice.
+                const touching = pressStart.current !== null;
+                cancelPress();
+                if (longPressed.current) return;
+                if (touching) longPressed.current = true;
+                onContextMenu({ x: e.clientX, y: e.clientY }, c);
               }}
-              className={`flex w-full flex-col gap-1 border-b border-slate-50 px-4 py-3 text-left transition-colors ${
+              onTouchStart={(e) => startPress(e, c)}
+              onTouchMove={movePress}
+              onTouchEnd={endPress}
+              onTouchCancel={endPress}
+              className={`flex w-full min-w-0 max-w-full flex-col gap-1 overflow-hidden border-b border-slate-50 px-4 py-3 text-left transition-colors max-md:select-none max-md:pr-12 max-md:[-webkit-touch-callout:none] ${
                 isSelected ? "bg-cyan-50" : needsReply ? "bg-red-50/60 hover:bg-red-50" : "bg-white hover:bg-slate-50"
               }`}
             >
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-1.5">
                   {needsReply && (
                     <span
@@ -167,66 +223,86 @@ export default function ConversationList({
                   <span className="shrink-0 text-[11px] text-slate-400">{timeLabel(c.lastMessage.sentAt, locale)}</span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                {/* Single canonical badge — same category /reports and /reports/kanban
-                    show for this lead, instead of stacking every boolean flag that
-                    happens to be true. `needsReply`/`repliedByBot` still get their own
-                    pill even though a category badge is also showing: those two answer
-                    "do I owe a reply right now", which is orthogonal to which bucket
-                    the lead is classified into (e.g. an Appointment lead can still be
-                    sitting on an unanswered message). */}
-                {needsReply && (
-                  <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-600">
-                    {t.convUnrepliedBadge}
-                  </span>
-                )}
-                {c.repliedByBot && (
-                  <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-600">
-                    {t.convRepliedByBotBadge}
-                  </span>
-                )}
-                {categoryLabel && (
-                  <span
-                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ backgroundColor: `${categoryColor}1a`, color: categoryColor }}
-                  >
-                    {categoryLabel}
-                  </span>
-                )}
-                {/* Same masking as the filter above: show these two even when
-                    tagCategory picked needs_reply/replied_by_bot instead, so a
-                    manual tag never becomes invisible just because the lead
-                    also has an unanswered message right now. */}
-                {c.needsOtherContact && c.tagCategory !== "needs_other_contact" && (
-                  <span
-                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ backgroundColor: `${CATEGORY_COLORS.needs_other_contact}1a`, color: CATEGORY_COLORS.needs_other_contact }}
-                  >
-                    {labels.needs_other_contact}
-                  </span>
-                )}
-                {c.needsFollowUp && c.tagCategory !== "needs_follow_up" && (
-                  <span
-                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ backgroundColor: `${CATEGORY_COLORS.needs_follow_up}1a`, color: CATEGORY_COLORS.needs_follow_up }}
-                  >
-                    {labels.needs_follow_up}
-                  </span>
-                )}
-                {c.letterSent && c.tagCategory !== "letter_sent" && (
-                  <span
-                    className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                    style={{ backgroundColor: `${CATEGORY_COLORS.letter_sent}1a`, color: CATEGORY_COLORS.letter_sent }}
-                  >
-                    {labels.letter_sent}
-                  </span>
-                )}
-                <span className="truncate text-xs text-slate-500">{preview}</span>
-              </div>
+              {/* Preview gets its own full-width line (single line, ellipsis) so
+                  it can never be covered by — or overflow next to — the tag
+                  pills. Tags sit on the line below and wrap if there are many.
+                  Newlines in the message are collapsed by `truncate`. */}
+              <span className="block w-full min-w-0 max-w-full truncate text-xs text-slate-500">{preview}</span>
+              {/* Single canonical badge — same category /reports and /reports/kanban
+                  show for this lead. The old extra "Belum dibalas" pill duplicated the
+                  "Belum Dijawab" category and is gone: an unanswered message is still
+                  signalled by the red dot, the red row tint and the header counter. */}
+              {(c.repliedByBot ||
+                categoryLabel ||
+                (c.needsOtherContact && c.tagCategory !== "needs_other_contact") ||
+                (c.needsFollowUp && c.tagCategory !== "needs_follow_up") ||
+                (c.letterSent && c.tagCategory !== "letter_sent")) && (
+                <div className="flex min-w-0 max-w-full flex-wrap gap-1">
+                  {c.repliedByBot && (
+                    <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-600">
+                      {t.convRepliedByBotBadge}
+                    </span>
+                  )}
+                  {categoryLabel && (
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ backgroundColor: `${categoryColor}1a`, color: categoryColor }}
+                    >
+                      {categoryLabel}
+                    </span>
+                  )}
+                  {/* Show these even when tagCategory picked a higher-priority
+                      category, so a manual tag never becomes invisible. */}
+                  {c.needsOtherContact && c.tagCategory !== "needs_other_contact" && (
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ backgroundColor: `${CATEGORY_COLORS.needs_other_contact}1a`, color: CATEGORY_COLORS.needs_other_contact }}
+                    >
+                      {labels.needs_other_contact}
+                    </span>
+                  )}
+                  {c.needsFollowUp && c.tagCategory !== "needs_follow_up" && (
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ backgroundColor: `${CATEGORY_COLORS.needs_follow_up}1a`, color: CATEGORY_COLORS.needs_follow_up }}
+                    >
+                      {labels.needs_follow_up}
+                    </span>
+                  )}
+                  {c.letterSent && c.tagCategory !== "letter_sent" && (
+                    <span
+                      className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ backgroundColor: `${CATEGORY_COLORS.letter_sent}1a`, color: CATEGORY_COLORS.letter_sent }}
+                    >
+                      {labels.letter_sent}
+                    </span>
+                  )}
+                </div>
+              )}
               {!c.lead && (
                 <span className="text-[11px] text-amber-600">{t.convNotLinked}</span>
               )}
             </button>
+            {/* Visible, discoverable alternative to long-press on phones. */}
+            <button
+              type="button"
+              aria-label="Tag / tandai"
+              onClick={(e) => {
+                // Keep this click from reaching the window listener that
+                // closes the menu.
+                e.stopPropagation();
+                const r = e.currentTarget.getBoundingClientRect();
+                onContextMenu({ x: r.left, y: r.bottom }, c);
+              }}
+              className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-slate-400 active:bg-slate-200/60 md:hidden"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="12" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="19" cy="12" r="2" />
+              </svg>
+            </button>
+            </div>
           );
         })}
       </div>

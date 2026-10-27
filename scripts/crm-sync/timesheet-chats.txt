@@ -1,0 +1,101 @@
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|08:05|outbound|Selamat pagi  Dok, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|08:06|inbound|Boleh mas
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|08:06|inbound|Mau kapan mas?
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|08:06|inbound|Saya baru ada waktu senin depan
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|08:18|outbound|Untuk senin depan kira-kira berkenan jam berapa nggih Dok?
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|11:13|inbound|Senin depan pagi ya jam 8
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|12:51|outbound|Baik Dok dari saya bisa, saya izin konfirmasi mengingatkan ulang besok senin pagi nggih Se
+2026-10-23|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|13:06|inbound|Oke mas
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|11:19|inbound|Selamat siang, untuk wawancara mengenai Riset Sistem Kesehatan di lakukan hari Senin / Selasa apa berkenan?
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|12:50|outbound|Berkenan Kak, apakah senin/selasa jam siang pihak Klinik senggang?
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|13:24|inbound|Senin bisa siang, untuk hari selasa agak sore jam 3
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|13:28|outbound|Baik, senin siang saya izin tanyakan ulang nggih
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|15:07|inbound|Baik, untuk senin siang pastinya jam berapa ya kak?
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|15:44|outbound|kalau jam 12 apakah dari pihak klinik bisa Kak?
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|16:07|inbound|Bisa kak
+2026-10-23|4efdac02-990c-46e1-92e1-92a9ea4c8bdf|Klinik BeSt Medika|17:20|outbound|Baik kak, terima kasih 🙏
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|09:52|inbound|baik
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|09:53|inbound|berkenan dijadwalkan kapan kak? nanti kami sampaikan dengan jadwal dokternya
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|10:26|outbound|Kalau hari senin/selasa, kira-kira dari dokter senggang di jam berapa nggih?
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|13:00|inbound|blm bisa kak mhn maaf  kalau hari kamis gimana kak?
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|13:03|outbound|Bisa kak, kamis sekitar jam berapa ya?
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|13:37|inbound|jam 18-20 ya
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|13:38|inbound|
+2026-10-23|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|13:51|outbound|Baik, kami izin tanyakan konfirmasi ulang kamis siang nggih
+2026-10-23|60db10ad-9b42-49d6-8e0b-e4cc94f3bd2f|Klinik Mutiara Sehat Lawang - Bedali|08:04|outbound|Selamat sore  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|60db10ad-9b42-49d6-8e0b-e4cc94f3bd2f|Klinik Mutiara Sehat Lawang - Bedali|08:21|inbound|selamat pagi. menunggu disposisi dulu nggeh
+2026-10-23|eae5caad-ab6b-4f4e-b902-ec541c6c7c4c|Klinik Pediatrik Medika|13:03|outbound|Selamat siang  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|eae5caad-ab6b-4f4e-b902-ec541c6c7c4c|Klinik Pediatrik Medika|13:14|inbound|Ouh iya kak mohon maaf dokter tidak berkenan kak mohon maaf nggeh lagi berduka soalnya
+2026-10-23|eae5caad-ab6b-4f4e-b902-ec541c6c7c4c|Klinik Pediatrik Medika|13:19|outbound|Terima kasih atas informasinya, kami turut berduka cita 🙏
+2026-10-23|eae5caad-ab6b-4f4e-b902-ec541c6c7c4c|Klinik Pediatrik Medika|13:20|outbound|Saya izin tanyakan ulang bulan depan nggih jika dari kami masih kekurangan narasumber
+2026-10-23|3b48146f-8c86-4a8d-b86b-9481b2c22256|KLINIK PRATAMA DELIMA|08:16|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|3b48146f-8c86-4a8d-b86b-9481b2c22256|KLINIK PRATAMA DELIMA|14:42|inbound|selamat siang untuk ketersediaan apa ya kak?
+2026-10-23|3b48146f-8c86-4a8d-b86b-9481b2c22256|KLINIK PRATAMA DELIMA|15:45|outbound|Seperti yang saya sampaikan diatas kak
+2026-10-23|e7178a0f-0468-4d8e-91ca-261d5a49a2de|Klinik Pratama D’Maryam|13:45|outbound|Halo Kak Rara, Untuk akun trial sudah kami siapkan nggih Trial Account Name: Ghevira Rahma
+2026-10-23|e7178a0f-0468-4d8e-91ca-261d5a49a2de|Klinik Pratama D’Maryam|14:31|outbound|Lalu kami juga izin bertanya, untuk Klinik D'maryam termasuk praktik PMB atau berbentuk fa
+2026-10-23|e7178a0f-0468-4d8e-91ca-261d5a49a2de|Klinik Pratama D’Maryam|15:37|inbound|Baik kak nanti saya cek
+2026-10-23|f0e9394b-bfc1-44f3-aec8-52877ac48410|Klinik Pratama Mitra Medika|12:57|outbound|Selamat siang  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|f0e9394b-bfc1-44f3-aec8-52877ac48410|Klinik Pratama Mitra Medika|15:10|inbound|Maaf mas,, nt saya tanyakan dokternya lg
+2026-10-23|50bce1e6-ce56-45e6-9571-a444e2d4646c|Klinik Pratama Sultan Agung Semarang|13:03|outbound|Selamat siang, melanjutkan informasi dari komunikasi kemarin. berikut saya lampirkan surat
+2026-10-23|50bce1e6-ce56-45e6-9571-a444e2d4646c|Klinik Pratama Sultan Agung Semarang|13:11|inbound|Baik kak.. sudah saya teruskan ke manajer operasionalnya nggih.. ditunggu info selanjutnya
+2026-10-23|50bce1e6-ce56-45e6-9571-a444e2d4646c|Klinik Pratama Sultan Agung Semarang|13:36|outbound|Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏
+2026-10-23|50bce1e6-ce56-45e6-9571-a444e2d4646c|Klinik Pratama Sultan Agung Semarang|13:53|inbound|Baik kak
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|09:00|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|09:02|inbound|Selamat Pagi, anda sedang terhubung dengan admin KLINIK SARANGAN MEDICARE
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|09:03|inbound|mohon maaf sebelumnya, permohonan kakak sudah kami sampaikan ke manajer kak, jawaban dari beliau tetap sama, beliau akan menghubungi secara personal/ tidak melalui WA center ini 🙏🏻
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|12:52|outbound|Oh baik kak, apakah dari saya bisa meminta nomer WA manajer tersebut secara langsung?
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|12:55|inbound|mohon maaf kak, SOP kami tidak diperbolehkan membagikan nomor pribadi staff dan manajemen.   Request kakak ini sudah kami sampaikan ulang hari ini ke beliau ya kak 🙏🏻
+2026-10-23|b6433556-648c-4243-8747-2d1aff1369e3|KLINIK SARANGAN MEDICARE MALANG|12:58|outbound|Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏
+2026-10-23|c41f490c-0859-407a-9bbe-076d652d40bd|Klinik Triyola|08:32|outbound|Selamat pagi  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|c41f490c-0859-407a-9bbe-076d652d40bd|Klinik Triyola|08:32|inbound|Pesan otomatis Terima kasih telah menghubungi Klinik Triyola. Silakan beri tahu apa yang dapat kami bantu 😇 Silahkan tinggalkan pesan anda pesan akan kami balas setelah melayani pasien. Pelayanan klinik  Poli umum 08.00-13.00 & 15.00-20.00 Poli gigi pagi senin
+2026-10-23|37d2bd7c-f90d-4335-a579-435418ae48b0|Klinik Utama Harapan Sehat Keluarga|13:06|outbound|Selamat siang  Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|37d2bd7c-f90d-4335-a579-435418ae48b0|Klinik Utama Harapan Sehat Keluarga|13:07|inbound|Terima kasih sudah menghubungi Klinik Utama Harapan Sehat Keluarga.  Ada yang bisa kami bantu Bapak/Ibu? Mohon maaf saat ini admin sedang tidak aktif.  Kami akan segera merespon saat jam operasional Klinik.   Jam Operasional Klinik : Senin - Jumat : 07.00 - 10
+2026-10-23|7d3945fb-050d-4bf7-a20d-49f4c1c4f23c|KLINIK WISNU HUSADA|13:54|outbound|Selamat siang Pak Tri, berikut penjelasan sistem kami secara umum dan gambarannya https://
+2026-10-23|7d3945fb-050d-4bf7-a20d-49f4c1c4f23c|KLINIK WISNU HUSADA|13:54|inbound|
+2026-10-23|7d3945fb-050d-4bf7-a20d-49f4c1c4f23c|KLINIK WISNU HUSADA|13:54|inbound|matursuwun
+2026-10-23|e586cd3d-598e-4baa-b4d1-ee88dd98049f|Praktek Dokter 24 Jam Amal Sehat|12:55|outbound|Selamat Siang, apakah benar ini kontak nomer Praktek Dokter 24 Admin Malang?
+2026-10-23|e586cd3d-598e-4baa-b4d1-ee88dd98049f|Praktek Dokter 24 Jam Amal Sehat|12:55|inbound|Terima kasih telah menghubungi Admin Praktek Dokter 24 Jam. Silakan beri tahu apa yang dapat kami bantu 🙏.
+2026-10-23|e586cd3d-598e-4baa-b4d1-ee88dd98049f|Praktek Dokter 24 Jam Amal Sehat|13:06|outbound|Perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan 
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|07:40|outbound|Izin konfirmasi ulang ketersediaan jam 8 pagi ini nggih
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|07:59|outbound|Berikut link untuk jam 8 ini nggih https://meet.google.com/wpc-vkvc-qte
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|08:19|outbound|Baik Bu, apabila jam 8 pagi ini belum senggang, kira-kira berkenan dijadwalkan ulang kapan
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|08:20|inbound|JM 9 ya mas
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|08:21|outbound|Baik 🙏
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|09:02|outbound|Saya sudah did dalam link nggih
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|09:02|inbound|Ini link nya mas
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|09:02|inbound|Mohon d konfirmasi
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|09:02|inbound|Sy SDH gabung
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|14:03|outbound|Halo Bu Efi, melanjutkan Gmeet kami tadi pagi. Dari kami meminta beberapa informasi supaya
+2026-10-23|6df088f6-dd1d-477e-8916-56b2c0c75934|Praktek Mandiri Bidan Efi Marinda|14:19|inbound|
+2026-10-23|45478cb8-ef44-4f2f-931f-27dfbc003824|Praktik Mandiri Bidan Siti Maryam|14:30|outbound|Kami izin bertanya lagi, untuk Praktik Bidan Siti Maryam termasuk praktik PMB atau berbent
+2026-10-23|45478cb8-ef44-4f2f-931f-27dfbc003824|Praktik Mandiri Bidan Siti Maryam|14:38|inbound|klinik bersalin b
+2026-10-23|45478cb8-ef44-4f2f-931f-27dfbc003824|Praktik Mandiri Bidan Siti Maryam|15:45|inbound|baik kaj
+2026-10-23|6f9ba1f3-6c14-4d8b-9b94-7781cebe7b95|Thursina Medical Clinic|08:09|outbound|Selamat pagi Kak, izin menanyakan ulang informasi ketersediaannya 🙏
+2026-10-23|6f9ba1f3-6c14-4d8b-9b94-7781cebe7b95|Thursina Medical Clinic|08:09|inbound|Selamat Datang di Thursina Medical Clinic   Saat ini kami sedang offline silahkan tinggalkan pesan, kami akan segera membalas pada saat jam operasional   *Jadwal Operasional* Senin-Kamis 08.00-17.00 Jum’at-Sabtu: 13.00-17.00 ✅ Kedatangan pasien maksimal 1 jam 
+2026-10-23|6f9ba1f3-6c14-4d8b-9b94-7781cebe7b95|Thursina Medical Clinic|14:53|inbound|Selamat sore kak. Monggo bisa di follow up melalui email nggih kak 🙏☺️
+2026-10-24|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|06:27|inbound|Selamat pagi. Mohon maaf sebelumnya, iya benar kak🙏🏻☺️
+2026-10-24|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|12:55|outbound|Perkenalkan saya Dzaki Wismadi yang saat ini sedang melakukan riset terkait pengembangan s
+2026-10-24|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|12:57|inbound|Saya sampaikan dan tanyakan dulu nggeh kak. Kepada pihak administrasi/dokternya 🙏🏻☺️
+2026-10-24|a314ed44-b50b-481b-96bc-9e289cfc7b28|KLINIK BINA SEHAT PATRANG|13:08|inbound|Mohon kak. Untuk program ini, apakah ada proposalnya nggeh?🙏🏻
+2026-10-24|3b48146f-8c86-4a8d-b86b-9481b2c22256|KLINIK PRATAMA DELIMA|00:55|inbound|Mohon maaf kak  Kami follow up ke bagian manajeman dahulu njih kak 🙏  Sudah kami  sampai untuk maksud dan tujuannya serta surat juga sudah kami sampaikan   Paling lambat besok siang njih kak info dari kami 🙏
+2026-10-24|8dbdaed2-fdc5-4c5f-91cd-6ddfd3b18b71|Klinik Pratama LC Medika|16:07|inbound|Ada yg bisa sy Bantu kak?
+2026-10-24|f0e9394b-bfc1-44f3-aec8-52877ac48410|Klinik Pratama Mitra Medika|08:01|inbound|Maaf untuk dokter tidak sedang pktk..  Dokter lagi seminar di luar kota
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:04|outbound|Selamat siang Dok, mohon maaf menganggu hari sabtunya. Untuk hari ini apakah ada waktu sen
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:12|inbound|Boleh mas
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:12|inbound|13.30 longgar
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:13|inbound|Ato saya coba sendiri dl
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:17|outbound|saya izin agendakan online jam 13.30 nggih Dok, singkat saja hanya 15 menit untuk perkenal
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:18|inbound|oke
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:28|outbound|https://meet.google.com/vua-udhh-qog berikut linknya nggih Dok
+2026-10-24|ba8de637-383a-4461-9879-fcd50d7dac1c|praktek dr Kurniawan Eko Y|13:31|inbound|ok
+2026-10-24|2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a|PRAKTEK MANDIRI BIDAN & DOKTER SEHATI|13:57|inbound|Klinik bersalin ya kak
+2026-10-25|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|15:21|inbound|Halo kak. Untuk presentasi besok bsia diundur di pukul 11.00 wib ya karena pasgi ada pasien saya 🙏🙏
+2026-10-25|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|18:21|outbound|Maaf baru membalas Dok 🙏  nggih baik saya bisa besok senin jam 11, sebelumn terima kasih a
+2026-10-25|df4d59d7-de59-4bbc-93a3-7b09bcc13e80|Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)|18:23|inbound|Oke mas
+2026-10-25|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|10:39|inbound|Baik mas  Rabu atau kamis pagi bisa dishare link zoomnya ya
+2026-10-25|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|18:20|outbound|Maaf baru membalasa kak, kami siang akan kami kirimkan linknya 🙏
+2026-10-25|aba1a0be-5706-422a-9adc-eadb603812b1|Klinik Elfahmi|18:26|inbound|Baik
+2026-10-25|11819651-9df1-405b-aea8-e2104e7c4d9f|Klinik Sumber Sekar Lawang|09:39|outbound|Izin menanyakan ulang ketersediaan jam 10 pagi ini untuk online meeting wawancara nggih 🙏
+2026-10-25|11819651-9df1-405b-aea8-e2104e7c4d9f|Klinik Sumber Sekar Lawang|09:48|inbound|Baik kak
+2026-10-25|11819651-9df1-405b-aea8-e2104e7c4d9f|Klinik Sumber Sekar Lawang|09:56|inbound|Kami sudah siap kak
+2026-10-25|11819651-9df1-405b-aea8-e2104e7c4d9f|Klinik Sumber Sekar Lawang|09:58|outbound|https://meet.google.com/zyu-fkyk-tww berikut linknya nggih

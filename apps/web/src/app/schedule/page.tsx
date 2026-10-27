@@ -120,33 +120,39 @@ export default function SchedulePage() {
     <div className="flex h-screen bg-slate-50">
       <AppSidebar active="none" />
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-6 py-3">
-          <div className="mr-2">
-            <h1 className="text-lg font-semibold text-slate-900">{t.schedTitle}</h1>
-            <p className="text-xs text-slate-400">{t.schedSubtitle}</p>
+        {/* Phones (max-md:*): two rows — [title ........ Month|Week] then
+            [Today ‹ › period-title]; "+ Add" moves to a floating button.
+            Desktop keeps the original single wrapping row untouched. */}
+        <header className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white px-6 py-3 max-md:gap-2 max-md:px-3 max-md:py-2">
+          <div className="mr-2 max-md:order-1 max-md:min-w-0">
+            <h1 className="text-lg font-semibold text-slate-900 max-md:text-base">{t.schedTitle}</h1>
+            <p className="text-xs text-slate-400 max-md:hidden">{t.schedSubtitle}</p>
           </div>
+          <div className="hidden basis-full max-md:order-3 max-md:block" aria-hidden />
           <button
             onClick={goToday}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 max-md:order-4 max-md:h-10"
           >
             {t.schedToday}
           </button>
-          <div className="flex items-center">
-            <button onClick={() => shift(-1)} className="rounded-lg px-2.5 py-1.5 text-slate-600 hover:bg-slate-100" aria-label="prev">
+          <div className="flex items-center max-md:order-4">
+            <button onClick={() => shift(-1)} className="rounded-lg px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 max-md:h-10 max-md:w-10 max-md:p-0 max-md:text-xl" aria-label="prev">
               ‹
             </button>
-            <button onClick={() => shift(1)} className="rounded-lg px-2.5 py-1.5 text-slate-600 hover:bg-slate-100" aria-label="next">
+            <button onClick={() => shift(1)} className="rounded-lg px-2.5 py-1.5 text-slate-600 hover:bg-slate-100 max-md:h-10 max-md:w-10 max-md:p-0 max-md:text-xl" aria-label="next">
               ›
             </button>
           </div>
-          <h2 className="min-w-[10rem] text-base font-semibold capitalize text-slate-800">{title}</h2>
-          <div className="ml-auto flex items-center gap-3">
+          <h2 className="min-w-[10rem] text-base font-semibold capitalize text-slate-800 max-md:order-4 max-md:min-w-0 max-md:flex-1 max-md:truncate max-md:text-right max-md:text-sm">
+            {title}
+          </h2>
+          <div className="ml-auto flex items-center gap-3 max-md:order-2">
             <div className="flex overflow-hidden rounded-lg border border-slate-200 text-sm">
               {(["month", "week"] as const).map((v) => (
                 <button
                   key={v}
                   onClick={() => setView(v)}
-                  className={`px-3 py-1.5 font-medium ${view === v ? "bg-cyan-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
+                  className={`px-3 py-1.5 font-medium max-md:h-10 ${view === v ? "bg-cyan-600 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
                 >
                   {v === "month" ? t.schedMonth : t.schedWeek}
                 </button>
@@ -154,7 +160,7 @@ export default function SchedulePage() {
             </div>
             <button
               onClick={() => setAdding(true)}
-              className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-cyan-700"
+              className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-cyan-700 max-md:hidden"
             >
               {t.schedAdd}
             </button>
@@ -162,7 +168,7 @@ export default function SchedulePage() {
         </header>
 
         <div className="flex min-h-0 flex-1">
-          <section className="flex min-w-0 flex-1 flex-col overflow-auto p-4">
+          <section className="flex min-w-0 flex-1 flex-col overflow-auto p-4 max-md:p-3 max-md:pb-[calc(6rem+env(safe-area-inset-bottom))]">
             {loadError && <p className="mb-2 text-sm text-red-600">{t.schedLoadFailed}</p>}
             {view === "month" ? (
               <MonthGrid
@@ -176,16 +182,68 @@ export default function SchedulePage() {
                 onOpen={setOpenItem}
               />
             ) : (
-              <WeekGrid
-                days={days}
-                today={today}
-                selectedDay={selectedDay}
-                byDay={byDay}
-                weekdayNames={weekdayNames}
-                onSelectDay={setSelectedDay}
-                onOpen={setOpenItem}
-              />
+              <>
+                <WeekGrid
+                  days={days}
+                  today={today}
+                  selectedDay={selectedDay}
+                  byDay={byDay}
+                  weekdayNames={weekdayNames}
+                  onSelectDay={setSelectedDay}
+                  onOpen={setOpenItem}
+                />
+                <WeekListMobile
+                  days={days}
+                  today={today}
+                  selectedDay={selectedDay}
+                  byDay={byDay}
+                  weekdayNames={weekdayNames}
+                  onSelectDay={setSelectedDay}
+                  onOpen={setOpenItem}
+                />
+              </>
             )}
+
+            {/* Phones: the desktop side panel (lg+) is replaced by stacked
+                sections under the calendar — selected-day agenda (month view
+                only; the week list already shows every day) + overdue. */}
+            <div className="mt-4 flex flex-col gap-5 md:hidden">
+              {view === "month" && (
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold text-slate-900">
+                    {t.schedAgenda} ·{" "}
+                    <span className="font-normal capitalize text-slate-500">
+                      {formatDate(parseYmd(selectedDay), locale, { weekday: "long", day: "numeric", month: "long" })}
+                    </span>
+                  </h3>
+                  {agenda.length === 0 ? (
+                    <p className="rounded-lg border border-dashed border-slate-200 bg-white px-3 py-4 text-center text-sm text-slate-400">
+                      {t.schedNoItems}
+                    </p>
+                  ) : (
+                    <ul className="flex flex-col gap-2">
+                      {agenda.map((it) => (
+                        <AgendaRow key={it.key} item={it} onOpen={setOpenItem} />
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+              <div>
+                <h3 className="mb-2 text-sm font-semibold text-red-700">
+                  {t.schedOverdueTitle} {overdue.length > 0 && `(${overdue.length})`}
+                </h3>
+                {overdue.length === 0 ? (
+                  <p className="text-sm text-slate-400">{t.schedOverdueNone}</p>
+                ) : (
+                  <ul className="flex flex-col gap-2">
+                    {overdue.map((it) => (
+                      <AgendaRow key={it.key} item={it} showDate onOpen={setOpenItem} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
           </section>
 
           <aside className="hidden w-80 shrink-0 flex-col gap-5 overflow-y-auto border-l border-slate-200 bg-white p-4 lg:flex">
@@ -222,6 +280,13 @@ export default function SchedulePage() {
             </div>
           </aside>
         </div>
+        {/* Phones: thumb-reachable "+ Add" (the header button is desktop-only). */}
+        <button
+          onClick={() => setAdding(true)}
+          className="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-40 flex h-14 items-center rounded-full bg-cyan-600 px-5 text-sm font-semibold text-white shadow-lg shadow-cyan-900/20 active:bg-cyan-700 md:hidden"
+        >
+          {t.schedAdd}
+        </button>
       </main>
 
       {openItem && <ItemModal item={openItem} onClose={() => setOpenItem(null)} onChanged={load} />}
@@ -286,10 +351,12 @@ function MonthGrid({
 }: GridProps & { cursorMonth: string }) {
   const { t } = useLanguage();
   return (
-    <div className="flex min-h-[560px] flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
-      <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-xs font-semibold uppercase text-slate-500">
+    // Phones: no fixed min height / flex-1 (the agenda stacks underneath),
+    // and each cell shows the date + kind dots instead of event chips.
+    <div className="flex min-h-[560px] flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white max-md:min-h-0 max-md:flex-none">
+      <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50 text-center text-xs font-semibold uppercase text-slate-500 max-md:text-[11px]">
         {weekdayNames.map((n) => (
-          <div key={n} className="py-2">
+          <div key={n} className="py-2 max-md:py-1.5">
             {n}
           </div>
         ))}
@@ -299,24 +366,38 @@ function MonthGrid({
           const list = byDay.get(d) ?? [];
           const inMonth = d.startsWith(cursorMonth);
           const isToday = d === today;
+          const isSelected = d === selectedDay;
           return (
             <div
               key={d}
               onClick={() => onSelectDay(d)}
-              className={`min-w-0 cursor-pointer border-b border-r border-slate-100 p-1 ${
-                d === selectedDay ? "bg-cyan-50/60" : inMonth ? "bg-white" : "bg-slate-50/70"
+              className={`min-w-0 cursor-pointer border-b border-r border-slate-100 p-1 max-md:flex max-md:min-h-[52px] max-md:flex-col max-md:items-center max-md:px-0.5 ${
+                isSelected ? "bg-cyan-50/60" : inMonth ? "bg-white" : "bg-slate-50/70"
               }`}
             >
               <div className="mb-0.5 flex justify-end">
                 <span
-                  className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-semibold ${
+                  className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-semibold max-md:h-7 max-md:min-w-7 max-md:text-[13px] ${
                     isToday ? "bg-cyan-600 text-white" : inMonth ? "text-slate-700" : "text-slate-300"
-                  }`}
+                  } ${isSelected && !isToday ? "max-md:ring-2 max-md:ring-cyan-500" : ""}`}
                 >
                   {Number(d.slice(8))}
                 </span>
               </div>
-              <div className="flex flex-col gap-0.5">
+              {list.length > 0 && (
+                <div className="flex items-center justify-center gap-0.5 md:hidden" aria-label={String(list.length)}>
+                  {list.slice(0, 3).map((it) => (
+                    <span
+                      key={it.key}
+                      className={`h-1.5 w-1.5 rounded-full ${KIND_STYLE[it.kind].dot} ${it.status !== "scheduled" ? "opacity-40" : ""}`}
+                    />
+                  ))}
+                  {list.length > 3 && (
+                    <span className="text-[9px] font-semibold leading-none text-slate-500">+{list.length - 3}</span>
+                  )}
+                </div>
+              )}
+              <div className="flex flex-col gap-0.5 max-md:hidden">
                 {list.slice(0, MONTH_CHIPS).map((it) => (
                   <button
                     key={it.key}
@@ -345,6 +426,61 @@ function MonthGrid({
         })}
       </div>
     </div>
+  );
+}
+
+// Phones' week view: a vertical agenda grouped by day (Mon..Sun of the
+// cursor week), each day header tappable to select it for "+ Add".
+function WeekListMobile({ days, today, selectedDay, byDay, weekdayNames, onSelectDay, onOpen }: GridProps) {
+  const { locale, t } = useLanguage();
+  return (
+    <ol className="flex flex-col gap-3 md:hidden">
+      {days.map((d, i) => {
+        const list = byDay.get(d) ?? [];
+        const isToday = d === today;
+        const isSelected = d === selectedDay;
+        return (
+          <li
+            key={d}
+            className={`rounded-xl border bg-white p-2 ${isSelected ? "border-cyan-300 ring-1 ring-cyan-200" : "border-slate-200"}`}
+          >
+            <button
+              type="button"
+              onClick={() => onSelectDay(d)}
+              className="flex min-h-11 w-full items-center gap-3 rounded-lg px-1 text-left"
+            >
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold ${
+                  isToday ? "bg-cyan-600 text-white" : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {Number(d.slice(8))}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-xs font-semibold uppercase text-slate-500">{weekdayNames[i]}</span>
+                <span className="block truncate text-sm capitalize text-slate-700">
+                  {formatDate(parseYmd(d), locale, { day: "numeric", month: "long" })}
+                </span>
+              </span>
+              {list.length > 0 && (
+                <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                  {list.length}
+                </span>
+              )}
+            </button>
+            {list.length === 0 ? (
+              <p className="px-1 pb-1 pt-0.5 text-xs text-slate-400">{t.schedNoItems}</p>
+            ) : (
+              <ul className="mt-1 flex flex-col gap-2">
+                {list.map((it) => (
+                  <AgendaRow key={it.key} item={it} onOpen={onOpen} />
+                ))}
+              </ul>
+            )}
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -385,12 +521,16 @@ function WeekGrid({ days, today, selectedDay, byDay, weekdayNames, onSelectDay, 
   const nowTop = ((now.getHours() * 60 + now.getMinutes()) / 60 - HOUR_START) * HOUR_PX;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
-      {/* Day headers + all-day (untimed follow-ups) strip */}
+    // Desktop only — phones get WeekListMobile (a 7-column hour grid is
+    // unreadable at ~45px per column).
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white max-md:hidden">
+      {/* Day headers + summary strip: every item of the day (untimed
+          follow-ups first, then timed demos/visits with their time), so the
+          week reads at a glance without scrolling the hour grid. */}
       <div className="grid grid-cols-[3.5rem_repeat(7,minmax(0,1fr))] border-b border-slate-200 bg-slate-50">
         <div />
         {days.map((d, i) => {
-          const untimed = (byDay.get(d) ?? []).filter((x) => !x.time);
+          const dayItems = byDay.get(d) ?? [];
           return (
             <div
               key={d}
@@ -408,16 +548,19 @@ function WeekGrid({ days, today, selectedDay, byDay, weekdayNames, onSelectDay, 
                 </div>
               </div>
               <div className="mt-1 flex flex-col gap-0.5">
-                {untimed.map((it) => (
+                {dayItems.map((it) => (
                   <button
                     key={it.key}
                     onClick={(e) => {
                       e.stopPropagation();
                       onOpen(it);
                     }}
-                    title={`${t.schedNoTime} · ${it.leadName}`}
-                    className={`truncate rounded border px-1 py-0.5 text-left text-[11px] leading-tight ${KIND_STYLE[it.kind].chip}`}
+                    title={`${it.time ?? t.schedNoTime} · ${kindLabel(t, it.kind)} · ${it.leadName}`}
+                    className={`truncate rounded border px-1 py-0.5 text-left text-[11px] leading-tight ${KIND_STYLE[it.kind].chip} ${
+                      it.status !== "scheduled" ? "opacity-50" : ""
+                    } ${it.status === "cancelled" ? "line-through" : ""}`}
                   >
+                    {it.time && <b className="mr-1">{it.time}</b>}
                     {it.leadName}
                   </button>
                 ))}

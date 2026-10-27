@@ -43,6 +43,16 @@ export interface WaMessageItem {
   createdAt: string;
 }
 
+/** A message held back by the send guard (see lib/sendGuard.ts), shown in the thread until it goes out. */
+export interface ScheduledItem {
+  id: string;
+  body: string;
+  scheduledFor: string;
+  status: "queued" | "sending" | "failed" | string;
+  reason: string | null;
+  lastError: string | null;
+}
+
 export interface ConversationListItem {
   id: string; // wa_contact id
   jid: string;

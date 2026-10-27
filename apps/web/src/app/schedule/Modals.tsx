@@ -20,12 +20,22 @@ export function kindLabel(t: T, kind: ItemKind): string {
   }
 }
 
+// max-md:* = phones only (44px tap targets, bottom-sheet layout); desktop
+// classes are unchanged.
 const inputCls =
-  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500";
+  "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11 max-md:bg-white";
 const labelCls = "mt-3 block text-xs font-medium text-slate-600";
 const primaryBtn =
-  "rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50";
-const ghostBtn = "rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50";
+  "rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50 max-md:min-h-11 max-md:flex-1";
+const ghostBtn =
+  "rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 max-md:min-h-11 max-md:flex-1 max-md:border max-md:border-slate-200";
+// Secondary actions in the detail sheet (chat / done / cancel / delete).
+const actionTap = "max-md:flex max-md:min-h-11 max-md:items-center max-md:justify-center";
+// Save/close row: pinned to the bottom of the sheet on phones so it stays
+// reachable while the form scrolls (the sheet itself has no bottom padding
+// there; this row carries the safe-area inset instead).
+const sheetFooter =
+  "max-md:sticky max-md:bottom-0 max-md:-mx-4 max-md:border-t max-md:border-slate-100 max-md:bg-white max-md:px-4 max-md:pt-3 max-md:pb-[calc(0.75rem+env(safe-area-inset-bottom))]";
 
 function Overlay({ onClose, children }: { onClose: () => void; children: React.ReactNode }) {
   useEffect(() => {
@@ -34,11 +44,18 @@ function Overlay({ onClose, children }: { onClose: () => void; children: React.R
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+    // Phones: bottom sheet (full width, rounded top, max 92dvh, scrolls).
+    // `mt-0!` beats globals.css's "push siblings of the sidebar below the
+    // mobile bar" rule — this overlay must cover the whole screen.
+    <div
+      className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4 max-md:mt-0! max-md:items-end max-md:p-0"
+      onClick={onClose}
+    >
       <div
-        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl"
+        className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-white p-5 shadow-xl max-md:max-h-[92dvh] max-md:max-w-none max-md:overscroll-contain max-md:rounded-b-none max-md:rounded-t-2xl max-md:px-4 max-md:pt-2 max-md:pb-0"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-200 md:hidden" aria-hidden />
         {children}
       </div>
     </div>
@@ -209,33 +226,33 @@ export function ItemModal({
 
       {error && <p className="mt-2 text-xs text-red-600">{t.schedFailed}</p>}
 
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2 max-md:grid max-md:grid-cols-2">
         <a
           href={`/chat?leadId=${item.leadId}`}
           target="_blank"
           rel="noreferrer"
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          className={`rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 ${actionTap}`}
         >
           {t.schedOpenChat}
         </a>
         {item.status === "scheduled" && (
-          <button onClick={markDone} disabled={busy} className="rounded-lg border border-emerald-300 px-3 py-1.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50">
+          <button onClick={markDone} disabled={busy} className={`rounded-lg border border-emerald-300 px-3 py-1.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 disabled:opacity-50 ${actionTap}`}>
             {t.schedMarkDone}
           </button>
         )}
         {!isFollowUp && item.status === "scheduled" && (
-          <button onClick={cancelAppt} disabled={busy} className="rounded-lg border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-700 transition hover:bg-amber-50 disabled:opacity-50">
+          <button onClick={cancelAppt} disabled={busy} className={`rounded-lg border border-amber-300 px-3 py-1.5 text-sm font-medium text-amber-700 transition hover:bg-amber-50 disabled:opacity-50 ${actionTap}`}>
             {t.schedCancelAppt}
           </button>
         )}
         {!isFollowUp && (
-          <button onClick={remove} disabled={busy} className="rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50">
+          <button onClick={remove} disabled={busy} className={`rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50 ${actionTap}`}>
             {t.schedDelete}
           </button>
         )}
       </div>
 
-      <div className="mt-4 flex justify-end gap-2 border-t border-slate-100 pt-3">
+      <div className={`mt-4 flex justify-end gap-2 border-t border-slate-100 pt-3 ${sheetFooter}`}>
         <button onClick={onClose} className={ghostBtn}>
           {t.schedClose}
         </button>
@@ -348,7 +365,8 @@ export function AddModal({
               setLead(null);
               setQuery("");
             }}
-            className="shrink-0 text-xs font-semibold text-cyan-700 hover:underline"
+            aria-label="clear"
+            className="shrink-0 text-xs font-semibold text-cyan-700 hover:underline max-md:-my-2 max-md:-mr-2 max-md:h-10 max-md:w-10 max-md:text-sm"
           >
             ✕
           </button>
@@ -368,7 +386,7 @@ export function AddModal({
                 <li key={h.id}>
                   <button
                     onClick={() => setLead(h)}
-                    className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50"
+                    className="block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 max-md:py-3"
                   >
                     <span className="block font-medium text-slate-800">{h.name}</span>
                     {h.address && <span className="block truncate text-xs text-slate-400">{h.address}</span>}
@@ -422,7 +440,7 @@ export function AddModal({
 
       {error && <p className="mt-2 text-xs text-red-600">{t.schedFailed}</p>}
 
-      <div className="mt-4 flex justify-end gap-2">
+      <div className={`mt-4 flex justify-end gap-2 ${sheetFooter}`}>
         <button onClick={onClose} className={ghostBtn}>
           {t.schedCancel}
         </button>

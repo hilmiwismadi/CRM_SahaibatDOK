@@ -53,7 +53,7 @@ export default function DailyLogTestPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="sync" />
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-3 pb-6 md:p-6">
         <h1 className="mb-1 text-lg font-bold text-slate-900">CRM Sync — Test Script</h1>
         <p className="mb-4 text-sm text-slate-500">
           Script log 2026-10-01 (6 lead yang sudah punya Ringkasan Claude). Klik Copy, lalu paste ke DevTools Console di
@@ -63,7 +63,7 @@ export default function DailyLogTestPage() {
         <div className="mb-2 flex items-center justify-end">
           <button
             onClick={copy}
-            className="rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-cyan-700"
+            className="h-11 w-full rounded-lg bg-cyan-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-cyan-700 md:h-auto md:w-auto md:font-medium"
           >
             {copied ? "Tersalin ✓" : "Copy script"}
           </button>
@@ -78,7 +78,7 @@ export default function DailyLogTestPage() {
           readOnly
           value={SCRIPT}
           spellCheck={false}
-          className="h-[70vh] w-full rounded-xl border border-slate-300 bg-white p-3 font-mono text-xs leading-relaxed"
+          className="block h-[60dvh] w-full min-w-0 rounded-xl border border-slate-300 bg-white p-3 font-mono text-xs leading-relaxed md:inline-block md:h-[70vh]"
         />
       </div>
     </div>

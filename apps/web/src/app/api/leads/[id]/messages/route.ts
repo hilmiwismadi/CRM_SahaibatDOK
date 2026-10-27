@@ -3,7 +3,8 @@ import { z } from "zod";
 import { phoneToJid } from "@sahaibat/shared";
 import { db } from "@/lib/db";
 import { getActiveContactNode } from "@/lib/contactChain";
-import { sendOutboundToPhone, WaSendError } from "@/lib/waSend";
+import { sendOrSchedule, WaSendError } from "@/lib/waSend";
+import { listPendingForPhone } from "@/lib/scheduledQueue";
 
 export async function GET(
   _req: NextRequest,
@@ -32,7 +33,11 @@ export async function GET(
     waContactId = shared?.id ?? null;
   }
   if (!waContactId) {
-    return NextResponse.json({ contact: null, messages: [] });
+    return NextResponse.json({
+      contact: null,
+      messages: [],
+      scheduled: await listPendingForPhone(contactNode.phoneNormalized),
+    });
   }
 
   const [contact, messages] = await Promise.all([
@@ -43,11 +48,14 @@ export async function GET(
     }),
   ]);
 
-  return NextResponse.json({ contact, messages });
+  const scheduled = await listPendingForPhone(contact?.phoneNormalized ?? contactNode.phoneNormalized);
+  return NextResponse.json({ contact, messages, scheduled });
 }
 
 const sendSchema = z.object({
   body: z.string().min(1).max(4096),
+  // "Kirim sekarang": skip the send guard (see lib/sendGuard.ts).
+  force: z.boolean().optional(),
 });
 
 export async function POST(
@@ -75,11 +83,26 @@ export async function POST(
   }
 
   try {
-    const { waContact, message } = await sendOutboundToPhone({
+    const outcome = await sendOrSchedule({
       phoneNormalized,
       body: parsed.data.body,
       leadId: id,
+      force: parsed.data.force,
     });
+    if (outcome.kind === "scheduled") {
+      // 202: accepted but not sent yet — the send guard queued it.
+      return NextResponse.json(
+        {
+          scheduled: {
+            id: outcome.scheduled.id,
+            scheduledFor: outcome.scheduled.scheduledFor.toISOString(),
+            reasons: outcome.reasons,
+          },
+        },
+        { status: 202 },
+      );
+    }
+    const { waContact, message } = outcome;
 
     // lead_contact_nodes.wa_contact_id is UNIQUE, but several leads can share
     // one phone number (e.g. a clinic group's front-desk line) and therefore

@@ -1,0 +1,43 @@
+-- sync_daily_summaries 2026-10-20 (37 rows)
+BEGIN;
+INSERT INTO sync_daily_summaries (lead_id, date, summary) VALUES
+  ('11819651-9df1-405b-aea8-e2104e7c4d9f', '2026-10-20', $q$Klinik bisa wawancara hanya malam di luar jam operasional, dan meminta surat informed consent serta proposal. Kami kirim surat dan menanyakan jam malam yang cocok.$q$),
+  ('df4d59d7-de59-4bbc-93a3-7b09bcc13e80', '2026-10-20', $q$Menanyakan surat/proposal riset; surat kami kirim (09.02), dijawab "Ok" sore. Menunggu kabar dari klinik.$q$),
+  ('fcd5b660-a44b-4f18-8970-1aac4d240add', '2026-10-20', $q$Kami tanya ulang ketersediaan; malam dijawab "Maaf ya saya tidak". Menolak, tutup.$q$),
+  ('6fe742fc-71fc-4b06-ae74-2acdc93c2de2', '2026-10-20', $q$Nomor benar. Klinik belum bisa wawancara online dan mengarahkan datang langsung. Kami terima dengan ucapan terima kasih. Kemungkinan tutup.$q$),
+  ('32800d7f-f1b4-4da1-9e76-8a070e9e61ef', '2026-10-20', $q$Tanya ulang ketersediaan; Bu Hani ingin berbicara langsung lewat telepon. Kami jawab nanti ada link online meeting seperti call. Menunggu tanggapan.$q$),
+  ('4efdac02-990c-46e1-92e1-92a9ea4c8bdf', '2026-10-20', $q$Terhubung ke Kak Rizka; ditanya surat pengantar, kami kirim surat. Dijawab "kami pelajari dulu, akan dikabari secepatnya".$q$),
+  ('c6580b84-da17-4eea-bd50-da378b358e1f', '2026-10-20', $q$Nomor dikonfirmasi benar, pitch riset terkirim 17.17. Belum ada balasan.$q$),
+  ('7b74c92f-38d4-44c9-82ca-ed6440452627', '2026-10-20', $q$Nomor dikonfirmasi benar (admin klinik), pitch terkirim 18.28. Belum ada balasan.$q$),
+  ('30e75f34-2c54-4353-ba49-116e732a736e', '2026-10-20', $q$Klinik meminta surat pengantar/identitas; surat kami kirim dan ditambah penjelasan Sahaibat. Dijawab keesokan harinya masih dikonsultasikan ke dokter DPJP.$q$),
+  ('12af5002-7545-4923-ba1d-034506fd9da0', '2026-10-20', $q$Klinik membalas malam hari dengan lampiran jawaban PJ Klinik (isi lampiran tidak terbaca di chat). Perlu dibuka dan dibalas.$q$),
+  ('ddf157bd-6ae4-4d61-b81d-c9173ef784f7', '2026-10-20', $q$Kami tanya ulang ketersediaan pagi. Belum ada balasan.$q$),
+  ('60db10ad-9b42-49d6-8e0b-e4cc94f3bd2f', '2026-10-20', $q$Nomor benar; setelah pitch klinik meminta surat pengajuan, surat kami kirim, dijawab "baik". Menunggu kabar.$q$),
+  ('a1043c72-e3d0-4260-91bf-70b147fe3248', '2026-10-20', $q$Nomor benar; setelah pitch mereka bertanya data apa yang diperlukan. Kami jawab tidak meminta data spesifik, hanya tanya jawab. Menunggu tanggapan.$q$),
+  ('330c2075-0b0f-4604-87af-c032921022b3', '2026-10-20', $q$Kami menanyakan apakah boleh bertanya ke staf admin. Belum ada balasan di hari ini.$q$),
+  ('5b689a68-00d6-420a-aefa-7d7997572fbc', '2026-10-20', $q$Klinik Asy-Syifa meminta data trial sebelumnya direset dan ingin upload data baru sendiri. Kami tawarkan bantuan input dari awal. Gmeet pengajaran sistem sudah dilakukan (13.00).$q$),
+  ('e7178a0f-0468-4d8e-91ca-261d5a49a2de', '2026-10-20', $q$Gmeet disepakati sore, jam 16.00 (bukan 15.30); link Meet dikirim 15.33 dan klinik akan menyampaikan. Menunggu pelaksanaan.$q$),
+  ('d3fad0d8-321d-4686-86d3-c1302e75e1cd', '2026-10-20', $q$Klinik bertanya benefit dan siapa yang presentasi. Mereka sudah punya ERM buatan sendiri (Unimus), jadi tidak relevan. Kami tutup dengan terima kasih.$q$),
+  ('bc2171c1-ccb3-4ee2-ba72-af93184f0c7f', '2026-10-20', $q$Nomor dikonfirmasi benar dan ada pesan tambahan dari mereka. Pitch baru terkirim keesokan harinya.$q$),
+  ('e504beca-96ed-4ae9-824c-c6ffdae6670e', '2026-10-20', $q$Nomor benar, pitch terkirim. Dijawab "ditunggu informasi selanjutnya, nanti kami kabari". Kami minta dikabari.$q$),
+  ('b6433556-648c-4243-8747-2d1aff1369e3', '2026-10-20', $q$Kami tanya soal permohonan; dijawab pihak manajemen yang akan menghubungi langsung. Menunggu manajemen.$q$),
+  ('119f070d-59e4-448a-a7a7-b661d99f8d9d', '2026-10-20', $q$Nomor benar (ada autoreply katalog), pitch terkirim 10.50. Belum ada balasan.$q$),
+  ('7b18f5b1-81d8-4856-b74f-bec5a69759e0', '2026-10-20', $q$Autoreply klinik; nomor dikonfirmasi lalu pitch terkirim 11.25. Belum ada balasan.$q$),
+  ('04e82c65-fe8d-4b58-9d68-b34514594da9', '2026-10-20', $q$Klinik menjadwalkan Gmeet besok jam 08.00; kami akan kirim link pagi.$q$),
+  ('6d103db4-83c4-43de-9c5c-5b3f693b573d', '2026-10-20', $q$Nomor benar, pitch terkirim; disampaikan ke manajemen terlebih dahulu. Kami minta dikabari.$q$),
+  ('35ddb1cc-fd93-4422-a0b7-6efbbbf016b0', '2026-10-20', $q$Nomor dikonfirmasi benar ("Benar Bunda"); pitch terkirim 13.06. Belum ada balasan.$q$),
+  ('ba8de637-383a-4461-9879-fcd50d7dac1c', '2026-10-20', $q$Akun trial Dok sudah dibuat dan dikirim; kami ajak online meeting singkat untuk alur sistem dan tanya masa habis assist.id. Belum dijawab hari ini.$q$),
+  ('1ba5456d-2f6b-4357-9f32-3213f46691fe', '2026-10-20', $q$Kami tanya apakah Rabu bisa wawancara online; dokter minta dengan admin dan "bisa insyaAllah". Menunggu info jam dari admin.$q$),
+  ('ae42dfbe-32aa-40f5-869e-8579b9b33b0b', '2026-10-20', $q$Kami tanya ulang ketersediaan siang. Belum ada balasan.$q$),
+  ('2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a', '2026-10-20', $q$Klinik menyanggupi Gmeet jam 13.00; link dikirim 12.29 dan kami sudah masuk online meeting 13.06. Gmeet berlangsung.$q$),
+  ('0773daf0-2ab4-4b66-83b3-0514b7d53838', '2026-10-20', $q$Nomor baru dibuka pagi. Belum ada balasan hari ini.$q$),
+  ('11aeee81-5d06-4f32-88fe-ee4f59511bfa', '2026-10-20', $q$Dokter belum memberi jawaban; kami minta kabar dan menawarkan tanya jawab dengan admin, dijawab "Baik".$q$),
+  ('cdac41e5-b899-4984-9fa7-466a267713cb', '2026-10-20', $q$Kami follow up kembali ke Dr Adam siang. Belum ada balasan.$q$),
+  ('45478cb8-ef44-4f2f-931f-27dfbc003824', '2026-10-20', $q$Akun trial siap; disepakati Gmeet besok jam 13.00 dengan tim bidan. Kami juga mendapat kontak Kak Rara untuk dihubungi langsung.$q$),
+  ('23c10c1e-ccbc-4ca4-bae0-0a4e94c9dedf', '2026-10-20', $q$Kami tanya ulang ketersediaan siang. Belum ada balasan.$q$),
+  ('4df4ff67-159a-4848-bfd3-737251546ea5', '2026-10-20', $q$Nomor dikonfirmasi benar, pitch terkirim 16.49. Belum ada balasan.$q$),
+  ('bd07de06-c408-4492-a0d9-1f930d240b17', '2026-10-20', $q$Kami tanya ulang ketersediaan siang. Belum ada balasan.$q$),
+  ('6f9ba1f3-6c14-4d8b-9b94-7781cebe7b95', '2026-10-20', $q$Permintaan diteruskan ke manajemen, lalu diminta surat ke kepala klinik via email. Surat sudah kami kirim; diteruskan ke PIC klinik, mohon ditunggu.$q$)
+ON CONFLICT (lead_id, date) DO NOTHING;
+COMMIT;
+SELECT count(*) AS rows_for_date FROM sync_daily_summaries WHERE date='2026-10-20';

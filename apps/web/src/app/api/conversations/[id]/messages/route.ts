@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { sendOutboundToPhone, WaSendError } from "@/lib/waSend";
+import { sendOrSchedule, WaSendError } from "@/lib/waSend";
+import { listPendingForPhone } from "@/lib/scheduledQueue";
 
 export async function GET(
   _req: NextRequest,
@@ -21,11 +22,14 @@ export async function GET(
     orderBy: { sentAt: "asc" },
   });
 
-  return NextResponse.json({ contact, messages });
+  const scheduled = await listPendingForPhone(contact.phoneNormalized);
+  return NextResponse.json({ contact, messages, scheduled });
 }
 
 const sendSchema = z.object({
   body: z.string().min(1).max(4096),
+  // "Kirim sekarang": skip the send guard (see lib/sendGuard.ts).
+  force: z.boolean().optional(),
 });
 
 /** Reply within an existing conversation — the phone number is already known. */
@@ -51,12 +55,25 @@ export async function POST(
   }
 
   try {
-    const { message } = await sendOutboundToPhone({
+    const outcome = await sendOrSchedule({
       phoneNormalized: contact.phoneNormalized,
       body: parsed.data.body,
       leadId: contact.leadId,
+      force: parsed.data.force,
     });
-    return NextResponse.json({ message });
+    if (outcome.kind === "scheduled") {
+      return NextResponse.json(
+        {
+          scheduled: {
+            id: outcome.scheduled.id,
+            scheduledFor: outcome.scheduled.scheduledFor.toISOString(),
+            reasons: outcome.reasons,
+          },
+        },
+        { status: 202 },
+      );
+    }
+    return NextResponse.json({ message: outcome.message });
   } catch (err) {
     if (err instanceof WaSendError) {
       return NextResponse.json({ error: err.message }, { status: err.status });

@@ -1,0 +1,41 @@
+-- sync_daily_summaries 2026-10-16 (35 rows)
+BEGIN;
+INSERT INTO sync_daily_summaries (lead_id, date, summary) VALUES
+  ('8139a202-e486-4e4a-b779-0005fe281fd9', '2026-10-16', $q$Nomor dikonfirmasi; setelah perkenalan riset, malam hari menjawab sedang di luar kota (mungkin minggu depan atau akan diinfokan) dan kurang berkenan diskusi online, lebih menyarankan offline.$q$),
+  ('99219dcc-159d-4dc8-a65b-3ce49866b3c4', '2026-10-16', $q$Kami membalas "baik kak bisa" dan dijawab "inggih baik" (konfirmasi lanjutan sesi/surat yang sebelumnya dibahas).$q$),
+  ('a81850ef-7b9b-4a8b-8ead-aa7f8dfa9207', '2026-10-16', $q$Nomor benar tetapi dr Satya sedang cuti; ditawarkan dr Iraky Sp.PD pada hari Selasa dan Minggu pukul 18.00. Kami kirim perkenalan riset; belum ada balasan.$q$),
+  ('75098af3-c349-4990-8cb1-7d0628893609', '2026-10-16', $q$Kami minta maaf baru membalas (HP error) dan mengirim pesan lanjutan. Belum ada balasan.$q$),
+  ('f79f078c-5474-4f31-8c51-b86fe25c7a9f', '2026-10-16', $q$Nomor benar (DPP dr. Diah Kartika) dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('8de05a7a-9d19-41e1-9998-1e0a01462a56', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('349cd997-5e0f-40cf-856e-e3d6add02634', '2026-10-16', $q$Setelah perkenalan, mereka menanyakan apakah tanya jawab lewat Zoom/video call dan menawarkan hari Senin. Kami membenarkan online meeting dan menanyakan jam senggang.$q$),
+  ('aba1a0be-5706-422a-9adc-eadb603812b1', '2026-10-16', $q$Menanyakan asal institusi dan meminta surat pengantar untuk wawancara; kami jelaskan dari startup Sahaibat dan akan menyiapkan suratnya. Dijawab "Baik kak".$q$),
+  ('b8373f33-fffd-4d9f-be09-23e708faf323', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('89aae1b8-5afa-48ef-b4f8-d2ed225890b9', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('d7c6cc93-f816-4a25-9831-2d558195f73a', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('fa1f86f1-c221-4aca-a959-65f02a21cb88', '2026-10-16', $q$Sesi online dengan Pak Danang disepakati pagi ini sekitar 08.30 (link Google Meet kami kirim 08.28). Setelahnya kami kirim video singkat extension; dijawab akan dipelajari dulu.$q$),
+  ('330c2075-0b0f-4604-87af-c032921022b3', '2026-10-16', $q$Atas pertanyaan kami soal pendataan: yang menginput ke Khanza adalah staf admin.$q$),
+  ('5b689a68-00d6-420a-aefa-7d7997572fbc', '2026-10-16', $q$Ada kendala uji koneksi integrasi (kolom Organization ID berubah sendiri menjadi email; akhirnya berhasil setelah beberapa kali coba), dan akun klinik masih trial. Mereka bertanya apakah integrasi perlu dilanjutkan atau cukup riset; disepakati sesi hari Senin (19 Okt) pukul 13.00 yang kami jadwalkan.$q$),
+  ('372191fd-37af-4738-b166-3e6ba0c9c4c8', '2026-10-16', $q$Kami menanyakan ulang ketersediaan pihak klinik. Belum ada balasan.$q$),
+  ('f30f6a59-cb81-4553-b3a6-7f365151c2cb', '2026-10-16', $q$Manajemen minggu ini jadwalnya masih penuh sehingga belum bisa memberi info; kami akan menanyakan lagi minggu depan.$q$),
+  ('6221704b-0d55-4ada-879e-5ab64d87e5c8', '2026-10-16', $q$Sore hari membenarkan nomor dan menanyakan apa yang bisa dibantu. Belum kami lanjutkan.$q$),
+  ('afe3f138-40e0-4bc5-a6e7-2473e53c68be', '2026-10-16', $q$Sore hari membenarkan nomor ("iya"). Belum kami lanjutkan.$q$),
+  ('4f9328b3-90be-493a-959f-31f3a4dd45de', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('eeaf1be4-6661-442c-9891-9d160687ea3d', '2026-10-16', $q$Kami menawarkan sebagai narasumber (kekurangan narasumber daerah Solo); hanya dibalas pesan sambutan otomatis.$q$),
+  ('b6433556-648c-4243-8747-2d1aff1369e3', '2026-10-16', $q$Menanyakan instansi kami; setelah dijelaskan mereka menyampaikan ke manajemen. Penawaran/kolaborasi harus lewat email klinik; untuk permohonan narasumber juga perlu surat, dan kami akan menyiapkan suratnya.$q$),
+  ('9bf4ac30-8ae0-4d29-a224-9cda6a41f658', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('593b58ba-2d45-4b30-80e8-fe9761696eea', '2026-10-16', $q$Balasan otomatis (jam operasional), lalu admin membenarkan nomor; kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('7b074af4-8592-4c5e-b68a-3eca3107f1ca', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('04e82c65-fe8d-4b58-9d68-b34514594da9', '2026-10-16', $q$Kami mengirim konfirmasi nomor; belum ada balasan.$q$),
+  ('304005ca-ad22-43a7-9810-c06e996522e7', '2026-10-16', $q$Kami menawarkan sebagai narasumber (kekurangan narasumber daerah Klaten); dijawab "Terimakasih", lalu kami menanyakan apakah berkenan. Belum ada jawaban.$q$),
+  ('fd62d97b-a2b1-411b-9e6d-027a2e3275b0', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('c6ce2806-a15e-4c5b-97b5-8d01a09b177e', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('82edf8a1-4e9e-4bc2-97b0-8429ae5800f4', '2026-10-16', $q$Nomor benar dan menanyakan siapa kami; setelah perkenalan riset, malam hari menjawab "Silahkan..".$q$),
+  ('2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a', '2026-10-16', $q$Setelah perkenalan riset, bersedia di hari Minggu; kami menanyakan jam senggangnya.$q$),
+  ('7c6797fb-0c56-43c3-844a-36cab4e6ec63', '2026-10-16', $q$Beberapa pesan masuk tanpa teks (isi tidak terbaca); kami kirim perkenalan riset. Belum ada balasan bertulis.$q$),
+  ('661c32b2-ed2b-47e5-88fc-9197dae300c1', '2026-10-16', $q$Nomor dikonfirmasi dan kami kirim perkenalan riset. Belum ada balasan.$q$),
+  ('45478cb8-ef44-4f2f-931f-27dfbc003824', '2026-10-16', $q$Wawancara dijadwalkan jam 14.00 via Google Meet (link kami kirim 13.23); sekitar 14.02 mereka menyatakan sudah siap.$q$),
+  ('23c10c1e-ccbc-4ca4-bae0-0a4e94c9dedf', '2026-10-16', $q$Menanyakan instansi dan benefit setelah perkenalan; kami jelaskan fokus AI dan belum bisa memberi banyak karena masih merintis. Mereka lalu mengajukan beberapa pertanyaan soal penggunaan data rekam medis pasien (data nyata atau dummy) dan pemrosesan datanya oleh AI; belum kami jawab.$q$),
+  ('aa34d482-3958-4097-813f-3e9270ed7bb6', '2026-10-16', $q$Setelah balasan otomatis, admin membenarkan nomor; kami kirim perkenalan riset. Belum ada balasan.$q$)
+ON CONFLICT (lead_id, date) DO NOTHING;
+COMMIT;
+SELECT count(*) AS rows_for_date FROM sync_daily_summaries WHERE date='2026-10-16';

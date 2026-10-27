@@ -15,6 +15,7 @@ import {
   type QuickTagAction,
   BOARD_COLUMN_WIDTH,
   buildBoardHeaderCells,
+  MobileColumnTabs,
 } from "../shared";
 
 // Overview's columns that are valid drag-and-drop targets, mapped to the
@@ -73,6 +74,9 @@ export default function KanbanOverviewPage() {
   const [selected, setSelected] = useState<SelectedLead | null>(null);
   const [dragOverKey, setDragOverKey] = useState<LeadCategory | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  // Phones show one column at a time (see MobileColumnTabs); null = the
+  // first column that has any leads.
+  const [mobileKey, setMobileKey] = useState<LeadCategory | null>(null);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -121,18 +125,72 @@ export default function KanbanOverviewPage() {
       })
     : [];
 
+  const mobileColumn =
+    columns.find((c) => c.key === mobileKey) ?? columns.find((c) => c.leads.length > 0) ?? columns[0];
+  const mobileGroup = mobileColumn ? FUNNEL_COLUMNS.find((c) => c.key === mobileColumn.key)?.group : undefined;
+
   return (
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="reports" />
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-6">
-        <h1 className="mb-1 text-lg font-bold text-slate-900">{t.salesReportTitle}</h1>
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 pb-6 md:overflow-hidden md:p-6">
+        <h1 className="mt-3 mb-1 text-lg font-bold text-slate-900 md:mt-0">{t.salesReportTitle}</h1>
         <p className="mb-4 text-sm text-slate-500">{t.kanbanOverviewDesc}</p>
         <ReportsTabs />
         <KanbanSubNav active="overview" />
 
         {loading && <div className="text-sm text-slate-400">{t.loading}</div>}
+        {data && mobileColumn && (
+          <div className="md:hidden">
+            <MobileColumnTabs
+              tabs={columns.map((col) => ({
+                key: col.key,
+                label: col.label,
+                color: CATEGORY_COLORS[col.key],
+                count: col.leads.length,
+              }))}
+              activeKey={mobileColumn.key}
+              onChange={(k) => setMobileKey(k as LeadCategory)}
+            />
+            <div className="rounded-xl bg-slate-100/60 p-3">
+              <div className="mb-3 flex items-center gap-2 px-1">
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                  style={
+                    CATEGORY_GRADIENTS[mobileColumn.key]
+                      ? { backgroundImage: `linear-gradient(135deg, ${CATEGORY_GRADIENTS[mobileColumn.key]![0]}, ${CATEGORY_GRADIENTS[mobileColumn.key]![1]})` }
+                      : { backgroundColor: CATEGORY_COLORS[mobileColumn.key] }
+                  }
+                />
+                <span className="min-w-0 truncate text-sm font-semibold text-slate-700">
+                  {mobileGroup && <span className="font-medium text-slate-400">{GROUP_LABELS[mobileGroup]} › </span>}
+                  {mobileColumn.label}
+                </span>
+                <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-500">
+                  {mobileColumn.leads.length}
+                </span>
+              </div>
+              <div className="flex flex-col gap-2">
+                {mobileColumn.leads.length === 0 && (
+                  <div className="rounded-lg border border-dashed border-slate-200 p-3 text-center text-xs text-slate-400">
+                    {t.empty}
+                  </div>
+                )}
+                {mobileColumn.leads.map((lead) => (
+                  <LeadCard
+                    key={lead.id}
+                    lead={lead}
+                    categoryLabel={mobileColumn.label}
+                    categoryColor={CATEGORY_COLORS[mobileColumn.key]}
+                    draggable={false}
+                    onOpen={setSelected}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
         {data && (
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="hidden min-h-0 flex-1 flex-col overflow-hidden md:flex">
             {/* One shared horizontal scroller for both rows below — on a
                 narrow screen the group headers ("Tidak Reply"/"Reply") must
                 scroll together with the columns they label, not stay fixed
@@ -236,7 +294,7 @@ export default function KanbanOverviewPage() {
       </div>
       {selected && <LeadPopup selection={selected} onClose={() => setSelected(null)} onMoved={handleMoved} />}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg">
+        <div className="fixed bottom-6 left-1/2 z-[110] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-slate-900 px-4 py-2 text-sm text-white shadow-lg md:z-[70] md:w-auto md:max-w-none">
           {toast}
         </div>
       )}

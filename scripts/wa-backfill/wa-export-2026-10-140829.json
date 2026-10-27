@@ -1,0 +1,2611 @@
+{
+  "meta": {
+    "source": "wa-web",
+    "version": 1,
+    "exportedAt": "2026-10-14T08:29:13.141Z",
+    "browserTz": "Asia/Bangkok",
+    "cutoff": "2026-10-13T00:00:00+07:00",
+    "dateOrder": "mdy"
+  },
+  "chats": [
+    {
+      "phone": "+628113507020",
+      "name": "KLINIK DIAN KUSUMA WIJAYA",
+      "leadId": "a2b5eace-6024-4083-b93c-7ab15386e2fb",
+      "status": "ok",
+      "verified": "composer",
+      "headerTitle": "+62 811-3507-020",
+      "jidSeen": null,
+      "reachedCutoff": false,
+      "scrolls": 3,
+      "totalLoaded": 11,
+      "noTimestamp": 1,
+      "warnings": [
+        "mentok di atas (riwayat habis dimuat)",
+        "belum mencapai CUTOFF — kemungkinan masih ada pesan lebih lama yang belum termuat"
+      ],
+      "scrapedAt": "2026-10-14T08:07:21.944Z",
+      "messages": [
+        {
+          "id": "3EB016680378E6FB25F078",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Dian Kusuma Wijaya?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC943C09C31270FA1B9FC54042D883F4",
+          "fromMe": false,
+          "ts": "2026-10-13T06:33:01.000Z",
+          "text": "Selamat siang \nIya benar",
+          "type": "text",
+          "sender": "+62 811-3507-020"
+        },
+        {
+          "id": "3EB0C27199CD6C7D41604B",
+          "fromMe": true,
+          "ts": "2026-10-13T06:38:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Dian Kusuma Wijaya sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Dian Kusuma Wijaya berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACD0DFFBF3FE9A673EBCD1991D9D2B89",
+          "fromMe": false,
+          "ts": "2026-10-13T06:41:00.000Z",
+          "text": "Mohon maaf untuk klinik kami belum menggunakan Sistem informasi digital jadi semuanya masih manual menggunakan buku rekam medis",
+          "type": "text",
+          "sender": "+62 811-3507-020"
+        },
+        {
+          "id": "3EB09F230C876B36F34539",
+          "fromMe": true,
+          "ts": "2026-10-13T06:46:00.000Z",
+          "text": "Baik tidak apa kak, apakah berkenan kami tanya-tanya. karena dari kami sendiri juga perlu tau untuk klinik yang menggunakan rekam medis kertas itu alurnya seperti apa, lalu kendala yang dirasakan dan sebagainya\n\nsupaya sistem digital yang kami rancang juga mudah dan nyaman digunakan apabila ingin diperkenalkan kepada klinik yang terbiasa menggunakan buku/catatan kertas ☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACD466FFEDE41A00E604145EBDF4A0D3",
+          "fromMe": false,
+          "ts": "2026-10-13T07:05:00.000Z",
+          "text": "Apa sudah menghubungi Bu dokter?",
+          "type": "text",
+          "sender": "+62 811-3507-020"
+        },
+        {
+          "id": "3EB02A76BE5A4713935702",
+          "fromMe": true,
+          "ts": "2026-10-13T07:25:00.000Z",
+          "text": "Belum kak, sebenarnya dari saya tidak harus dengan dokter. bisa dengan staff yang berkaitan dengan administrasi rekam medis dan manajamen pelayanan jika ada",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC05954FB2263F61DDFA310742A1E50D",
+          "fromMe": false,
+          "ts": "2026-10-13T07:28:00.000Z",
+          "text": "Baik kak nanti saya sampaikan kepada yang bersangkutan",
+          "type": "text",
+          "sender": "+62 811-3507-020"
+        },
+        {
+          "id": "3A73F56C84339517FE0E",
+          "fromMe": true,
+          "ts": "2026-10-13T07:47:00.000Z",
+          "text": "Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACA329A1E19871237A08E47B72BFB3F6",
+          "fromMe": false,
+          "ts": "2026-10-13T10:08:00.000Z",
+          "text": "Mohon maaf ini untuk keperluan akademis atau keperluan lain?",
+          "type": "text",
+          "sender": "+62 811-3507-020"
+        }
+      ]
+    },
+    {
+      "phone": "+62811360923",
+      "name": "Apotek dan Klinik Madyopuro Medical Center (MMC)",
+      "leadId": "ecd05451-970a-4f70-a056-2ead4ba18910",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-360-923",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:13:53.187Z",
+      "messages": [
+        {
+          "id": "3EB0532DE20523A997E65F",
+          "fromMe": true,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Madyopuro Medical Center?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC77276D60A7BD3BBA1F0A89520A9C40",
+          "fromMe": false,
+          "ts": "2026-10-13T07:44:00.000Z",
+          "text": "Iya ka",
+          "type": "text",
+          "sender": "+62 811-360-923"
+        }
+      ]
+    },
+    {
+      "phone": "+6285784305377",
+      "name": "Safa Homecare",
+      "leadId": "87f69f71-b53a-4fb8-94a5-13590f46ca82",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 857-8430-5377",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:14:13.051Z",
+      "messages": [
+        {
+          "id": "3EB0067DD369092EA5DE67",
+          "fromMe": true,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Safa Homecare?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "2A3A32D8813595C4B587",
+          "fromMe": false,
+          "ts": "2026-10-13T07:23:01.000Z",
+          "text": "Selamat siang kak ada yang bisa kami bantu",
+          "type": "text",
+          "sender": "+62 857-8430-5377"
+        },
+        {
+          "id": "2A5295C7344E1F8643B6",
+          "fromMe": false,
+          "ts": "2026-10-13T12:32:00.000Z",
+          "text": "Malam kak apakah jadi kami bantu perawatan sesuai dengan keluhan kakaknya",
+          "type": "text",
+          "sender": "+62 857-8430-5377"
+        }
+      ]
+    },
+    {
+      "phone": "+628179663770",
+      "name": "Dokter Arif Yahya",
+      "leadId": "aaf24ca9-3972-44d6-9b5a-fd90f72e266d",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 817-9663-770",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:14:32.397Z",
+      "messages": [
+        {
+          "id": "3EB04A13B0324D5E4FAF7E",
+          "fromMe": true,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktik Dokter Arif?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC7334AA38B88F2FA4BDCF5855880C7B",
+          "fromMe": false,
+          "ts": "2026-10-13T07:39:00.000Z",
+          "text": "Iya",
+          "type": "text",
+          "sender": "+62 817-9663-770"
+        }
+      ]
+    },
+    {
+      "phone": "+6285257575834",
+      "name": "Praktik Mandiri dr. Sulistyorini",
+      "leadId": "7db9faa8-e29f-4c3f-866f-248aac9ba7db",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 852-5757-5834",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:14:51.574Z",
+      "messages": [
+        {
+          "id": "3EB070434D9B8C7B3470ED",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktik Mandiri dr. Sulistyorini?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5ECE61AF13EC0E763669A5243879695",
+          "fromMe": false,
+          "ts": "2026-10-13T07:09:00.000Z",
+          "text": "Benar",
+          "type": "text",
+          "sender": "+62 852-5757-5834"
+        },
+        {
+          "id": "3EB054B18754132D33B87D",
+          "fromMe": true,
+          "ts": "2026-10-13T07:16:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Praktik Mandiri dr. Sulistyorini sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Praktik Mandiri dr. Sulistyorini berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5333EBACD8C49901C2E25564098B534",
+          "fromMe": false,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Mohon maaf kami tidak bisa memenuhi permintaan mas Dzaki .🙏🙏🙏",
+          "type": "text",
+          "sender": "+62 852-5757-5834"
+        }
+      ]
+    },
+    {
+      "phone": "+6285179797922",
+      "name": "KLINIK ARRAYAN MEDIKA PAKISAJI",
+      "leadId": "e06daa9d-9428-4a8f-a558-b10212dec26e",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 851-7979-7922",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 6,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:15:11.389Z",
+      "messages": [
+        {
+          "id": "3EB0CEE45332E3D2740EB2",
+          "fromMe": true,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Arrayan Medika?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0A9D5AD16738C510ECF",
+          "fromMe": false,
+          "ts": "2026-10-13T06:48:00.000Z",
+          "text": "Inggih benar ada yang bisa di bantu inggih🙏🏻😊",
+          "type": "text",
+          "sender": "+62 851-7979-7922"
+        },
+        {
+          "id": "3EB0FE5708505980CB50F1",
+          "fromMe": true,
+          "ts": "2026-10-13T06:52:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Arrayan Medika sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Arrayan Medika berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0ACB8A0FD10A2025BB4",
+          "fromMe": false,
+          "ts": "2026-10-13T06:54:00.000Z",
+          "text": "mohon maaf ini dari mana ,dan untuk kepentingan apa inggih🙏🏻🙏🏻",
+          "type": "text",
+          "sender": "+62 851-7979-7922"
+        },
+        {
+          "id": "3EB03CDB84D0CC6030729A",
+          "fromMe": true,
+          "ts": "2026-10-13T07:06:00.000Z",
+          "text": "Berkaitan dengan pesan saya sebelumnya, saya dari startup https://www.sahaibat.com/ yang sebelumnya kami bekerja sama pada program CSR membangun sistem Kesehatan di daerah NTT\n\nLalu kami berencana melanjutkan program kolaborasi dengan badan FKTP (klinik/praktik mandiri) di sekitar Jawa dalam pembangan sistem manajemen fasilitas kesehatan, tapi dalam prosesnya saya ditugaskan untuk riset ke lapangan bagaimana sistem yang sudah diadopsi di masyarakat. \n\npertanyaan kurang lebih seperti:\nAlur pasien mulai dari pendaftaran hingga selesai konsultasi;\nProses penjadwalan dan pencatatan rekam medis;\nSistem digital atau pencatatan manual yang saat ini digunakan;\nKendala atau kebutuhan yang masih dirasakan dalam proses tersebut.\n\nApakah pihak klinik berkenan menjadi salah satu narasumber kami🙏?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0B47141C8A05C15B92E",
+          "fromMe": false,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "inggih kami sampaikan dulu ke pimpinan kami terlebih dahulu inggih🙏🏻🙏🏻",
+          "type": "text",
+          "sender": "+62 851-7979-7922"
+        }
+      ]
+    },
+    {
+      "phone": "+628113509602",
+      "name": "Klinik Nayaka Husada 02 Pakis",
+      "leadId": "fa1f86f1-c221-4aca-a959-65f02a21cb88",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-3509-602",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:15:30.971Z",
+      "messages": [
+        {
+          "id": "3EB017E98C27E76C0BA486",
+          "fromMe": true,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Nayaka Husada 02?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5BD693C302BA3F8A9BEB45FF9CB5B4C",
+          "fromMe": false,
+          "ts": "2026-10-13T07:23:01.000Z",
+          "text": "Hallo sahabat Nayaka👋                                   Terima kasih telah menghubungi Klinik Nayaka Husada 02 PAKIS. Ada yang bisa kami bantu ?                             \n                                                                                           Mohon menunggu, pesan akan kami balas sesuai antrian.\n\nTerimakasih salam sehat 💚",
+          "type": "text",
+          "sender": "+62 811-3509-602"
+        },
+        {
+          "id": "A5F1F7A8E9E2CDCF68337DE96F12C199",
+          "fromMe": false,
+          "ts": "2026-10-13T07:37:00.000Z",
+          "text": "Iya selamat sore\nIya benar bpk, ada yg bisa kami bantu 🙏🏻",
+          "type": "text",
+          "sender": "+62 811-3509-602"
+        }
+      ]
+    },
+    {
+      "phone": "+6285692796199",
+      "name": "Klinik Hari Husada",
+      "leadId": "e62c7695-c74a-4d21-875d-e9e3b30a239b",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 856-9279-6199",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:15:50.185Z",
+      "messages": [
+        {
+          "id": "3EB09CF27A741ADF61224A",
+          "fromMe": true,
+          "ts": "2026-10-13T07:22:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Hari Husada?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A51AAD34961C952D09C3997EB092D84C",
+          "fromMe": false,
+          "ts": "2026-10-13T07:22:01.000Z",
+          "text": "Terima kasih telah menghubungi Klinik Hari Husada. Silakan beri tahu apa yang dapat kami bantu.",
+          "type": "text",
+          "sender": "+62 856-9279-6199"
+        },
+        {
+          "id": "A564ABEA9A230B9A18B3F3FF98D0E423",
+          "fromMe": false,
+          "ts": "2026-10-13T07:23:00.000Z",
+          "text": "Iya ka benar",
+          "type": "text",
+          "sender": "+62 856-9279-6199"
+        }
+      ]
+    },
+    {
+      "phone": "+6282128953388",
+      "name": "Praktek dokter Yenny Ardiani",
+      "leadId": "4a7d5071-3aeb-4028-804e-d4eefe468920",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 821-2895-3388",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:16:08.895Z",
+      "messages": [
+        {
+          "id": "3EB02FEBB398E7E8C11D26",
+          "fromMe": true,
+          "ts": "2026-10-13T07:22:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek dokter Yenny?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACD51ED75C0DC45DBF8C4C0163608C8B",
+          "fromMe": false,
+          "ts": "2026-10-13T09:05:00.000Z",
+          "text": "Soree",
+          "type": "text",
+          "sender": "+62 821-2895-3388"
+        },
+        {
+          "id": "ACD8DEC7D2A6DAE392A2EFAF61F25B3F",
+          "fromMe": false,
+          "ts": "2026-10-13T09:05:01.000Z",
+          "text": "Iya benar",
+          "type": "text",
+          "sender": "+62 821-2895-3388"
+        }
+      ]
+    },
+    {
+      "phone": "+6281222448836",
+      "name": "Praktik Dokter Abirama Care",
+      "leadId": "67bcf51a-3269-4d7b-9a84-0363217d88ba",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 812-2244-8836",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 5,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:16:27.398Z",
+      "messages": [
+        {
+          "id": "3EB0CE71411D1D99909613",
+          "fromMe": true,
+          "ts": "2026-10-13T07:22:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktik Dokter Abirama Care?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5525BA12ABE8EBEB8B0F9BE5ABE22A4",
+          "fromMe": false,
+          "ts": "2026-10-13T07:22:01.000Z",
+          "text": "Terima kasih telah menghubungi Abirama Care. Ada yang bisa kami bantu?",
+          "type": "text",
+          "sender": "+62 812-2244-8836"
+        },
+        {
+          "id": "A56415C1F13921D4D6D49F408384FA9B",
+          "fromMe": false,
+          "ts": "2026-10-13T07:22:02.000Z",
+          "text": "Salam sehat sahabat Abirama Care\n\nTerima kasih telah menghubungi Abirama Care, namun saat ini kami sedang tidak berada di tempat.\nPesan Anda akan segera kami balas pada saat jam kerja Senin-Jumat pukul 07.00-11.00 atau 16.00-21.00\nSabtu pukul 16.00-21.00\nHari Minggu atau tanggal Merah kami TUTUP\n\nMungkin selagi menunggu balasan dari kami, anda dapat menyampaikan pesan melalui nomor kami atau telepon pada nomor 0341-8561179\n\nTerima kasih🙏",
+          "type": "text",
+          "sender": "+62 812-2244-8836"
+        },
+        {
+          "id": "3EB0EB9D1D7799CB9B297E",
+          "fromMe": false,
+          "ts": "2026-10-13T11:01:00.000Z",
+          "text": "Selamat malam, benar kak",
+          "type": "text",
+          "sender": "+62 812-2244-8836"
+        }
+      ]
+    },
+    {
+      "phone": "+6282232929617",
+      "name": "Bidan Praktek Mandiri Veronika Dewi",
+      "leadId": "83c42400-f9f8-4ec7-8b03-d8947f280a30",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-3292-9617",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:16:45.928Z",
+      "messages": [
+        {
+          "id": "3EB00CCB303EA91D5F5CDC",
+          "fromMe": true,
+          "ts": "2026-10-13T07:18:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Bidan Praktek Mandiri Veronika Dewi?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3AA6374279C7419C12E5",
+          "fromMe": false,
+          "ts": "2026-10-13T07:22:00.000Z",
+          "text": "selamat siang iyah betul dgn admin bidan veronika ada yg bisa di bantu?",
+          "type": "text",
+          "sender": "+62 822-3292-9617"
+        }
+      ]
+    },
+    {
+      "phone": "+6285649214695",
+      "name": "Wonder Kidz Therapy Center (Terapi wicara, Okupasi & Fisioterapi Malang)",
+      "leadId": "582130e3-3f90-4da6-96d8-7471e72b85ac",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 856-4921-4695",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:17:05.425Z",
+      "messages": [
+        {
+          "id": "3EB08E3087239FAF664DC5",
+          "fromMe": true,
+          "ts": "2026-10-13T07:19:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Wonder Kidz Therapy Center?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A550E404596E0AA355A0122872A5E6AC",
+          "fromMe": false,
+          "ts": "2026-10-13T07:21:00.000Z",
+          "text": "Selamat siang, benar. Ada yang bisa kami bantu? 😊🙏",
+          "type": "text",
+          "sender": "+62 856-4921-4695"
+        }
+      ]
+    },
+    {
+      "phone": "+628113132292",
+      "name": "JERU MEDIS",
+      "leadId": "9a8dded2-5c4b-491d-8b01-588af73ec5f2",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-3132-292",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:17:24.181Z",
+      "messages": [
+        {
+          "id": "3EB0515A9B2A81CEE31F76",
+          "fromMe": true,
+          "ts": "2026-10-13T07:19:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Jeru Medis?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5A558E8C00CE301CF8F40E1D374AFE5",
+          "fromMe": false,
+          "ts": "2026-10-13T07:19:01.000Z",
+          "text": "Terima kasih telah menghubungi Jeru Medika. Silakan beri tahu apa yang bisa kami bantu.",
+          "type": "text",
+          "sender": "+62 811-3132-292"
+        },
+        {
+          "id": "A51C63F08C508731EA8976B198065A00",
+          "fromMe": false,
+          "ts": "2026-10-13T07:21:00.000Z",
+          "text": "Inggih benar bu/ pak",
+          "type": "text",
+          "sender": "+62 811-3132-292"
+        },
+        {
+          "id": "A551BFE31D5EDCCD806E407BCCA853B9",
+          "fromMe": false,
+          "ts": "2026-10-13T07:21:01.000Z",
+          "text": "Ada yang bisa kami bantu 🙏",
+          "type": "text",
+          "sender": "+62 811-3132-292"
+        }
+      ]
+    },
+    {
+      "phone": "+6281546093283",
+      "name": "Klinik Mediska Malang",
+      "leadId": "ddf157bd-6ae4-4d61-b81d-c9173ef784f7",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 815-4609-3283",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:17:44.011Z",
+      "messages": [
+        {
+          "id": "3EB0CAB99E858487FAB0F9",
+          "fromMe": true,
+          "ts": "2026-10-13T06:51:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Mediska?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC084FD7F36152AE2C04F3AE84F6046A",
+          "fromMe": false,
+          "ts": "2026-10-13T07:21:00.000Z",
+          "text": "Iya selamat siang",
+          "type": "text",
+          "sender": "+62 815-4609-3283"
+        },
+        {
+          "id": "AC120D80EDD7B09215EB77D2AA0BBFB1",
+          "fromMe": false,
+          "ts": "2026-10-13T07:21:01.000Z",
+          "text": "Bener ini nomer Klinik Mediska Malang",
+          "type": "text",
+          "sender": "+62 815-4609-3283"
+        }
+      ]
+    },
+    {
+      "phone": "+628113642421",
+      "name": "Kedungboto Medis",
+      "leadId": "32800d7f-f1b4-4da1-9e76-8a070e9e61ef",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-3642-421",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:18:02.708Z",
+      "messages": [
+        {
+          "id": "3EB04A9FB6EF2719678C48",
+          "fromMe": true,
+          "ts": "2026-10-13T07:20:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Kedungboto Medis?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5D3E4855C6AA6AB29CA649A54EA8DD5",
+          "fromMe": false,
+          "ts": "2026-10-13T08:56:00.000Z",
+          "text": "Siang ibu",
+          "type": "text",
+          "sender": "+62 811-3642-421"
+        },
+        {
+          "id": "A5DC03F282657F1E33A5E1AEDA7D120D",
+          "fromMe": false,
+          "ts": "2026-10-13T08:56:01.000Z",
+          "text": "Betul",
+          "type": "text",
+          "sender": "+62 811-3642-421"
+        },
+        {
+          "id": "A55F0FD2120F23E09264A5010C42E086",
+          "fromMe": false,
+          "ts": "2026-10-13T08:56:02.000Z",
+          "text": "Ada yg bs kami bantu?",
+          "type": "text",
+          "sender": "+62 811-3642-421"
+        }
+      ]
+    },
+    {
+      "phone": "+6282323986844",
+      "name": "Praktek Dokter Mandiri Bayung Lapangan",
+      "leadId": "72f67196-f6de-4dbc-9633-3891e6b0b9e0",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 823-2398-6844",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:18:22.014Z",
+      "messages": [
+        {
+          "id": "3EB051A6B8320EEBE80D4E",
+          "fromMe": true,
+          "ts": "2026-10-13T07:19:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Dokter Mandiri Bayung Lapangan?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC121FCD7789F133B9B93CDF9DD449EB",
+          "fromMe": false,
+          "ts": "2026-10-13T10:03:00.000Z",
+          "text": "Iya benar",
+          "type": "text",
+          "sender": "+62 823-2398-6844"
+        },
+        {
+          "id": "AC843F5A6348D9D59010BB32D95C02B2",
+          "fromMe": false,
+          "ts": "2026-10-13T10:03:01.000Z",
+          "text": "Ada yg bisa dibantu",
+          "type": "text",
+          "sender": "+62 823-2398-6844"
+        }
+      ]
+    },
+    {
+      "phone": "+6281358190704",
+      "name": "Bidan delima sidemiarti",
+      "leadId": "d39ff117-d7cc-440a-a624-0e27f7d8b178",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 813-5819-0704",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:18:40.256Z",
+      "messages": [
+        {
+          "id": "3EB0C86ADB5A133665EEC1",
+          "fromMe": true,
+          "ts": "2026-10-13T07:19:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Bidan Delima Sidemiarti?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC23BA66B1FA4444E6AD7DB7E434CB94",
+          "fromMe": false,
+          "ts": "2026-10-13T10:11:00.000Z",
+          "text": "Iya",
+          "type": "text",
+          "sender": "+62 813-5819-0704"
+        }
+      ]
+    },
+    {
+      "phone": "+6285850633424",
+      "name": "KLINIK PRATAMA RAWAT JALAN BANI RACHMAN",
+      "leadId": "8c2a8780-74f6-4255-b4f2-046fd025adef",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 858-5063-3424",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 1,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:18:59.505Z",
+      "messages": [
+        {
+          "id": "3EB0859E659BD1D95B310E",
+          "fromMe": true,
+          "ts": "2026-10-13T07:18:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Bani Rachman?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6285731339148",
+      "name": "Klinik Pratama Rawat Jalan Albasrah",
+      "leadId": "3f52c79f-f4bc-4893-b14d-dae8fc340227",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 857-3133-9148",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:19:18.528Z",
+      "messages": [
+        {
+          "id": "3EB05DB4C721BF12E2065B",
+          "fromMe": true,
+          "ts": "2026-10-13T07:13:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Rawat Jalan Albasrah?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A50B0BDCEEB753189E93E7313405CF72",
+          "fromMe": false,
+          "ts": "2026-10-13T07:14:00.000Z",
+          "text": "Selamat sing, iya benar. Ada yang bisa kami bantu pak?🙏🏻☺️",
+          "type": "text",
+          "sender": "+62 857-3133-9148"
+        },
+        {
+          "id": "3EB0E693955FE2B0DD1AE6",
+          "fromMe": true,
+          "ts": "2026-10-13T07:18:00.000Z",
+          "text": "Perkenalkan saya Dzaki Wismadi yang saat ini sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik (FKTP), dengan fokus pada manajemen pasien serta administrasi. Saya ingin mendapatkan masukan langsung dari pengalaman pihak Klinik Pratama Rawat Jalan Albasrah dalam sekitar 20-30 menit melalui agenda tanya-jawab secara online menjadi narasumber.🙏\n\nUntuk hal ini apakah dari pihak klinik  kira-kira berkenan? untuk jadwal menyesuaikan ketersediaan staff admisitrasi/dokter 2-3 hari lagi atau minggu depan ☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6282232673051",
+      "name": "DOKTER PRAKTEK MANDIRI 'dr HESTY ROSALINA'",
+      "leadId": "362c2799-fa26-40c7-b89a-f816d4ff5d29",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-3267-3051",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 7,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:19:38.197Z",
+      "messages": [
+        {
+          "id": "3EB02EE44B40540458B6E2",
+          "fromMe": true,
+          "ts": "2026-10-13T07:12:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Dokter Praktek Mandiri dr Hesty Rosalina'",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACAED5BEA366C9E232B52251A32F3AAC",
+          "fromMe": false,
+          "ts": "2026-10-13T07:13:00.000Z",
+          "text": "Selamat siang",
+          "type": "text",
+          "sender": "+62 822-3267-3051"
+        },
+        {
+          "id": "AC065D4FCF6401F3F435C9D11E1E3261",
+          "fromMe": false,
+          "ts": "2026-10-13T07:13:01.000Z",
+          "text": "Benar, tetapi dokter hesty sudah tidak praktek lagi dan di gantikan oleh rekan nya 🙏🏻🙏🏻",
+          "type": "text",
+          "sender": "+62 822-3267-3051"
+        },
+        {
+          "id": "AC45B4C1A5FC21D1EAB605EBD0E25A09",
+          "fromMe": false,
+          "ts": "2026-10-13T07:13:02.000Z",
+          "text": "Ada yg bisa di bantu?",
+          "type": "text",
+          "sender": "+62 822-3267-3051"
+        },
+        {
+          "id": "3EB0D97DCC5634862CB919",
+          "fromMe": true,
+          "ts": "2026-10-13T07:17:00.000Z",
+          "text": "Oh baik, berarti digantikan oleh Dokter siapa nggih?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0AB0E1AB196E1E07D1C",
+          "fromMe": false,
+          "ts": "2026-10-13T07:36:00.000Z",
+          "text": "dengan dokter irfan,,",
+          "type": "text",
+          "sender": "+62 822-3267-3051"
+        },
+        {
+          "id": "3EB0F324B8830F387613B9",
+          "fromMe": false,
+          "ts": "2026-10-13T07:36:01.000Z",
+          "text": "ada yang bisa kami bantu?",
+          "type": "text",
+          "sender": "+62 822-3267-3051"
+        }
+      ]
+    },
+    {
+      "phone": "+6282232292366",
+      "name": "Klinik Pratama Kidal Medis",
+      "leadId": "802f0ee5-8b55-4518-92a8-6b9ccd45f4ee",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-3229-2366",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:19:57.956Z",
+      "messages": [
+        {
+          "id": "3EB0F4D903CCD01F60937D",
+          "fromMe": true,
+          "ts": "2026-10-13T07:13:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Kidal Medis?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5E1DEEC6D1E449EAB3046ECECD851CE",
+          "fromMe": false,
+          "ts": "2026-10-13T07:13:01.000Z",
+          "text": "Terima kasih telah menghubungi Klinik Kidal. Silakan beri tahu apa yang bisa kami bantu.",
+          "type": "text",
+          "sender": "+62 822-3229-2366"
+        }
+      ]
+    },
+    {
+      "phone": "+6282141991545",
+      "name": "Klinik Pratama Rawat Inap Ronggo Husada",
+      "leadId": "d83bfb18-5a2c-4696-8044-aa8364fc9b71",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 821-4199-1545",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:20:17.714Z",
+      "messages": [
+        {
+          "id": "3EB0F8CEF0537E4C16D544",
+          "fromMe": true,
+          "ts": "2026-10-13T07:13:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Ronggo Husada?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5CCACF7019050089A75435425025E01",
+          "fromMe": false,
+          "ts": "2026-10-13T07:13:01.000Z",
+          "text": "Terima kasih telah menghubungi KLINIK PRATAMA RAWAT INAP RONGGO HUSADA. Silakan beri tahu apa yang dapat kami bantu.",
+          "type": "text",
+          "sender": "+62 821-4199-1545"
+        },
+        {
+          "id": "3EB08FC9268B8DA77FCE28",
+          "fromMe": false,
+          "ts": "2026-10-13T07:26:00.000Z",
+          "text": "Siang, iya benar Bapak/Ibu",
+          "type": "text",
+          "sender": "+62 821-4199-1545"
+        }
+      ]
+    },
+    {
+      "phone": "+6282142971007",
+      "name": "Klinik Amiruddin",
+      "leadId": "9ffc7be5-45e5-4f82-b037-3fcfa5373ce1",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 821-4297-1007",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:20:36.917Z",
+      "messages": [
+        {
+          "id": "3EB035DD0A3F43594655A1",
+          "fromMe": true,
+          "ts": "2026-10-13T07:13:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Amiruddin?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACDE1BBA2755C56666F771AC0C31CB8F",
+          "fromMe": false,
+          "ts": "2026-10-13T07:31:00.000Z",
+          "text": "Selamat siang\nNggih bapak 🙏",
+          "type": "text",
+          "sender": "+62 821-4297-1007"
+        }
+      ]
+    },
+    {
+      "phone": "+6282232994248",
+      "name": "Rumah Bidan/ Bidan Hepi",
+      "leadId": "8b1d8bcb-e7be-4c92-8c61-8ab82dd6331e",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-3299-4248",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:20:56.289Z",
+      "messages": [
+        {
+          "id": "3EB0078A74011D48CAB17B",
+          "fromMe": true,
+          "ts": "2026-10-13T07:12:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Rumah Bidan Hepi?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5DFD34C86D7B829632E6125AC41A388",
+          "fromMe": false,
+          "ts": "2026-10-13T07:12:01.000Z",
+          "text": "Assalamualaikum, \nSelamat Datang di Rumah Bidan. \n \nSilakan beri tahu apa yang dapat kami bantu 🥰\n\nPRAKTIK BIDAN HEPI\nPraktik jam 05.00-21.00\nPersalinan 24 jam. \n\nBaby, Kid's n Mom Care\nTreatment dengan perjanjian\n🥰\n\nTinggalkan pesan, kami akan balas secepat mungkin.\n\nWassalamu'alaikum🥰🤗",
+          "type": "text",
+          "sender": "+62 822-3299-4248"
+        }
+      ]
+    },
+    {
+      "phone": "+6281313060650",
+      "name": "Klinik Rawat Inap Sahabat Sehat (Bu Lina)",
+      "leadId": "f7cf5d75-5706-48ab-9afa-d89174ad976f",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "Klinik Rawat Inap Sahabat Sehat",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:21:15.828Z",
+      "messages": [
+        {
+          "id": "3EB0DA7EDE81EF04013FF8",
+          "fromMe": true,
+          "ts": "2026-10-13T07:12:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Sahabat Sehat?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A50D832C2BBB6AC861C891CA3F922B03",
+          "fromMe": false,
+          "ts": "2026-10-13T07:12:01.000Z",
+          "text": "Terima kasih telah menghubungi Klinik Sahabat Sehat. \nSilakan beri tahu apa yang dapat kami bantu 🥰🙏\n\nKami melayani pasien Umum, BPJS/KIS \nIGD 24 jam\nPelayanan Rawat Inap 24 jam\nPelayanan drg. Gigi\nSenin sampai Sabtu : 08.00-13.00\n * Selasa Kamis Sabtu jam 16.30-19.00\nPelayanan Persalinan 24 jam\nUSG kandungan : \nsenin sampai jumat: 10.00-12.00\nSenin&Rabu jam 16.00 -17.00\nMinggu&Selasa: 15.00-16.30\nEKG setiap hari\nPeriksa kehamilan, nifas dan KB setiap hari\nLaboratorium\nFarmasi\n🥰🥰",
+          "type": "text",
+          "sender": "Klinik Rawat Inap Sahabat Sehat"
+        },
+        {
+          "id": "A564DB45B33701E345D14BDE9004DC59",
+          "fromMe": false,
+          "ts": "2026-10-13T07:12:02.000Z",
+          "text": "Terima kasih telah menghubungi Klinik Sahabat Sehat. \nSilakan beri tahu apa yang dapat kami bantu 🥰🙏\n\nKami melayani pasien Umum, BPJS/KIS \npelayanan dr. Umum 24 jam\npelayanan drg. Gigi\n# drg Vena setiap Hari Selasa, Kamis & Sabtu  jam 16.30 - 19.30 wib\n#drg Salsabila senin-kamis jam 08.00 sd jam 13.00\npelayanan persalinan 24 jam\nUSG kandungan\nEKG setiap hari\nperiksa kehamilan, nifas dan KB setiap hari\npelayanan laboratorium\n\nBila pasien BPJS/KIS\nCukup menunjukkan KTP/BPJS/KIS/Mobile JKN",
+          "type": "text",
+          "sender": "Klinik Rawat Inap Sahabat Sehat"
+        },
+        {
+          "id": "A5ACA07BABFD76F5D13AA1719A67763C",
+          "fromMe": false,
+          "ts": "2026-10-13T08:01:00.000Z",
+          "text": "Nggih benar",
+          "type": "text",
+          "sender": "Klinik Rawat Inap Sahabat Sehat"
+        }
+      ]
+    },
+    {
+      "phone": "+6285859131921",
+      "name": "Praktek Mandiri Bidan Suhartatik",
+      "leadId": "75e74407-e805-4967-919e-bbb3e086f0e9",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 858-5913-1921",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:21:34.587Z",
+      "messages": [
+        {
+          "id": "3EB06DEDDF2E827E89A083",
+          "fromMe": true,
+          "ts": "2026-10-13T07:11:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Mandiri Bidan Suhartatik?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC961F3BCEF91EC7DD4E8BCFFFEAB9C4",
+          "fromMe": false,
+          "ts": "2026-10-13T07:27:00.000Z",
+          "text": "Selamat siang, iya betul",
+          "type": "text",
+          "sender": "+62 858-5913-1921"
+        }
+      ]
+    },
+    {
+      "phone": "+6281325668796",
+      "name": "Klinik Pratama Asy-Syifa",
+      "leadId": "5b689a68-00d6-420a-aefa-7d7997572fbc",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "title-name",
+      "headerTitle": "Klinik Pratama Asy Syifa",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 18,
+      "noTimestamp": 10,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:21:49.357Z",
+      "messages": [
+        {
+          "id": "3EB079CF8BA13A379418D7",
+          "fromMe": true,
+          "ts": "2026-10-13T06:28:00.000Z",
+          "text": "Selamat siang Kak Alifa, apakah sudah mulai mencoba menggunakan dan ada pertanyaan terkait sistem kami?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A561A9DE2DCCAD1C030E9A13BCBA18C8",
+          "fromMe": false,
+          "ts": "2026-10-13T07:09:00.000Z",
+          "text": "Siang, kemarin sudah coba fitur apoteknya kak. Sudah bisaa\nUntuk export data juga aman, cuman saya memang belum coba nambah kasus lagi",
+          "type": "text",
+          "sender": "Klinik Pratama Asy Syifa"
+        },
+        {
+          "id": "3A1A8E8B9288EA331A0C",
+          "fromMe": true,
+          "ts": "2026-10-13T08:25:00.000Z",
+          "text": "apakah ada kesulitan dalam penggunaannya kak?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0481769312EE5965F78",
+          "fromMe": false,
+          "ts": "2026-10-14T03:53:00.000Z",
+          "text": "aman kak, ga ada kesulitan",
+          "type": "text",
+          "sender": "Klinik Pratama Asy Syifa"
+        },
+        {
+          "id": "3A0CA2DC8FAD2181C487",
+          "fromMe": true,
+          "ts": "2026-10-14T05:41:00.000Z",
+          "text": "Selamat siang kak, untuk melanjutkan integrasi perlu mengisi\n\nNama Lengkap:\nNomor STR :\nNomor SIP (opsional) :\nTempat Praktik: Klinik\nAlamat Praktik: Jl.\nNomor WhatsApp:\nEmail:\nRole pemilik akun: Dokter / Admin Klinik / Resepsionis / Apotek\n\nagar sistem kami secara resmi bisa membantu submit ke sistem satusehatnya bersama pihak klinik asy-syifa kak🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB00117683317934858D4",
+          "fromMe": false,
+          "ts": "2026-10-14T06:47:00.000Z",
+          "text": "Nama Lengkap: dr. Suriadie\nNomor STR : 33.1.1.100.4.22.046477\nNomor SIP (opsional) : 33724.57152/DU/03/KS.23.01/0313/IV/2022\nTempat Praktik: Klinik Pratama Asy Syifa\nAlamat Praktik: Jl. Kartopuran 241A, Jayengan, Serengan, Surakarta\nNomor WhatsApp: 081325668796\nrole akunnya jadi satu pakai yang sudah ada kemarin?",
+          "type": "text",
+          "sender": "Klinik Pratama Asy Syifa"
+        },
+        {
+          "id": "3A47556B5A3CA008FFA2",
+          "fromMe": true,
+          "ts": "2026-10-14T07:43:00.000Z",
+          "text": "Nama Lengkap: dr. Suriadie\nNomor STR : 33.1.1.100.4.22.046477\nNomor SIP (opsional) : 33724.57152/DU/03/KS.23.01/0313/IV/2022\nTempat Praktik: Klinik Pratama Asy Syifa\nAlamat Praktik: Jl. Kartopuran 241A, Jayengan, Serengan, Surakarta\nNomor WhatsApp: 081325668796\nrole akunnya jadi satu pakai yang sudah ada kemarin?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6282142006400",
+      "name": "Klinik Shabira Husada",
+      "leadId": "b4ff35d0-e4bb-4db1-9368-eef9eec92db9",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 821-4200-6400",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 5,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:22:08.179Z",
+      "messages": [
+        {
+          "id": "3EB00A70BBC75CFE0A46CC",
+          "fromMe": true,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Shabira Husada?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0118E1BFF1933243C42",
+          "fromMe": false,
+          "ts": "2026-10-13T07:00:00.000Z",
+          "text": "Selamat siang, betul kak",
+          "type": "text",
+          "sender": "+62 821-4200-6400"
+        },
+        {
+          "id": "3EB052B48545FF613D26EF",
+          "fromMe": false,
+          "ts": "2026-10-13T07:01:00.000Z",
+          "text": "halo, ada yang bisa admin bantu?😊🥰",
+          "type": "text",
+          "sender": "+62 821-4200-6400"
+        },
+        {
+          "id": "3EB06AA9E1B793A393320C",
+          "fromMe": true,
+          "ts": "2026-10-13T07:08:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Shabira Husada sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Shabira Husada berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6287758564743",
+      "name": "dr.Fery Medika",
+      "leadId": "99219dcc-159d-4dc8-a65b-3ce49866b3c4",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 877-5856-4743",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 8,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:22:27.718Z",
+      "messages": [
+        {
+          "id": "3EB0D68B1744FE95D9A458",
+          "fromMe": true,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer praktik dr.Fery Medika?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB06CD3F922E0CCC5A5F1",
+          "fromMe": true,
+          "ts": "2026-10-13T07:08:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan dr.Fery Medika sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak dr.Fery Medika berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB033D28AA1979BFB1F32",
+          "fromMe": false,
+          "ts": "2026-10-13T14:38:00.000Z",
+          "text": "besok bisa WA kembali nggih kak🙏🏻😊",
+          "type": "text",
+          "sender": "+62 877-5856-4743"
+        },
+        {
+          "id": "3ADC6F2495B2F6CCF0F9",
+          "fromMe": true,
+          "ts": "2026-10-14T06:57:00.000Z",
+          "text": "Selamat siang, ingin menanyakan kembali nggih",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "2A4CE340B35B278CED11",
+          "fromMe": false,
+          "ts": "2026-10-14T07:03:00.000Z",
+          "text": "sebentar nggih mohon di tunggu nggih🙏🏻😊",
+          "type": "text",
+          "sender": "+62 877-5856-4743"
+        },
+        {
+          "id": "3A9658976D7FFD4761FE",
+          "fromMe": true,
+          "ts": "2026-10-14T07:43:00.000Z",
+          "text": "Baik kak 🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0AD66A3864CB90361A3",
+          "fromMe": false,
+          "ts": "2026-10-14T07:46:00.000Z",
+          "text": null,
+          "type": "image",
+          "approxTime": true
+        }
+      ]
+    },
+    {
+      "phone": "+628113130061",
+      "name": "Klinik PMI Curungrejo Kepanjen",
+      "leadId": "ca248139-3291-4016-ab22-6f8b8e238abe",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-3130-061",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 5,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:22:46.120Z",
+      "messages": [
+        {
+          "id": "3EB06AF55810C9FE1A54A8",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik PMI Curungrejo?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC3E3E1C204D6747E4169661C87ED9E7",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat siang, iya benar ini dengan klinik PMI Curungrejo, apakah ada yang bisa dibantu kak 🙏",
+          "type": "text",
+          "sender": "+62 811-3130-061"
+        },
+        {
+          "id": "3EB0FD74E30A6F6B83BE13",
+          "fromMe": true,
+          "ts": "2026-10-13T06:43:00.000Z",
+          "text": "Perkenalkan saya Dzaki Wismadi yang saat ini sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik (FKTP), dengan fokus pada manajemen pasien serta administrasi. Saya ingin mendapatkan masukan langsung dari pengalaman pihak Klinik PMI Curungrejo dalam sekitar 20-30 menit melalui agenda tanya-jawab secara online menjadi narasumber.🙏\n\nUntuk hal ini apakah dari pihak praktik  kira-kira berkenan? untuk jadwal menyesuaikan ketersediaan staff admisitrasi/dokter 2-3 hari lagi atau minggu depan ☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC4C641E959E1BF4DBFC087B80317128",
+          "fromMe": false,
+          "ts": "2026-10-13T07:06:00.000Z",
+          "text": "Kami sampaikan dulu kepada managemen ya kak",
+          "type": "text",
+          "sender": "+62 811-3130-061"
+        },
+        {
+          "id": "3A9E45E29C4D50BF7770",
+          "fromMe": true,
+          "ts": "2026-10-13T07:32:00.000Z",
+          "text": "Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6282333373233",
+      "name": "Dr.Marwoto Health Center (Bisa melayani HOMECARE)",
+      "leadId": "9c2f8a96-5aa9-422e-92f9-d876ffa8e9dc",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 823-3337-3233",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:23:05.524Z",
+      "messages": [
+        {
+          "id": "3EB0A74EAB3E7A801E4CEC",
+          "fromMe": true,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Dr.Marwoto Health Center?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACBF04E6DE7AEA66D36F119F3EF16D02",
+          "fromMe": false,
+          "ts": "2026-10-13T06:53:00.000Z",
+          "text": "Selamat siang, benar Kak 😊 Ini nomor resmi Klinik Pratama dr. Marwoto Health Center. Ada yang bisa kami bantu, Kak? 🙏",
+          "type": "text",
+          "sender": "+62 823-3337-3233"
+        },
+        {
+          "id": "3EB02381A8FF9512F78813",
+          "fromMe": true,
+          "ts": "2026-10-13T07:06:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Dr.Marwoto Health Center sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Dr.Marwoto Health Center berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6285755496575",
+      "name": "Klinik Jaya Kusuma Husada",
+      "leadId": "96bbe099-b337-452e-930c-56cf818ccc7d",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 857-5549-6575",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:23:24.649Z",
+      "messages": [
+        {
+          "id": "3EB0A4599450C07C4BEE9D",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Jaya Kusuma Husada?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A522C85CCA3524ACDC6A11E6C8B4A201",
+          "fromMe": false,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Nggih",
+          "type": "text",
+          "sender": "+62 857-5549-6575"
+        },
+        {
+          "id": "3EB02B87EA58B6181E6AAE",
+          "fromMe": true,
+          "ts": "2026-10-13T07:05:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Jaya Kusuma Husada sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Jaya Kusuma Husada berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6282321666060",
+      "name": "Praktek Dokter Dinar (dr. Nur Alfi Dinari)",
+      "leadId": "790cd473-614d-44a4-9868-d7e6f59cc0c9",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 823-2166-6060",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 5,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:23:43.680Z",
+      "messages": [
+        {
+          "id": "3EB06BC20D9238B750866B",
+          "fromMe": true,
+          "ts": "2026-10-13T06:49:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Dokter Dinar?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5DF8D6D4F5BBF1CB76642BC6E283951",
+          "fromMe": false,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Selamat siang",
+          "type": "text",
+          "sender": "+62 823-2166-6060"
+        },
+        {
+          "id": "A50C7017AC8CAC40920B41D1FACBC330",
+          "fromMe": false,
+          "ts": "2026-10-13T06:50:01.000Z",
+          "text": "Iya benar kak",
+          "type": "text",
+          "sender": "+62 823-2166-6060"
+        },
+        {
+          "id": "A5A3BBB0DDFF1F771680116A8643A5E1",
+          "fromMe": false,
+          "ts": "2026-10-13T06:50:02.000Z",
+          "text": "Ada yg bisa dibantu?",
+          "type": "text",
+          "sender": "+62 823-2166-6060"
+        },
+        {
+          "id": "3EB0C772ACAE901CD6E9C9",
+          "fromMe": true,
+          "ts": "2026-10-13T07:04:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Praktek Dokter Dinar sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Praktek Dokter Dinar berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6285100051952",
+      "name": "Dokter Umum Malang - Dr. Harjono",
+      "leadId": "14674093-c40d-4251-9320-a60afa53a9e2",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 851-0005-1952",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:24:02.797Z",
+      "messages": [
+        {
+          "id": "3EB039C0773AFD50C37E6E",
+          "fromMe": true,
+          "ts": "2026-10-13T06:52:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktik Dokter Harjono?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3A91CEB668DFCB0D6BD9",
+          "fromMe": false,
+          "ts": "2026-10-13T08:40:00.000Z",
+          "text": "Ya",
+          "type": "text",
+          "sender": "+62 851-0005-1952"
+        }
+      ]
+    },
+    {
+      "phone": "+6281330052934",
+      "name": "Klinik Yudhistira Medika Malang",
+      "leadId": "1e8095bc-1f04-4de4-bd53-a7b76c7c4c77",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 813-3005-2934",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 4,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:24:22.144Z",
+      "messages": [
+        {
+          "id": "3EB06B891A5F2ECDCBF4F5",
+          "fromMe": true,
+          "ts": "2026-10-13T06:51:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Yudhistira Medika?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5E8EF7D44E6845AE6D1403032298C36",
+          "fromMe": false,
+          "ts": "2026-10-13T06:51:01.000Z",
+          "text": "Terima kasih telah menghubungi Klinik Yudhistira Medika Malang. Silahkan beri tahu apa yang bisa kami bantu.\nJangan lupa simpan nomor kontak ini untuk mendapatkan informasi dan promosi kesehatan terkini di klinik kami.\nTerima kasih 😊🙏",
+          "type": "text",
+          "sender": "+62 813-3005-2934"
+        },
+        {
+          "id": "A5EFCE1757DF1AE613B858FE3F09A76D",
+          "fromMe": false,
+          "ts": "2026-10-13T09:43:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Yudhistira Medika?",
+          "type": "text",
+          "sender": "+62 813-3005-2934"
+        }
+      ]
+    },
+    {
+      "phone": "+6282220505009",
+      "name": "KLINIK SYIFA HUSADA UNGGUL",
+      "leadId": "125947e2-1817-44c5-ad11-60b52be153e1",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-2050-5009",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 1,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:24:42.000Z",
+      "messages": [
+        {
+          "id": "3EB061E41AA8D0533ADF0F",
+          "fromMe": true,
+          "ts": "2026-10-13T06:51:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Syifa Husada Unggul?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6282131032148",
+      "name": "Praktek Dokter Umum Klayatan",
+      "leadId": "a111ff55-0408-4449-95ac-ebf6d65eb407",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 821-3103-2148",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:25:00.381Z",
+      "messages": [
+        {
+          "id": "3EB0322DFE4BA3E22C44E0",
+          "fromMe": true,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Dokter Umum Klayatan?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACA8833606E6F273F95A1BED6A1A05F9",
+          "fromMe": false,
+          "ts": "2026-10-13T08:14:00.000Z",
+          "text": "Selamat sore,kami buka dari jam 15.00 - 21.00 WIB\nuntuk dokter ada sekitr jm 17.00 - 21.00 WIB🙏🏻",
+          "type": "text",
+          "sender": "+62 821-3103-2148"
+        },
+        {
+          "id": "ACBA31903B6DA4E4EB1ED28153DFF20C",
+          "fromMe": false,
+          "ts": "2026-10-13T08:14:01.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Dokter Umum Klayatan?",
+          "type": "text",
+          "sender": "+62 821-3103-2148"
+        }
+      ]
+    },
+    {
+      "phone": "+62881036858686",
+      "name": "Klinik Pratama Rawat Inap Astagina Medika",
+      "leadId": "0261f398-8474-4929-8608-9cea1b5c1fb9",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 881-0368-58686",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 2,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:25:19.875Z",
+      "messages": [
+        {
+          "id": "3EB09E2819E0E6E01843C9",
+          "fromMe": true,
+          "ts": "2026-10-13T06:50:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Astagina Medika?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0776C7F1A54CF9EDEB0",
+          "fromMe": false,
+          "ts": "2026-10-13T08:35:00.000Z",
+          "text": "iya, ada yang bisa dibantu kak🙏🏻",
+          "type": "text",
+          "sender": "+62 881-0368-58686"
+        }
+      ]
+    },
+    {
+      "phone": "+6289675873994",
+      "name": "Klinik Pratama UNIMUS",
+      "leadId": "d3fad0d8-321d-4686-86d3-c1302e75e1cd",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 896-7587-3994",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 17,
+      "noTimestamp": 3,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:25:34.271Z",
+      "messages": [
+        {
+          "id": "3EB06A0516ADB0C19822F1",
+          "fromMe": false,
+          "ts": "2026-10-13T01:45:00.000Z",
+          "text": "terimakasih, kami lanjutkan ke bagian terkait. \nakan kami informasikan jika sudah ada konfirmasi ya kak",
+          "type": "text",
+          "sender": "+62 896-7587-3994"
+        },
+        {
+          "id": "A5DD4D06867947F6194EB0D6ADFC3763",
+          "fromMe": false,
+          "ts": "2026-10-13T02:06:00.000Z",
+          "text": "Dari pimpinan menanyakan kak untuk programnya nanti akan masuk di eRMnya klinik atau terpisah ya?",
+          "type": "text",
+          "sender": "+62 896-7587-3994"
+        },
+        {
+          "id": "3EB0CA16B10A423CBF1CEC",
+          "fromMe": true,
+          "ts": "2026-10-13T03:43:00.000Z",
+          "text": "Untuk proses wawancara ini, saya tidak menjalankan programnya kak. hanya bersifat tanya jawab terkait pengalaman penggunaan eRM yang ada di klinik pratama UNIMUS sekitar 15 menit (Alur pelayanan pasien, fitur yang dibutuhkan atau kendala penggunaan rekam medis,... dan sebagainya)\n\nlalu sekitar 5 menit saya memperlihatkan rancangan sistem kami dan meminta feedback komen menurut pengalaman pihak klinik sistem kami apakah mudah dipahami dan sesuai untuk dikolaborasikan (apakah mungkin terlalu kompleks, apakah mungkin belum terlalu dibutuhkan masyarakat,.. dan sebagainya) \n\nkurang lebih seperti itu kak  ☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5F63C3E9BD4217128AF44F074A6649A",
+          "fromMe": false,
+          "ts": "2026-10-13T04:02:00.000Z",
+          "text": "Terima kasih infonya",
+          "type": "text",
+          "sender": "+62 896-7587-3994"
+        },
+        {
+          "id": "3EB054C44859B081779B84",
+          "fromMe": true,
+          "ts": "2026-10-13T06:49:00.000Z",
+          "text": "Dari pihak klinik apakah berkenan kak untuk jadi salah satu narasumber kami?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB068A262FFE256077025",
+          "fromMe": false,
+          "ts": "2026-10-13T07:55:00.000Z",
+          "text": "blm ada jawaban dari pimpinan, mohon di tunggu",
+          "type": "text",
+          "sender": "+62 896-7587-3994"
+        },
+        {
+          "id": "3A3237B2088C658BD309",
+          "fromMe": true,
+          "ts": "2026-10-13T08:06:00.000Z",
+          "text": "Baik, Mohon kabari saya jika sudah ada informasi terbaru  🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB04EB779C479DEC734CC",
+          "fromMe": false,
+          "ts": "2026-10-14T01:15:00.000Z",
+          "text": "njih",
+          "type": "text",
+          "sender": "+62 896-7587-3994"
+        }
+      ]
+    },
+    {
+      "phone": "+6285333339950",
+      "name": "KLINIK PRATAMA RAWAT INAP YASSA HUSADA",
+      "leadId": "23334b6a-0e44-4a5d-afa5-62b1770b834f",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 853-3333-9950",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:25:53.038Z",
+      "messages": [
+        {
+          "id": "3EB0B082D166FE1B44CE78",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Pratama Yassa Husada?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5C208F6003AEE704E4E8EA86458EB78",
+          "fromMe": false,
+          "ts": "2026-10-13T06:33:01.000Z",
+          "text": "Terima kasih telah menghubungi Yassa Husada. Silakan beri tahu apa yang dapat kami bantu.\nYassa Husada Melayani Seperti Keluarga😊",
+          "type": "text",
+          "sender": "+62 853-3333-9950"
+        },
+        {
+          "id": "3EB01FA81CCE8BAAB3F9C2",
+          "fromMe": true,
+          "ts": "2026-10-13T06:48:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Pratama Rawat sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Pratama Rawat berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+628113636977",
+      "name": "KETAWANG MEDIS",
+      "leadId": "617aaa5e-23fe-406c-96a2-b923221652fa",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 811-3636-977",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 9,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:26:12.291Z",
+      "messages": [
+        {
+          "id": "3EB02B0192F67F8001D6A2",
+          "fromMe": true,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Ketawang Medis?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A53DDDB42757535849C283F8543CB573",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:01.000Z",
+          "text": "Terima kasih telah menghubungi KETAWANG MEDIS. Silakan beri tahu apa yang dapat kami bantu.",
+          "type": "text",
+          "sender": "+62 811-3636-977"
+        },
+        {
+          "id": "A5C0F42A8F72F5C7D6BC81F084D28427",
+          "fromMe": false,
+          "ts": "2026-10-13T06:35:00.000Z",
+          "text": "Iya",
+          "type": "text",
+          "sender": "+62 811-3636-977"
+        },
+        {
+          "id": "A5689E317775B4A8FE99879651FD045B",
+          "fromMe": false,
+          "ts": "2026-10-13T06:35:01.000Z",
+          "text": "Ada yang bisa kami bantu kak?",
+          "type": "text",
+          "sender": "+62 811-3636-977"
+        },
+        {
+          "id": "3EB07A519A2306A716122D",
+          "fromMe": true,
+          "ts": "2026-10-13T06:43:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Ketawang Medis sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Ketawang Medis berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A53E8FBF22E51CCDA3CE794B1A744CBA",
+          "fromMe": false,
+          "ts": "2026-10-13T06:44:00.000Z",
+          "text": "Mohon maaf kak, bisa chat langsung dengan owner kami atau manager kami ya",
+          "type": "text",
+          "sender": "+62 811-3636-977"
+        },
+        {
+          "id": "A5632A5D47C9BB5D3CB6FF7EC836B7EB",
+          "fromMe": false,
+          "ts": "2026-10-13T06:44:01.000Z",
+          "text": "Saya hanya admin per kliniknya",
+          "type": "text",
+          "sender": "+62 811-3636-977"
+        },
+        {
+          "id": "A5E0534AE570DED910FD81365BACF897",
+          "fromMe": false,
+          "ts": "2026-10-13T06:44:02.000Z",
+          "text": null,
+          "type": "sticker",
+          "approxTime": true
+        },
+        {
+          "id": "3EB03E89DE507010487062",
+          "fromMe": true,
+          "ts": "2026-10-13T06:47:00.000Z",
+          "text": "apakah ada kontak yang bisa saya hubungi kak?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6281233923999",
+      "name": "Klinik Dr Dian Agung Anggraeny",
+      "leadId": "c60ac3c5-60bf-4284-9788-3ae0bbaf9468",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 812-3392-3999",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 6,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:26:31.861Z",
+      "messages": [
+        {
+          "id": "3EB02BE313237BA39702DB",
+          "fromMe": true,
+          "ts": "2026-10-13T06:33:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Klinik Dr Dian Agung Anggraeny?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "ACB49F60874A551499CF47E78462F117",
+          "fromMe": false,
+          "ts": "2026-10-13T06:33:01.000Z",
+          "text": "Iya",
+          "type": "text",
+          "sender": "+62 812-3392-3999"
+        },
+        {
+          "id": "AC37DEBC5C8969F75B27488DC2225BA3",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Ada yang bisa dibantu kak",
+          "type": "text",
+          "sender": "+62 812-3392-3999"
+        },
+        {
+          "id": "3EB0E8E8D18B34F7439C64",
+          "fromMe": true,
+          "ts": "2026-10-13T06:39:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Klinik Dr Dian Agung Anggraeny sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Klinik Dr Dian Agung Anggraeny berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC488C08344637FEA9E5AA3579092287",
+          "fromMe": false,
+          "ts": "2026-10-13T06:40:00.000Z",
+          "text": "Dari mana ya ini?\nAkademisi atau mana?",
+          "type": "text",
+          "sender": "+62 812-3392-3999"
+        },
+        {
+          "id": "3EB06607873F0FE87954DA",
+          "fromMe": true,
+          "ts": "2026-10-13T06:44:00.000Z",
+          "text": "Berkaitan dengan pesan saya sebelumnya, saya dari startup https://www.sahaibat.com/ yang sebelumnya kami bekerja sama pada program CSR membangun sistem Kesehatan di daerah NTT\n\nLalu kami berencana melanjutkan program kolaborasi dengan badan FKTP (klinik/praktik mandiri) di sekitar Jawa dalam pembangan sistem manajemen fasilitas kesehatan, tapi dalam prosesnya saya ditugaskan untuk riset ke lapangan bagaimana sistem yang sudah diadopsi di masyarakat. \n\npertanyaan kurang lebih seperti:\nAlur pasien mulai dari pendaftaran hingga selesai konsultasi;\nProses penjadwalan dan pencatatan rekam medis;\nSistem digital atau pencatatan manual yang saat ini digunakan;\nKendala atau kebutuhan yang masih dirasakan dalam proses tersebut.\n\nApakah pihak klinik berkenan menjadi salah satu narasumber kami🙏?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6281222677717",
+      "name": "Ghania Farm & clinic (dr. Samsul) Permanu",
+      "leadId": "75098af3-c349-4990-8cb1-7d0628893609",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 812-2267-7717",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 4,
+      "totalLoaded": 37,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:26:52.514Z",
+      "messages": [
+        {
+          "id": "3EB07BCAA83A1EEBC2F3E8",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Ghania Farm & clinic?",
+          "type": "other"
+        },
+        {
+          "id": "A58AEDBE26D69C421372E7FB4DEE674A",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:01.000Z",
+          "text": "Terimakasih telah menghubungi praktek dr. Samsul Permanu, kami siap melayani kebutuhan layanan kesehatan anda",
+          "type": "other"
+        },
+        {
+          "id": "A55DB4B0DD7F982F0665591843481D2F",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:02.000Z",
+          "text": "Terimakasih telah menghubungi kami, saat ini kami tidak aktif. Mohon tinggalkan pesan terlebih dahulu. Kami akan segera merespon pesan anda di jam kerja🙏😊",
+          "type": "other"
+        },
+        {
+          "id": "A5DAB4A6D3CB1CC6BB52EB8D6A3C3745",
+          "fromMe": false,
+          "ts": "2026-10-13T06:35:00.000Z",
+          "text": "Selamat siang iya benar \nAda yg bisa d bantu",
+          "type": "other"
+        },
+        {
+          "id": "3EB017CAF7626EE0380998",
+          "fromMe": false,
+          "ts": "2026-10-13T06:42:00.000Z",
+          "text": "Selamat siang, perkenalkan saya Dzaki Wismadi. Saat ini saya sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik.\n\nSaya menemukan melalui Google Maps dan melihat ulasan yang positif dari para pasien. Saya berniat untuk mempelajari lebih jauh mengenai pelayanan dan operasional yang dilakukan Ghania Farm & clinic sehingga ingin meminta waktu sekitar 20–30 menit untuk berdiskusi secara online melalui sesi tanya jawab.\n\nApakah dari pihak Ghania Farm & clinic berkenan menjadi narasumber? Untuk jadwalnya, saya fleksibel dan dapat menyesuaikan dengan waktu luang staf yang bersangkutan atau dokter, baik 2–3 hari ke depan maupun minggu depan. Terima kasih 🙏☺️",
+          "type": "other"
+        },
+        {
+          "id": "3EB0F4C7A41FB5CCF013F9",
+          "fromMe": false,
+          "ts": "2026-10-13T09:09:00.000Z",
+          "text": "selamat siang, jika berkenan besok siang waktu jam istirahat antara jam 12 an nggih, krn di jam istirahat biasanya senggang tidak banyak pasien yang datang ke klinik",
+          "type": "other"
+        },
+        {
+          "id": "3A31F11F252AFA8296E2",
+          "fromMe": false,
+          "ts": "2026-10-13T09:24:00.000Z",
+          "text": "jika di jam 11.30 secara online apakah bisa kak?",
+          "type": "other"
+        },
+        {
+          "id": "3EB04D5A605AA94C522C05",
+          "fromMe": false,
+          "ts": "2026-10-13T09:26:00.000Z",
+          "text": "besok menyesuaikan dulu nggih kak, kalau sudah senggang saya konfirmasi lagi. Krn biasanya waktu senggang yg pasiennya tidak banyak berdatangan di jam 12 an",
+          "type": "other"
+        },
+        {
+          "id": "3AF88E1B627D1D7AFD7A",
+          "fromMe": false,
+          "ts": "2026-10-13T09:27:00.000Z",
+          "text": "Baik kak, saya coba tanyakan lagi besok siang nggih",
+          "type": "other"
+        },
+        {
+          "id": "3EB09785751809279B702C",
+          "fromMe": false,
+          "ts": "2026-10-13T09:27:01.000Z",
+          "text": "nggih kak 🙏🏻",
+          "type": "other"
+        },
+        {
+          "id": "3A48CFCE21243CC91904",
+          "fromMe": false,
+          "ts": "2026-10-13T09:30:00.000Z",
+          "text": "baik, terima kasih sebelumnya 🙏",
+          "type": "other"
+        },
+        {
+          "id": "3EB0DA24614CCCE353B2A6",
+          "fromMe": false,
+          "ts": "2026-10-13T09:55:00.000Z",
+          "text": "nggih sami sami kak",
+          "type": "other"
+        },
+        {
+          "id": "3A54AB25B1E97CA6A784",
+          "fromMe": false,
+          "ts": "2026-10-14T04:55:00.000Z",
+          "text": "Halo kak, izin menanyakan ulang waktu senggang jam 12.00 nanti nggih. Jika iya berikut link pertemuan online dari kami\nhttps://meet.google.com/ohb-zkex-rrf",
+          "type": "other"
+        },
+        {
+          "id": "3AEF6541D01F2ED66CE9",
+          "fromMe": true,
+          "ts": "2026-10-14T04:58:00.000Z",
+          "text": "dengan diwakili staff adminstrasi dulu bisa kak",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3A345D22AE3C2D1E584B",
+          "fromMe": true,
+          "ts": "2026-10-14T04:58:01.000Z",
+          "text": "kalau dari kakak bisa dengan suara call, namun saya akan dengan video",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0FC3772D31D46E9E5C0",
+          "fromMe": false,
+          "ts": "2026-10-14T04:59:00.000Z",
+          "text": "yang di tanyakan mengenai apa saja kak ?",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3A3DA52248E8A7AD5732",
+          "fromMe": true,
+          "ts": "2026-10-14T05:00:00.000Z",
+          "text": "pertanyaan kurang lebih seperti:\n•⁠  ⁠Alur pasien mulai dari pendaftaran hingga selesai konsultasi;\n•⁠  ⁠Proses penjadwalan dan pencatatan rekam medis;\n•⁠  ⁠Sistem digital atau pencatatan manual yang saat ini digunakan;\n•⁠  ⁠Kendala atau kebutuhan yang masih dirasakan dalam proses tersebut.",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB07ACA01F95ECB4B31EE",
+          "fromMe": false,
+          "ts": "2026-10-14T05:00:01.000Z",
+          "text": "kalau nanti mau sama dokternya juga, nanti sore ada jadwalnya dr samsul kak selaku owner klinik ghania",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3A0E1D92091C335B241B",
+          "fromMe": true,
+          "ts": "2026-10-14T05:01:00.000Z",
+          "text": "kalau nanti mau sama dokternya juga, nanti sore ada jadwalnya dr samsul kak selaku owner klinik ghania",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0851D696D83A2E570CD",
+          "fromMe": false,
+          "ts": "2026-10-14T05:01:01.000Z",
+          "text": "kurang lebih jadwal dr samsul sore sekitar jam 16.00-20.00",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3AFCEE99012008F47758",
+          "fromMe": true,
+          "ts": "2026-10-14T05:02:00.000Z",
+          "text": "kurang lebih jadwal dr samsul sore sekitar jam 16.00-20.00",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0DFEE3DB7FCC59DCAD2",
+          "fromMe": false,
+          "ts": "2026-10-14T05:03:00.000Z",
+          "text": "maaf kak sebelumnya, wawancara hari ini ditujukan sebagai tugas akhir atau keperluan lain kak ?",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3EB0356D2C7DF9EDF09052",
+          "fromMe": false,
+          "ts": "2026-10-14T05:03:01.000Z",
+          "text": "nggih benar kak, dr samsul hari ini ada jadwal praktek",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3AF554B12980099F578A",
+          "fromMe": true,
+          "ts": "2026-10-14T05:04:00.000Z",
+          "text": "maaf kak sebelumnya, wawancara hari ini ditujukan sebagai tugas akhir atau keperluan lain kak ?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0C061B14E721C9EB0D2",
+          "fromMe": false,
+          "ts": "2026-10-14T05:07:00.000Z",
+          "text": "baik kak, ijin saya lanjutkan pesan ini ke dr samsul nggih. barang kali nanti berkenan dg beliau nanti bisa diaturkan sesi tanya jawab dengan perawat yang jaga sore kak",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3AA9815DF81BF7F93BFD",
+          "fromMe": true,
+          "ts": "2026-10-14T05:07:01.000Z",
+          "text": "baik kak, berarti yang jam 12 ini apakah tidak jadi nggih?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0136E5B26458591EF99",
+          "fromMe": false,
+          "ts": "2026-10-14T05:08:00.000Z",
+          "text": "bisa, dengan staf dulu nggih niki",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3A982AECEC78E70578A1",
+          "fromMe": true,
+          "ts": "2026-10-14T05:09:00.000Z",
+          "text": "Halo kak, izin menanyakan ulang waktu senggang jam 12.00 nanti nggih. Jika iya berikut link pertemuan online dari kami\nhttps://meet.google.com/ohb-zkex-rrf",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A584843CDA0A6F7AE98141B87AAFCD06",
+          "fromMe": false,
+          "ts": "2026-10-14T05:17:00.000Z",
+          "text": "Mohon maaf kak, sudah saya konfrimasi ke dr samsul beliau mengatakan tidak bisa. Jadi untuk sesi tanya jawabnya masih belum bisa dilakukan sekarang. Mohon maaf kak🙏",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "A5FE32D4B2F15699F215AA95E1E3BC80",
+          "fromMe": false,
+          "ts": "2026-10-14T05:18:00.000Z",
+          "text": "Untuk saat ini dr samsul masih belum bisa melakukan sesi tanyanya 🙏",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3A3AA63573D08DDBEFDA",
+          "fromMe": true,
+          "ts": "2026-10-14T05:20:00.000Z",
+          "text": "baik kak, apakah harus ada surat pengantar resmi atau apa ya kak agar dari saya bisa melakukan tanya jawab?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB04CE0AD182EE34F22B2",
+          "fromMe": false,
+          "ts": "2026-10-14T07:49:00.000Z",
+          "text": "Mohon maaf kak untuk saat ini dr samsul masih belum ada waktu, semoga bisa di lain kesempatan . Mohon maaf dan terima kasih kak🙏🏻",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3ACB17BD744F697A63E3",
+          "fromMe": true,
+          "ts": "2026-10-14T08:18:00.000Z",
+          "text": "Oh baik kak, sebelumnya kalau boleh tau untuk klinik ini rekam medis apakah sudah menggunakan digital atau pembukuan kertas ya?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0330D3506984420707F",
+          "fromMe": false,
+          "ts": "2026-10-14T08:20:00.000Z",
+          "text": "enggeh bolehh,, di sini sudah pakai digital kak",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        },
+        {
+          "id": "3A14F50BA4E5E94E037D",
+          "fromMe": true,
+          "ts": "2026-10-14T08:21:00.000Z",
+          "text": "untuk yang mengakses sistem tersebut apakah hanya dokter atau ada staff lain yang ikut menggunakan nggih?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A58B2A9ADC3AF4245EC4BEBC601CA6E1",
+          "fromMe": false,
+          "ts": "2026-10-14T08:22:00.000Z",
+          "text": "Bisa langsung ke dr nya juga si kak\nKarena sedikit banyak juga drnya tau tentang sistem karena yg memegang seblumnya juga dr nya sendiri sebelum ada staff lainnya",
+          "type": "text",
+          "sender": "+62 812-2267-7717"
+        }
+      ]
+    },
+    {
+      "phone": "+6282257755991",
+      "name": "Praktek Keperawatan Mandiri Andri Suhartono, S.Kep.,Ners",
+      "leadId": "c7949812-3f49-493e-8f0b-8935c82c4dc5",
+      "status": "ok",
+      "reachedTop": true,
+      "verified": "composer",
+      "headerTitle": "+62 822-5775-5991",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 3,
+      "totalLoaded": 3,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:27:12.143Z",
+      "messages": [
+        {
+          "id": "3EB02C55D745FE712D1AFB",
+          "fromMe": true,
+          "ts": "2026-10-13T06:32:00.000Z",
+          "text": "Selamat Siang, apakah benar ini kontak nomer Praktek Keperawatan Mandiri Andri Suhartono?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3AC05FBDD64ED81A18DA",
+          "fromMe": false,
+          "ts": "2026-10-13T06:34:00.000Z",
+          "text": "Selamat siang iya pak, mohon maaf ini dengan siapa dan ada perlu apa nggeh?",
+          "type": "text",
+          "sender": "+62 822-5775-5991"
+        },
+        {
+          "id": "3EB0B3E1920F1254B8846C",
+          "fromMe": true,
+          "ts": "2026-10-13T06:41:00.000Z",
+          "text": "Perkenalkan saya Dzaki Wismadi yang saat ini sedang melakukan riset terkait pengembangan sistem informasi untuk membantu operasional dan administrasi layanan kesehatan, khususnya praktik mandiri dan klinik (FKTP), dengan fokus pada manajemen pasien serta administrasi. Saya ingin mendapatkan masukan langsung dari pengalaman pihak Praktek Keperawatan Mandiri Andri Suhartono dalam sekitar 20-30 menit melalui agenda tanya-jawab secara online menjadi narasumber.🙏\n\nUntuk hal ini apakah dari pihak praktik kira-kira berkenan? untuk jadwal menyesuaikan ketersediaan staff admisitrasi/Pak Andri 2-3 hari lagi atau minggu depan ☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+628113111492",
+      "name": "Praktek Umum dr. Daniel Candrianto",
+      "leadId": "11aeee81-5d06-4f32-88fe-ee4f59511bfa",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 811-3111-492",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 17,
+      "noTimestamp": 1,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:27:26.779Z",
+      "messages": [
+        {
+          "id": "A5729CF6758638A38C64D718D434C0CC",
+          "fromMe": false,
+          "ts": "2026-10-13T02:13:00.000Z",
+          "text": "Selamat pagi mas",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "A59C86104DEB723DE82A5359E7DA11B3",
+          "fromMe": false,
+          "ts": "2026-10-13T02:13:01.000Z",
+          "text": "Monggo sekarang sy senggang",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "3EB0A2AA0756A70E8A383B",
+          "fromMe": true,
+          "ts": "2026-10-13T02:56:00.000Z",
+          "text": "pagi mbak, mohon maaf baru menjawab karena dari saya baru siap-siap. jika di jam 10 apakah senggang mbak?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5C288E1AA71C459F395B0FAD7CCFF48",
+          "fromMe": false,
+          "ts": "2026-10-13T03:05:00.000Z",
+          "text": "Monggo mas mumpung dokter belum atang",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "3EB0E15BEEC5975612D1C6",
+          "fromMe": true,
+          "ts": "2026-10-13T03:06:00.000Z",
+          "text": "baik segera saya kirim linknya",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "3EB0A754DA2712C9751CA4",
+          "fromMe": true,
+          "ts": "2026-10-13T03:08:00.000Z",
+          "text": "https://meet.google.com/uuh-ewca-xct berikut linknya nggih",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5B901AA2D2D12DBC9E5D11C015F5BF6",
+          "fromMe": false,
+          "ts": "2026-10-13T05:29:00.000Z",
+          "text": "Mungkin ada file yg mau disampaikan ke dokter mas?",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "3EB0F754958D41F5555552",
+          "fromMe": true,
+          "ts": "2026-10-13T06:25:00.000Z",
+          "text": "Mungkin inti pesan yang perlu bantuan untuk disampaikan ke Dr Daniel\nKami dari https://www.sahaibat.com/id ingin mengembangkan ekosistem digital di ranah dunia Kesehatan Indonesia\nKami belum ingin komersil terdekat ini, sedang mencari mitra praktik mandiri/klinik yang ingin menggunakan sistem kami (Rekam Medis dengan AI) dan membutuhkan feedback mitra apakah sistem kami digunakan nyaman atau tidaknya. kami berikan akses ke sistem kami selama 1 tahun tapi jika misal dalam pemakaian 1-2 minggu dan merasa kurang cocok, bisa kabari kami jika ingin berhenti menggunakan \nApabila Dokter Daniel sibuk, sistem kami sebenarnya juga dirancang untuk Kak Ria yang membantu pekerjaan staff admin rekam medis\n\nIni dulu kak yang mungkin dari kami, terima kasih sebelumnya",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A51A94EBC3ADA8E05A0B7967DCAC7193",
+          "fromMe": false,
+          "ts": "2026-10-13T12:36:00.000Z",
+          "text": "Baik akan kami sampaikan 🙏",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "3A8C8D78F2515938EAC0",
+          "fromMe": true,
+          "ts": "2026-10-14T06:58:00.000Z",
+          "text": "Baik kak, apakah sudah ada respon dari Dr Daniel?",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A502B6684A0726E4AC0918605084FB92",
+          "fromMe": false,
+          "ts": "2026-10-14T07:07:00.000Z",
+          "text": "Maaf sebentar iya mas, admin nya sekarang libur🙏",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        },
+        {
+          "id": "3A23B9D7BEB51366B2D3",
+          "fromMe": true,
+          "ts": "2026-10-14T07:43:00.000Z",
+          "text": "Baik kak 🙏",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "A5C4F1E669540D56083E2C353FF19379",
+          "fromMe": false,
+          "ts": "2026-10-14T08:20:00.000Z",
+          "text": "Maaf mas masih belom ada respon dari p. Dokter",
+          "type": "text",
+          "sender": "+62 811-3111-492"
+        }
+      ]
+    },
+    {
+      "phone": "+6287882832538",
+      "name": "Testing ",
+      "leadId": "04b0930c-8cbb-41b7-ba98-fd835ad1c04c",
+      "status": "error",
+      "error": "chat tidak ketemu/tidak terverifikasi: [{\"q\":\"6287882832538\",\"results\":4,\"lastCheck\":{\"how\":\"none\",\"ok\":false,\"title\":\"ArachnoVa New Admin\",\"jid\":null}},{\"q\":\"+62 878-8283-2538\",\"results\":4,\"lastCheck\":{\"how\":\"none\",\"ok\":false,\"title\":\"ArachnoVa New Admin\",\"jid\":null}},{\"q\":\"087882832538\",\"results\":4,\"lastCheck\":{\"how\":\"none\",\"ok\":false,\"title\":\"ArachnoVa New Admin\",\"jid\":null}},{\"q\":\"Testing \",\"results\":4,\"lastCheck\":{\"how\":\"none\",\"ok\":false,\"title\":\"Bali Startup & Tech - General Community Discussion\",\"jid\":null}}]",
+      "messages": []
+    },
+    {
+      "phone": "+628815883288",
+      "name": "Praktik Mandiri Dokter dr. Mulia Suryandari",
+      "leadId": "ee3a268f-deba-4e68-a482-0358e65f2399",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 881-5883-288",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 31,
+      "noTimestamp": 15,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:28:26.976Z",
+      "messages": [
+        {
+          "id": "3EB05F41F787783419B9BA",
+          "fromMe": true,
+          "ts": "2026-10-13T03:45:00.000Z",
+          "text": "Maaf baru menjawab Dok, dari kami bisa nggih",
+          "type": "text",
+          "sender": "Dzaki"
+        },
+        {
+          "id": "AC5BA993360D830CAE80D4ABEBA80E1D",
+          "fromMe": false,
+          "ts": "2026-10-13T09:18:00.000Z",
+          "text": null,
+          "type": "image",
+          "approxTime": true
+        }
+      ]
+    },
+    {
+      "phone": "+6285655718382",
+      "name": "KLINIK H. KARIATIN",
+      "leadId": "701bc5fa-3c0c-4e51-9afe-0b9f547e39cb",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 856-5571-8382",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 6,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:28:40.875Z",
+      "messages": [
+        {
+          "id": "3EB0C2B316829AC352BDC8",
+          "fromMe": false,
+          "ts": "2026-10-13T01:03:00.000Z",
+          "text": "selamat pagi, kalau boleh tau untuk keperluan apa nggih",
+          "type": "text",
+          "sender": "+62 856-5571-8382"
+        },
+        {
+          "id": "3EB0636CD7314BD21C7736",
+          "fromMe": true,
+          "ts": "2026-10-13T03:44:00.000Z",
+          "text": "Berkaitan dengan pesan saya sebelumnya, saya dari startup https://www.sahaibat.com/ yang sebelumnya kami bekerja sama pada program CSR membangun sistem Kesehatan di daerah NTT\n\nLalu kami berencana melanjutkan program kolaborasi dengan badan FKTP (klinik/praktik mandiri) di sekitar Jawa dalam pembangan sistem manajemen fasilitas kesehatan, tapi dalam prosesnya saya ditugaskan untuk riset ke lapangan bagaimana sistem yang sudah diadopsi di masyarakat. \n\npertanyaan kurang lebih seperti:\nAlur pasien mulai dari pendaftaran hingga selesai konsultasi;\nProses penjadwalan dan pencatatan rekam medis;\nSistem digital atau pencatatan manual yang saat ini digunakan;\nKendala atau kebutuhan yang masih dirasakan dalam proses tersebut.\n\nApakah pihak klinik berkenan menjadi salah satu narasumber kami🙏?",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6281329304257",
+      "name": "Praktik Dokter (dr. Dea Pristy Amanda, M.M., M.A.R.S.)",
+      "leadId": "cdac41e5-b899-4984-9fa7-466a267713cb",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 813-2930-4257",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 5,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:28:56.086Z",
+      "messages": [
+        {
+          "id": "3EB0B0883D35352EC5179E",
+          "fromMe": true,
+          "ts": "2026-10-13T03:37:00.000Z",
+          "text": "Baik Dok, apabila ada pertanyaan bisa langsung tanyakan ke saya nggih☺️",
+          "type": "text",
+          "sender": "Dzaki"
+        }
+      ]
+    },
+    {
+      "phone": "+6285138585992",
+      "name": "Klinik pratama gita husada",
+      "leadId": "f30f6a59-cb81-4553-b3a6-7f365151c2cb",
+      "status": "ok",
+      "reachedTop": false,
+      "verified": "composer",
+      "headerTitle": "+62 851-3858-5992",
+      "jidSeen": null,
+      "reachedCutoff": true,
+      "scrolls": 0,
+      "totalLoaded": 8,
+      "noTimestamp": 0,
+      "warnings": [],
+      "scrapedAt": "2026-10-14T08:29:10.020Z",
+      "messages": [
+        {
+          "id": "3EB01919E49CB1D64CCDC9",
+          "fromMe": false,
+          "ts": "2026-10-13T02:51:00.000Z",
+          "text": "Belum ada info dari manajemen kak 🙏🏻",
+          "type": "text",
+          "sender": "+62 851-3858-5992"
+        }
+      ]
+    }
+  ]
+}

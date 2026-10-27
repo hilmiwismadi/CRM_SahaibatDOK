@@ -87,6 +87,8 @@ model Lead {
   appointments LeadAppointment[]
   waContacts WaContact[]
   syncDailySummaries SyncDailySummary[]
+  followupTriage     FollowupTriage?
+  followupNoteLogs   FollowupNoteLog[]
 
   // Contact chain — CRM-owned pointer to whichever LeadContactNode is
   // currently "active" for chat purposes. Deliberately NOT phoneNormalized
@@ -306,6 +308,38 @@ model WaMessage {
   @@map("wa_messages")
 }
 
+/// Outbound message held back by the send guard (src/lib/sendGuard.ts):
+/// the rep pressed Send, but the account had already sent similar / too many
+/// outreach messages in a short window, so the message waits here until a
+/// "safe" slot. A dispatcher (src/lib/scheduledDispatcher.ts, started from
+/// src/instrumentation.ts) sends due rows one at a time through the normal
+/// sendOutboundToPhone() path, so a scheduled message ends up in wa_messages
+/// exactly like a directly-sent one. status: queued | sending | sent | failed | cancelled.
+model ScheduledMessage {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  phoneNormalized String   @map("phone_normalized")
+  leadId         String?   @map("lead_id") @db.Uuid
+  body           String
+  scheduledFor   DateTime  @map("scheduled_for")
+  status         String    @default("queued")
+  // Why the guard delayed it (human-readable, Indonesian, joined with " • ").
+  reason         String?
+  // True when the recipient had not messaged us in the 24h before queuing —
+  // only "outreach" counts toward the guard's rate limits.
+  outreach       Boolean   @default(true)
+  attempts       Int       @default(0)
+  lastError      String?   @map("last_error")
+  // wa_messages.id of the message once actually sent.
+  sentMessageId  String?   @map("sent_message_id") @db.Uuid
+  sentAt         DateTime? @map("sent_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([status, scheduledFor], map: "scheduled_messages_due_idx")
+  @@index([phoneNormalized], map: "scheduled_messages_phone_idx")
+  @@map("scheduled_messages")
+}
+
 /// A node in a lead's "who gave us this contact" chain. One node = one
 /// person we've dealt with for this lead. `isRoot` marks the auto-seeded
 /// node representing the originally-scraped contact (see
@@ -395,4 +429,46 @@ model StgScrapeResult {
   importedAt    DateTime?  @map("imported_at") // null until merged into `leads`
 
   @@map("stg_scrape_results")
+}
+
+/// Per-lead follow-up triage shown on /reports/followup. `priority` is one of
+/// hot | warm | try | closed; `action` is a short next-step suggestion. Written
+/// by a Claude Code session after reading the day's chats (source = "claude")
+/// and overridable from the page (source = "manual"). status: open | done | snoozed.
+/// Dates are WIB "YYYY-MM-DD" strings, like sync_daily_summaries.date.
+model FollowupTriage {
+  leadId      String   @id @map("lead_id") @db.Uuid
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  priority    String
+  action      String?
+  dueDate     String?  @map("due_date")
+  status      String   @default("open")
+  snoozeUntil String?  @map("snooze_until")
+  source      String   @default("claude")
+  triagedOn   String?  @map("triaged_on")
+  /// Bullet reminders: [{ id, text, done, createdAt?, doneAt? }] (timestamps set server-side)
+  notes            Json    @default("[]")
+  /// /reports/important: "main" (post-demo, continuing) | "post_gmeet" (demoed, no continuation) | null
+  importantSection String? @map("important_section")
+  importantStage   String? @map("important_stage")
+  importantStatus  String? @map("important_status")
+  noFollowReason   String? @map("no_follow_reason")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("followup_triage")
+}
+
+/// History of reminder (followup_triage.notes) changes: when a point was added, checked, unchecked, edited or deleted.
+model FollowupNoteLog {
+  id     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId String   @map("lead_id") @db.Uuid
+  lead   Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  noteId String   @map("note_id")
+  action String // added | done | undone | edited | deleted
+  text   String
+  at     DateTime @default(now())
+
+  @@index([leadId, at], map: "followup_note_logs_lead_at_idx")
+  @@map("followup_note_logs")
 }

@@ -29,3 +29,137 @@ body {
   background: transparent !important;
   border: none !important;
 }
+
+/* ------------------------------------------------------------------ *
+ * Mobile shell (phones, < 768px — keep in sync with the matchMedia in
+ * components/AppSidebar.tsx). Every page renders
+ *   <div class="flex h-screen ..."><AppSidebar/> <content/></div>
+ * so on phones the sidebar turns into a drawer + fixed top bar and the
+ * content sibling is pushed below the bar.
+ * ------------------------------------------------------------------ */
+.app-mobile-bar,
+.app-drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* 100vh includes the collapsing browser toolbar on phones; dvh does not. */
+  .h-screen {
+    height: 100dvh;
+  }
+
+  .app-mobile-bar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    height: calc(52px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 6px 0;
+    align-items: center;
+    gap: 4px;
+    background: #111827;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .app-mobile-bar__btn {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .app-mobile-bar__btn:active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .app-mobile-bar__title {
+    flex: 1;
+    min-width: 0;
+    color: #f8fafc;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-sidebar {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90;
+    width: min(84vw, 300px) !important;
+    overflow-y: auto !important;
+    padding-top: calc(20px + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+    transform: translateX(-104%);
+    visibility: hidden;
+    transition: transform 220ms ease, visibility 0s linear 220ms !important;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35);
+  }
+  .app-sidebar--open {
+    transform: none;
+    visibility: visible;
+    transition: transform 220ms ease, visibility 0s !important;
+  }
+  .app-sidebar a,
+  .app-sidebar button {
+    min-height: 44px;
+  }
+  .app-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(2, 6, 23, 0.55);
+  }
+  .app-desktop-only {
+    display: none !important;
+  }
+
+  /* Page content (every sibling after the sidebar) starts below the bar. */
+  .app-sidebar ~ *:not(.app-reminders-pop) {
+    margin-top: calc(52px + env(safe-area-inset-top));
+    min-width: 0;
+  }
+
+  /* Follow-up reminders: floating card -> bottom sheet. */
+  .app-reminders-pop {
+    position: fixed !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    width: auto !important;
+    max-height: 78dvh !important;
+    border-radius: 16px 16px 0 0 !important;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+    z-index: 200;
+  }
+
+  /* iOS Safari zooms the page when a focused field is < 16px. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Horizontal scroller for wide tables / kanban boards on small screens. */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

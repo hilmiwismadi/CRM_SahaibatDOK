@@ -40,7 +40,7 @@ export default function LeadContactsPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-6">
+    <div className="mx-auto max-w-3xl p-6 max-md:px-4 max-md:pb-[calc(24px+env(safe-area-inset-bottom))] max-md:pt-4">
       <h2 className="mb-1 text-base font-semibold text-slate-900">Contact chain</h2>
       <p className="mb-4 text-sm text-slate-500">
         Track who gave you this contact when it gets handed off — e.g. a doctor forwarding you to
@@ -50,7 +50,7 @@ export default function LeadContactsPage({ params }: { params: Promise<{ id: str
       {loading ? (
         <div className="text-sm text-slate-400">Loading…</div>
       ) : (
-        <div className="rounded-xl border border-slate-100 bg-white p-4">
+        <div className="rounded-xl border border-slate-100 bg-white p-4 max-md:p-2">
           <ContactChainTree
             contacts={contacts}
             activeContactId={activeContactId}

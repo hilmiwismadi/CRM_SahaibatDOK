@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { CATEGORY_COLORS, categoryLabels, CATEGORY_LABELS, CATEGORY_LABELS_EN } from "@/lib/leadSegmentation";
 import { useLanguage } from "@/lib/i18n/context";
@@ -79,7 +79,7 @@ export function HistoryBoardCard({
       draggable={draggable}
       onDragStart={draggable ? (e) => e.dataTransfer.setData("text/plain", lead.id) : undefined}
       onClick={() => onOpen({ id: lead.id, name: lead.name, categoryLabel, categoryColor })}
-      className={`block w-full truncate rounded-lg border border-slate-100 bg-white p-2.5 text-left text-xs font-medium text-slate-700 shadow-sm transition hover:border-cyan-300 hover:shadow ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
+      className={`block w-full truncate rounded-lg border border-slate-100 bg-white px-3 py-3 text-left text-sm font-medium md:p-2.5 md:text-xs text-slate-700 shadow-sm transition hover:border-cyan-300 hover:shadow ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
     >
       {lead.name}
     </button>
@@ -429,14 +429,24 @@ export function LeadPopup({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+    // Phones: a bottom sheet (above the fixed mobile top bar / drawer) so the
+    // "Pindahkan ke" actions sit under the thumb — this is the touch
+    // replacement for drag-and-drop, which HTML5 doesn't support on touch.
+    <div
+      className="fixed inset-0 z-[100] flex items-end justify-center bg-black/40 md:z-50 md:items-center md:p-4"
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[88dvh] w-full overflow-y-auto rounded-t-2xl bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl md:max-h-none md:max-w-sm md:overflow-visible md:rounded-xl md:pb-5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mx-auto -mt-2 mb-3 h-1 w-10 rounded-full bg-slate-200 md:hidden" aria-hidden />
         <div className="mb-3 flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-slate-900">{selection.name}</h3>
+          <h3 className="min-w-0 text-base font-semibold break-words text-slate-900">{selection.name}</h3>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="-m-2 shrink-0 rounded-full p-3 leading-none text-slate-400 hover:bg-slate-100 hover:text-slate-600 md:m-0 md:p-1 md:leading-normal"
             aria-label={t.close}
           >
             ✕
@@ -487,14 +497,14 @@ export function LeadPopup({
 
         <div className="mb-4">
           <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-slate-400">{t.popupMoveTo}</div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap md:gap-1.5">
             {quickTagTargets(locale, t.quickTagClearSuffix).map((target) => (
               <button
                 key={target.action}
                 type="button"
                 disabled={pending !== null}
                 onClick={() => handleMove(target.action)}
-                className="rounded-full px-2.5 py-1 text-xs font-medium transition hover:brightness-95 disabled:opacity-50"
+                className="min-h-11 rounded-xl px-3 py-2 text-sm font-medium transition hover:brightness-95 disabled:opacity-50 md:min-h-0 md:rounded-full md:px-2.5 md:py-1 md:text-xs"
                 style={{ backgroundColor: `${target.color}1a`, color: target.color }}
               >
                 {pending === target.action ? "…" : target.label}
@@ -508,7 +518,7 @@ export function LeadPopup({
           href={`/chat?leadId=${selection.id}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block rounded-lg bg-cyan-600 px-4 py-2 text-center text-sm font-semibold text-white transition hover:bg-cyan-700"
+          className="block rounded-lg bg-cyan-600 px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-cyan-700 md:py-2"
         >
           {t.popupOpenChat}
         </Link>
@@ -532,13 +542,73 @@ export function KanbanSubNav({ active }: { active: "overview" | "history" }) {
         <Link
           key={t.key}
           href={t.href}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+          className={`rounded-md px-3 py-2.5 text-sm font-medium transition md:py-1.5 ${
             active === t.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           {t.label}
         </Link>
       ))}
+    </div>
+  );
+}
+
+// Phone-only (< md) column switcher for the kanban boards: a 12-column
+// 18rem-wide board can't fit a 375px screen and HTML5 drag-and-drop doesn't
+// work on touch, so phones get one column at a time, picked from this
+// horizontally scroll-snapping chip row (sticky under the page's scroll
+// top). Moving a lead on phones goes through LeadPopup's "Pindahkan ke"
+// buttons instead of a drop. Desktop never renders this.
+export interface MobileColumnTab {
+  key: string;
+  label: string;
+  color: string;
+  count: number;
+}
+
+export function MobileColumnTabs({
+  tabs,
+  activeKey,
+  onChange,
+}: {
+  tabs: MobileColumnTab[];
+  activeKey: string;
+  onChange: (key: string) => void;
+}) {
+  const activeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  }, [activeKey]);
+
+  return (
+    <div className="sticky top-0 z-10 -mx-3 mb-3 bg-[#f7f8fa] px-3 py-2 md:hidden">
+      <div className="flex snap-x gap-2 overflow-x-auto [scrollbar-width:none]">
+        {tabs.map((tab) => {
+          const active = tab.key === activeKey;
+          return (
+            <button
+              key={tab.key}
+              ref={active ? activeRef : undefined}
+              type="button"
+              onClick={() => onChange(tab.key)}
+              aria-pressed={active}
+              className={`flex h-11 shrink-0 snap-start items-center gap-2 rounded-full border px-3 text-sm font-medium whitespace-nowrap transition ${
+                active ? "border-cyan-500 bg-white text-slate-900 shadow-sm" : "border-slate-200 bg-white/60 text-slate-500"
+              }`}
+            >
+              <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: tab.color }} />
+              {tab.label}
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-xs font-semibold ${
+                  active ? "bg-cyan-50 text-cyan-700" : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

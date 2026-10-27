@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AppSidebar from "@/app/components/AppSidebar";
 import { CATEGORY_LABELS, CATEGORY_COLORS, type LeadCategory } from "@/lib/leadSegmentation";
+import { MOBILE_QUERY } from "@/lib/useIsMobile";
 
 // Mirrors LetterDocument.tsx's SessionMode — kept as a separate local type
 // since that file is server-only (uses node:fs) and can't be imported into
@@ -137,6 +138,10 @@ export default function LettersPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [copiedSubject, setCopiedSubject] = useState(false);
+  // Phones stack the lead list above the form — after picking a lead, jump
+  // down to the form (and offer a way back up).
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSender(loadSavedSender());
@@ -186,6 +191,9 @@ export default function LettersPage() {
     setNamaKlinik(lead.name);
     setSuccess(null);
     setError(null);
+    if (window.matchMedia(MOBILE_QUERY).matches) {
+      requestAnimationFrame(() => formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
   }
 
   // Lead-level equivalent of /chat's "Letter Sent" toggle — this page only
@@ -343,31 +351,31 @@ Email: ${email}`;
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="letters" />
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mb-5">
+      <div className="flex-1 overflow-y-auto p-6 max-md:p-3 max-md:pb-[calc(7rem+env(safe-area-inset-bottom))]">
+        <div className="mb-5 max-md:mb-3">
           <h1 className="text-lg font-bold text-slate-900">Surat Undangan Riset</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 max-md:text-xs">
             Generate PDF surat undangan riset dari template resmi untuk lead yang butuh kontak lanjutan.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
           {/* Lead picker */}
-          <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
+          <div ref={pickerRef} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm max-md:scroll-mt-3 max-md:p-3">
             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 max-md:flex-wrap">
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Cari nama klinik/dokter…"
-                  className="w-56 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                  className="w-56 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11 max-md:w-full"
                 />
-                <label className="flex items-center gap-1.5 whitespace-nowrap text-xs font-medium text-slate-600">
+                <label className="flex items-center gap-1.5 whitespace-nowrap text-xs font-medium text-slate-600 max-md:min-h-11">
                   <input
                     type="checkbox"
                     checked={onlyFurtherContact}
                     onChange={(e) => setOnlyFurtherContact(e.target.checked)}
-                    className="h-3.5 w-3.5 accent-cyan-600"
+                    className="h-3.5 w-3.5 accent-cyan-600 max-md:h-5 max-md:w-5"
                   />
                   Hanya tag &quot;Further Contact&quot;
                 </label>
@@ -375,7 +383,7 @@ Email: ${email}`;
                   value={letterFilter}
                   onChange={(e) => setLetterFilter(e.target.value as "all" | "sent" | "unsent")}
                   aria-label="Filter status surat"
-                  className="rounded-lg border border-slate-200 px-2 py-2 text-xs font-medium text-slate-600 outline-none transition focus:border-cyan-500"
+                  className="rounded-lg border border-slate-200 px-2 py-2 text-xs font-medium text-slate-600 outline-none transition focus:border-cyan-500 max-md:min-h-11 max-md:min-w-0 max-md:flex-1 max-md:bg-white"
                 >
                   <option value="all">Semua status surat</option>
                   <option value="sent">Sudah dikirim ({sentCount})</option>
@@ -401,7 +409,7 @@ Email: ${email}`;
                       : "Tidak ada lead yang cocok."}
               </div>
             ) : (
-              <div className="max-h-[calc(100vh-220px)] divide-y divide-slate-100 overflow-y-auto">
+              <div className="max-h-[calc(100vh-220px)] divide-y divide-slate-100 overflow-y-auto max-md:max-h-[55dvh] max-md:overscroll-contain">
                 {visibleLeads.map((lead) => {
                   const isActive = lead.id === selectedId;
                   return (
@@ -442,34 +450,66 @@ Email: ${email}`;
 
           {/* Letter form */}
           <div className="flex flex-col gap-4">
-            <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
-              <h2 className="mb-3 text-sm font-semibold text-slate-900">Detail Surat</h2>
+            <div ref={formRef} className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm max-md:scroll-mt-3 max-md:p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold text-slate-900">Detail Surat</h2>
+                {selected && (
+                  <button
+                    type="button"
+                    onClick={() => pickerRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="-my-2 min-h-11 px-1 text-xs font-semibold text-cyan-700 md:hidden"
+                  >
+                    ↑ Ganti lead
+                  </button>
+                )}
+              </div>
 
               {!selected ? (
-                <p className="text-xs text-slate-400">Pilih lead di sebelah kiri untuk mulai isi surat.</p>
+                <p className="text-xs text-slate-400">
+                  <span className="max-md:hidden">Pilih lead di sebelah kiri untuk mulai isi surat.</span>
+                  <span className="md:hidden">Pilih lead di daftar atas untuk mulai isi surat.</span>
+                </p>
               ) : (
                 <div className="flex flex-col gap-3">
+                  {/* Phones: the row context menu needs right-click / long-press
+                      (absent on iOS), so its two actions live here too. */}
+                  <div className="grid grid-cols-2 gap-2 md:hidden">
+                    <button
+                      type="button"
+                      onClick={() => window.open(`/chat?leadId=${selected.id}`, "_blank")}
+                      className="min-h-11 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 active:bg-slate-50"
+                    >
+                      Buka Chat
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleMarkLetterSent(selected)}
+                      className="min-h-11 rounded-lg border border-slate-200 bg-white px-2 text-xs font-semibold text-slate-700 active:bg-slate-50"
+                    >
+                      Tandai Letter Sent{selected.letterSent ? " ✓" : ""}
+                    </button>
+                  </div>
                   <Field label="Nama Klinik/Fasilitas Kesehatan">
                     <input
                       value={namaKlinik}
                       onChange={(e) => setNamaKlinik(e.target.value)}
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                     />
                   </Field>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
                     <Field label="Nama Penerima (opsional, biasanya kosong)">
                       <input
                         value={namaPenerima}
                         onChange={(e) => setNamaPenerima(e.target.value)}
                         placeholder="dr. Nama Penerima"
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                       />
                     </Field>
                     <Field label="Jabatan Penerima (opsional)">
                       <select
                         value={jabatanPenerima}
                         onChange={(e) => setJabatanPenerima(e.target.value)}
-                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                       >
                         <option value="">(Kosongkan)</option>
                         {JABATAN_OPTIONS.map((option) => (
@@ -480,13 +520,13 @@ Email: ${email}`;
                       </select>
                     </Field>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
                     <Field label="Nomor Surat">
                       <input
                         value={nomorSurat}
                         onChange={(e) => setNomorSurat(e.target.value)}
                         placeholder="013/SAH-DOK/IX/2026"
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                       />
                     </Field>
                     <Field label="Tanggal">
@@ -494,7 +534,7 @@ Email: ${email}`;
                         type="date"
                         value={tanggal}
                         onChange={(e) => setTanggal(e.target.value)}
-                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                        className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                       />
                     </Field>
                   </div>
@@ -506,7 +546,7 @@ Email: ${email}`;
                           key={option.value}
                           type="button"
                           onClick={() => setModeSesi(option.value)}
-                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                          className={`flex-1 rounded-lg border px-3 py-2 text-sm font-medium transition max-md:min-h-11 max-md:px-1.5 ${
                             modeSesi === option.value
                               ? "border-cyan-500 bg-cyan-50 text-cyan-700"
                               : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -521,7 +561,7 @@ Email: ${email}`;
               )}
             </div>
 
-            <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm max-md:p-4">
               <h2 className="mb-1 text-sm font-semibold text-slate-900">Data Pengirim (Business Development)</h2>
               <p className="mb-3 text-xs text-slate-400">Sudah terisi default — ubah jika perlu. Diingat otomatis di browser ini untuk surat berikutnya.</p>
               <div className="flex flex-col gap-3">
@@ -530,16 +570,16 @@ Email: ${email}`;
                     value={sender.namaBD}
                     onChange={(e) => updateSender({ namaBD: e.target.value })}
                     placeholder="M. H. Dzaki Wismadi"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                   />
                 </Field>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 max-md:grid-cols-1">
                   <Field label="Nomor WhatsApp">
                     <input
                       value={sender.whatsappBD}
                       onChange={(e) => updateSender({ whatsappBD: e.target.value })}
                       placeholder="0818 0925 2706"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                     />
                   </Field>
                   <Field label="Email">
@@ -547,7 +587,7 @@ Email: ${email}`;
                       value={sender.emailBD}
                       onChange={(e) => updateSender({ emailBD: e.target.value })}
                       placeholder="hilmi.d@sahaibat.com"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 max-md:min-h-11"
                     />
                   </Field>
                 </div>
@@ -555,7 +595,7 @@ Email: ${email}`;
             </div>
 
             {selected && (
-              <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="rounded-xl border border-slate-100 bg-white p-5 shadow-sm max-md:p-4">
                 <h2 className="mb-1 text-sm font-semibold text-slate-900">Draft Email Pengantar</h2>
                 <p className="mb-3 text-xs text-slate-400">
                   Kalimat pengantar untuk dikirim via email bersama lampiran PDF surat — sudah terisi otomatis dari data
@@ -567,12 +607,12 @@ Email: ${email}`;
                     readOnly
                     value={buildEmailSubject()}
                     onFocus={(e) => e.currentTarget.select()}
-                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-cyan-500"
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-cyan-500 max-md:min-h-11"
                   />
                 </Field>
                 <button
                   onClick={handleCopySubject}
-                  className="mb-3 mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95"
+                  className="mb-3 mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95 max-md:min-h-11 max-md:w-full"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                     <rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -593,7 +633,7 @@ Email: ${email}`;
                 />
                 <button
                   onClick={handleCopyEmailDraft}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95"
+                  className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 active:scale-95 max-md:min-h-11 max-md:w-full"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                     <rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="2" />
@@ -616,7 +656,7 @@ Email: ${email}`;
             <button
               onClick={handleGenerate}
               disabled={!canGenerate}
-              className="flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 max-md:hidden"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
                 <path
@@ -633,11 +673,54 @@ Email: ${email}`;
         </div>
       </div>
 
+      {/* Phones: thumb-reachable generate action, always visible. `mt-0!`
+          opts out of globals.css's below-the-mobile-bar margin. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-4px_16px_rgba(15,23,42,0.06)] backdrop-blur max-md:mt-0! md:hidden">
+        {error ? (
+          <p className="mb-1.5 line-clamp-2 text-xs text-red-600">{error}</p>
+        ) : success ? (
+          <p className="mb-1.5 line-clamp-2 text-xs text-emerald-700">{success}</p>
+        ) : (
+          <p className="mb-1.5 truncate text-xs text-slate-500">
+            {selected ? (
+              <>
+                Untuk: <span className="font-semibold text-slate-800">{namaKlinik || selected.name}</span>
+              </>
+            ) : (
+              "Pilih lead dulu untuk membuat surat."
+            )}
+          </p>
+        )}
+        <button
+          onClick={handleGenerate}
+          disabled={!canGenerate}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-cyan-600 px-4 text-sm font-semibold text-white shadow-sm transition active:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {generating ? "Membuat PDF…" : "Buat & Unduh Surat PDF"}
+        </button>
+      </div>
+
       {contextMenu && (
         <div
           onClick={(e) => e.stopPropagation()}
-          style={{ position: "fixed", top: contextMenu.y, left: contextMenu.x, zIndex: 100 }}
-          className="min-w-[180px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg"
+          style={{
+            // Clamped so a long-press near a phone's right/bottom edge (or a
+            // right-click near the window edge) keeps the menu on screen.
+            position: "fixed",
+            top: Math.max(8, Math.min(contextMenu.y, window.innerHeight - 140)),
+            left: Math.max(8, Math.min(contextMenu.x, window.innerWidth - 228)),
+            zIndex: 100,
+          }}
+          className="min-w-[180px] overflow-hidden rounded-lg border border-slate-200 bg-white py-1 shadow-lg max-md:mt-0!"
         >
           <div className="truncate px-3 py-1.5 text-xs font-medium text-slate-400">{contextMenu.lead.name}</div>
           <button
@@ -645,7 +728,7 @@ Email: ${email}`;
               openInBackgroundTab(`/chat?leadId=${contextMenu.lead.id}`);
               setContextMenu(null);
             }}
-            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 max-md:min-h-11"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-slate-400">
               <path d="M4 4h16v12H8l-4 4V4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
@@ -655,7 +738,7 @@ Email: ${email}`;
           <div className="my-1 border-t border-slate-100" />
           <button
             onClick={() => handleMarkLetterSent(contextMenu.lead)}
-            className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50"
+            className="flex w-full items-center justify-between gap-2 px-3 py-1.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 max-md:min-h-11"
           >
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0 text-slate-400">

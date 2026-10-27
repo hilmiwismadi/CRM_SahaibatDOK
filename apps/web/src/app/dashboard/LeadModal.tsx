@@ -78,26 +78,29 @@ export default function LeadModal({
   return (
     <div
       onClick={handleClose}
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 transition-opacity duration-150 ${
+      className={`fixed inset-0 z-[70] flex items-end justify-center bg-slate-900/40 transition-opacity duration-150 md:z-50 md:items-center md:p-4 ${
         mounted ? "opacity-100" : "opacity-0"
       }`}
     >
+      {/* Phones: bottom sheet (header + footer pinned, body scrolls).
+          Desktop (md+): the original centered dialog that scrolls as a whole. */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white shadow-2xl transition-all duration-150 ${
-          mounted ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        className={`flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-2xl transition-all duration-150 md:block md:max-h-[85vh] md:max-w-lg md:overflow-y-auto md:rounded-2xl ${
+          mounted ? "translate-y-0 scale-100 opacity-100" : "translate-y-6 opacity-0 md:translate-y-0 md:scale-95"
         }`}
       >
-        <div className="flex items-start justify-between border-b border-slate-100 px-6 py-4">
-          <div>
+        <div className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-slate-200 md:hidden" />
+        <div className="flex shrink-0 items-start justify-between gap-2 border-b border-slate-100 px-4 py-3 md:gap-0 md:px-6 md:py-4">
+          <div className="min-w-0">
             {editing ? (
               <input
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="rounded-lg border border-slate-200 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:border-cyan-500"
+                className="w-full rounded-lg border border-slate-200 px-2 py-1 text-base font-bold text-slate-900 outline-none focus:border-cyan-500 md:w-auto"
               />
             ) : (
-              <h2 className="text-base font-bold text-slate-900">{lead.name}</h2>
+              <h2 className="break-words text-base font-bold text-slate-900">{lead.name}</h2>
             )}
             <div className="mt-1 flex items-center gap-2">
               <span
@@ -113,7 +116,8 @@ export default function LeadModal({
           </div>
           <button
             onClick={handleClose}
-            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            aria-label="Close"
+            className="-mr-2 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 md:m-0 md:inline-block md:h-auto md:w-auto"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -121,7 +125,7 @@ export default function LeadModal({
           </button>
         </div>
 
-        <div className="flex flex-col gap-4 px-6 py-5">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-4 py-4 md:overflow-visible md:px-6 md:py-5">
           <div>
             <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Business type</div>
             {editing ? (
@@ -156,7 +160,7 @@ export default function LeadModal({
                 className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
               />
             ) : lead.instagramUrl ? (
-              <a href={lead.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-cyan-700 hover:underline">
+              <a href={lead.instagramUrl} target="_blank" rel="noopener noreferrer" className="break-all text-sm font-medium text-cyan-700 hover:underline md:break-normal">
                 {lead.instagramUrl}
               </a>
             ) : (
@@ -190,17 +194,17 @@ export default function LeadModal({
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4">
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 md:flex-nowrap md:gap-0 md:px-6 md:py-4">
           <div className="flex gap-2">
             <Link
               href={`/chat?leadId=${lead.id}`}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+              className="flex min-h-11 items-center rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 md:block md:min-h-0 md:text-xs"
             >
               Open Chat
             </Link>
             <Link
               href={`/chat?leadId=${lead.id}&openInfo=1`}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+              className="flex min-h-11 items-center rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 md:block md:min-h-0 md:text-xs"
             >
               Contact Chain
             </Link>
@@ -209,14 +213,14 @@ export default function LeadModal({
             <div className="flex gap-2">
               <button
                 onClick={() => setEditing(false)}
-                className="rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-50"
+                className="min-h-11 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 md:min-h-0 md:text-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="rounded-lg bg-cyan-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50"
+                className="min-h-11 rounded-lg bg-cyan-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50 md:min-h-0 md:text-xs"
               >
                 {saving ? "Saving…" : "Save"}
               </button>
@@ -224,7 +228,7 @@ export default function LeadModal({
           ) : (
             <button
               onClick={() => setEditing(true)}
-              className="rounded-lg bg-slate-900 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700 active:scale-95"
+              className="min-h-11 rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-700 active:scale-95 md:min-h-0 md:text-xs"
             >
               Edit
             </button>

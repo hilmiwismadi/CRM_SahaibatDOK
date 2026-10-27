@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-23",
+  "rows": [
+    { "leadId": "df4d59d7-de59-4bbc-93a3-7b09bcc13e80", "name": "Aeternus. Praktek Mandiri dr. Bias Rahadian Surya, M.Biomed(AAM)", "summary": "Kami tanya ulang ketersediaan; dokter bersedia, baru ada waktu Senin depan. Disepakati Senin 26 Okt jam 08.00; kami akan mengingatkan Senin pagi." },
+    { "leadId": "4efdac02-990c-46e1-92e1-92a9ea4c8bdf", "name": "Klinik BeSt Medika", "summary": "Klinik menawarkan wawancara riset Senin/Selasa. Disepakati Senin 26 Okt jam 12.00; kami akan konfirmasi ulang Senin siang." },
+    { "leadId": "aba1a0be-5706-422a-9adc-eadb603812b1", "name": "Klinik Elfahmi", "summary": "Klinik bersedia dan menanyakan jadwal; Senin/Selasa belum bisa, diusulkan Kamis jam 18.00-20.00. Kami akan konfirmasi ulang Kamis siang." },
+    { "leadId": "60db10ad-9b42-49d6-8e0b-e4cc94f3bd2f", "name": "Klinik Mutiara Sehat Lawang - Bedali", "summary": "Kami tanya ulang ketersediaan; klinik masih menunggu disposisi." },
+    { "leadId": "eae5caad-ab6b-4f4e-b902-ec541c6c7c4c", "name": "Klinik Pediatrik Medika", "summary": "Dokter tidak berkenan karena sedang berduka. Kami sampaikan belasungkawa dan akan tanya ulang bulan depan." },
+    { "leadId": "3b48146f-8c86-4a8d-b86b-9481b2c22256", "name": "KLINIK PRATAMA DELIMA", "summary": "Kami tanya ulang ketersediaan; klinik bertanya ketersediaan untuk apa, kami rujuk ke penjelasan riset sebelumnya." },
+    { "leadId": "e7178a0f-0468-4d8e-91ca-261d5a49a2de", "name": "Klinik Pratama D’Maryam", "summary": "Akun trial sudah kami siapkan dan kirim; kami tanya apakah D'Maryam berbentuk PMB atau klinik. Dijawab akan dicek." },
+    { "leadId": "f0e9394b-bfc1-44f3-aec8-52877ac48410", "name": "Klinik Pratama Mitra Medika", "summary": "Kami tanya ulang ketersediaan; admin akan menanyakan lagi ke dokter." },
+    { "leadId": "50bce1e6-ce56-45e6-9571-a444e2d4646c", "name": "Klinik Pratama Sultan Agung Semarang", "summary": "Surat permohonan kami kirim; admin meneruskan ke manajer operasional. Menunggu kabar." },
+    { "leadId": "b6433556-648c-4243-8747-2d1aff1369e3", "name": "KLINIK SARANGAN MEDICARE MALANG", "summary": "Manajer tetap akan menghubungi langsung, tidak lewat WA; permintaan nomor manajer ditolak sesuai SOP klinik. Menunggu kabar." },
+    { "leadId": "c41f490c-0859-407a-9bbe-076d652d40bd", "name": "Klinik Triyola", "summary": "Kami tanya ulang ketersediaan; hanya balasan otomatis." },
+    { "leadId": "37d2bd7c-f90d-4335-a579-435418ae48b0", "name": "Klinik Utama Harapan Sehat Keluarga", "summary": "Kami tanya ulang ketersediaan; hanya balasan otomatis (admin tidak aktif)." },
+    { "leadId": "7d3945fb-050d-4bf7-a20d-49f4c1c4f23c", "name": "KLINIK WISNU HUSADA", "summary": "Tindak lanjut Gmeet: kami kirim penjelasan dan gambaran sistem Sahaibat ke Pak Tri; dijawab 'matursuwun'." },
+    { "leadId": "e586cd3d-598e-4baa-b4d1-ee88dd98049f", "name": "Praktek Dokter 24 Jam Amal Sehat", "summary": "Kami menghubungi nomor admin Praktek Dokter 24 Jam (hanya balasan otomatis) dan mengirim perkenalan riset. Belum ada balasan." },
+    { "leadId": "6df088f6-dd1d-477e-8916-56b2c0c75934", "name": "Praktek Mandiri Bidan Efi Marinda", "summary": "Gmeet jam 08.00 diundur bidan ke jam 09.00 dan berlangsung. Siangnya kami minta beberapa informasi lanjutan untuk menyiapkan sistem." },
+    { "leadId": "45478cb8-ef44-4f2f-931f-27dfbc003824", "name": "Praktik Mandiri Bidan Siti Maryam", "summary": "Kami tanya bentuk praktik (PMB atau klinik); dijawab klinik bersalin." },
+    { "leadId": "6f9ba1f3-6c14-4d8b-9b94-7781cebe7b95", "name": "Thursina Medical Clinic", "summary": "Kami tanya ulang; setelah balasan otomatis, klinik meminta tindak lanjut lewat email." },
+    { "leadId": "5f30e657-dd36-4345-afb8-59c5be2f0124", "name": "dokter praktek mandiri dr.Lisa Linda Sari", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "029f7741-0931-487f-9676-16c22b3c6a6f", "name": "Klinik Ary Farma", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "8f173ab2-9f9f-43ca-ad12-e3431a9cafe5", "name": "Klinik dr.Sri Widatik", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "5b689a68-00d6-420a-aefa-7d7997572fbc", "name": "Klinik Pratama Asy-Syifa", "summary": "Kami konfirmasi fitur yang diperlukan klinik (konsultasi); klinik membalas dengan lampiran/media tanpa teks." },
+    { "leadId": "34bb7ec6-b62e-4892-8f39-4744140c17b9", "name": "Klinik Pratama Qanita", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "f7cf5d75-5706-48ab-9afa-d89174ad976f", "name": "Klinik Rawat Inap Sahabat Sehat (Bu Lina)", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "e504beca-96ed-4ae9-824c-c6ffdae6670e", "name": "KLINIK RAWAT INAP SIDODADI WARASE", "summary": "Kami minta dikabari bila sudah ada informasi dari manajemen. Belum ada balasan." },
+    { "leadId": "6d103db4-83c4-43de-9c5c-5b3f693b573d", "name": "Losari Medika", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." },
+    { "leadId": "17a1b95f-8c28-4f98-834e-446d827b6421", "name": "Praktek Dokter Victor Prayogi", "summary": "Klinik mengirim pesan tanpa teks (media) pagi hari; isinya tidak terbaca di chat. Perlu dicek." },
+    { "leadId": "2f856686-7f1f-4c46-8c6a-d2b6fb3bb81a", "name": "PRAKTEK MANDIRI BIDAN & DOKTER SEHATI", "summary": "Akun trial untuk Kak Arini sudah kami siapkan dan kirim; kami tanya apakah praktik berbentuk PMB atau klinik. Dijawab keesokan harinya: klinik bersalin." },
+    { "leadId": "05482f63-2a0d-40d3-8efe-222534c3a245", "name": "PRAKTEK MANDIRI DOKTER ASTRI RIANA SARI", "summary": "Kami tanya ulang ketersediaan wawancara. Belum ada balasan." }
+  ]
+}

@@ -1,0 +1,21 @@
+# Deploy diff 2026-10-27 16:50:48
+## Beda isi (lokal vs VPS)
+   apps/web/src/app/reports/followup/page.tsx
+   apps/web/src/app/reports/important/page.tsx
+   apps/web/src/app/api/reports/important/route.ts
+## Hanya di lokal (belum di-deploy)
+## Hanya di VPS
+## Identik: 167 file
+## DB & container
+   migrasi terakhir | 20261014120000_scheduled_messages, 20261020000000_followup_triage, 20261020120000_followup_notes_important
+   wa_messages 13 Okt 14:25 - 14 Okt WIB (backfill?) | 166
+   wa_messages terbaru (UTC) | 2026-10-27 09:49:18
+   scheduled_messages per status | cancelled=10, sent=239
+   sync_daily_summaries tanggal terakhir | 2026-10-26
+   followup_note_logs baris | 413
+   mapping-web-1 Up 4 hours
+   mapping-db-1 Up 5 weeks (healthy)
+   mapping-wa-bridge-1 Up 13 days
+   drwxr-xr-x  2 DzakiWismadi DzakiWismadi 4096 2026-10-01_09:15:42 dailylog
+   drwxr-xr-x  2 DzakiWismadi DzakiWismadi 4096 2026-09-30_14:44:36 leadinput
+   drwxrwxr-x  2 DzakiWismadi DzakiWismadi 4096 2026-10-11_14:17:06 timesheet

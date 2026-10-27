@@ -7,6 +7,8 @@ import {
   parseTemplateVariables,
   type TemplateVariable,
 } from "@/lib/templateVariables";
+import { normalizeClinicName } from "@/lib/normalizeClinicName";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 interface Template {
   id: string;
@@ -19,17 +21,26 @@ export default function Composer({
   disabled,
   disabledReason,
   contactName,
+  contactAddress,
   onSend,
 }: {
   disabled: boolean;
   disabledReason?: string;
   /** Substituted into `[...like this, dari database]`-style placeholders. */
   contactName?: string | null;
+  /** Lead address — lets the name normalizer drop a trailing area name. */
+  contactAddress?: string | null;
   onSend: (body: string) => Promise<void>;
 }) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
+  // Phones: Enter inserts a newline (on-screen keyboards have no Shift, and
+  // reps write multi-line messages); sending is the Send button only. The
+  // auto-grow cap is also lower so the thread stays visible above the
+  // keyboard.
+  const isMobile = useIsMobile();
+  const maxAutoHeight = isMobile ? 160 : 320;
 
   // Auto-grow the textarea with its content (long templates like the pitch
   // used to sit behind a 2-row box you had to scroll inside). Capped so the
@@ -43,10 +54,10 @@ export default function Composer({
     const el = textareaRef.current;
     if (!el || manualResize.current) return;
     el.style.height = "auto";
-    const next = Math.min(el.scrollHeight, 320);
+    const next = Math.min(el.scrollHeight, maxAutoHeight);
     el.style.height = `${next}px`;
     autoHeight.current = next;
-  }, [text]);
+  }, [text, maxAutoHeight]);
 
   function detectManualResize() {
     const el = textareaRef.current;
@@ -74,8 +85,12 @@ export default function Composer({
   function applyTemplate(id: string) {
     const t = templates.find((tpl) => tpl.id === id);
     if (!t) return;
-    const vars = parseTemplateVariables(t.message, contactName ?? null);
-    const values = defaultVariableValues(vars, contactName ?? null);
+    // The listing name is cleaned up (Title Case, no area/tagline/titles) so
+    // the greeting doesn't read like a bot copying a Google Maps title. The
+    // field stays editable below in case the guess is off.
+    const friendlyName = contactName ? normalizeClinicName(contactName, { address: contactAddress }) : null;
+    const vars = parseTemplateVariables(t.message, friendlyName);
+    const values = defaultVariableValues(vars, friendlyName);
     setActiveTemplate(t);
     setVariables(vars);
     setVariableValues(values);
@@ -88,11 +103,10 @@ export default function Composer({
     if (activeTemplate) setText(applyTemplateVariables(activeTemplate.message, nextValues));
   }
 
-  // "auto" variables stay hidden only while they actually resolved to
-  // something (contactName was available) — otherwise (e.g. an unlinked
-  // conversation with no lead attached) surface a manual fallback input
-  // instead of silently sending the placeholder text as-is or an empty gap.
-  const fillableVariables = variables.filter((v) => v.kind !== "auto" || !variableValues[v.raw]);
+  // "auto" variables are shown too (prefilled with the normalized name) so
+  // the rep can tweak it; when nothing resolved (e.g. an unlinked
+  // conversation) the same input doubles as the manual fallback.
+  const fillableVariables = variables;
 
   async function handleSend() {
     const body = text.trim();
@@ -110,7 +124,9 @@ export default function Composer({
   }
 
   return (
-    <div className="border-t border-slate-100 bg-white p-3">
+    // Phones: stays pinned under the thread (flex column) and clears the
+    // home-indicator / gesture bar.
+    <div className="shrink-0 border-t border-slate-100 bg-white p-3 max-md:px-2 max-md:pb-[calc(8px+env(safe-area-inset-bottom))] max-md:pt-2">
       {disabled && disabledReason && (
         // Brown — same color used on /map for confirmed "no WA contact"
         // leads, since this banner shows for the same underlying reason
@@ -126,7 +142,7 @@ export default function Composer({
               applyTemplate(e.target.value);
               e.target.value = "";
             }}
-            className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-500 outline-none transition focus:border-cyan-500 disabled:opacity-50"
+            className="rounded-lg border border-slate-200 px-2 py-1 text-xs text-slate-500 outline-none transition focus:border-cyan-500 disabled:opacity-50 max-md:min-h-[40px] max-md:w-full max-md:bg-white"
           >
             <option value="" disabled>
               Use a template…
@@ -140,15 +156,15 @@ export default function Composer({
         </div>
       )}
       {fillableVariables.length > 0 && (
-        <div className="mb-2 flex flex-wrap items-end gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2">
+        <div className="mb-2 flex flex-wrap items-end gap-2 rounded-lg border border-slate-100 bg-slate-50 p-2 max-md:max-h-[30dvh] max-md:overflow-y-auto">
           {fillableVariables.map((v) => (
-            <div key={v.raw} className="flex flex-col gap-0.5">
+            <div key={v.raw} className="flex flex-col gap-0.5 max-md:w-full max-md:min-w-0">
               <label className="text-[10px] font-medium uppercase tracking-wide text-slate-400">{v.raw}</label>
               {v.kind === "choice" ? (
                 <select
                   value={variableValues[v.raw] ?? ""}
                   onChange={(e) => updateVariable(v.raw, e.target.value)}
-                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-cyan-500"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-cyan-500 max-md:min-h-[40px] max-md:w-full"
                 >
                   {v.options!.map((o) => (
                     <option key={o} value={o}>
@@ -161,7 +177,7 @@ export default function Composer({
                   value={variableValues[v.raw] ?? ""}
                   onChange={(e) => updateVariable(v.raw, e.target.value)}
                   placeholder={v.raw}
-                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-cyan-500"
+                  className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs outline-none focus:border-cyan-500 max-md:min-h-[40px] max-md:w-full"
                 />
               )}
             </div>
@@ -177,20 +193,26 @@ export default function Composer({
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey && !isMobile) {
               e.preventDefault();
               handleSend();
             }
           }}
           disabled={disabled || sending}
-          placeholder={disabled ? "Not available" : "Type a message… (Enter to send, Shift+Enter for new line)"}
+          placeholder={
+            disabled
+              ? "Not available"
+              : isMobile
+                ? "Type a message…"
+                : "Type a message… (Enter to send, Shift+Enter for new line)"
+          }
           rows={2}
-          className="min-h-[3.5rem] flex-1 resize-y overflow-y-auto rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 disabled:bg-slate-50"
+          className="min-h-[3.5rem] min-w-0 flex-1 resize-y overflow-y-auto rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-cyan-500 disabled:bg-slate-50 max-md:min-h-[44px] max-md:resize-none max-md:rounded-2xl"
         />
         <button
           onClick={handleSend}
           disabled={disabled || sending || !text.trim()}
-          className="shrink-0 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+          className="shrink-0 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40 max-md:min-h-[44px] max-md:rounded-2xl"
         >
           {sending ? "Sending…" : "Send"}
         </button>

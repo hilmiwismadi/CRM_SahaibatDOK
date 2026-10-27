@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useLanguage } from "@/lib/i18n/context";
 import { NAV_LABELS } from "@/lib/i18n/translations";
 import { formatDate, formatTime } from "@/lib/i18n/locale";
+import InstallAppButton from "./InstallAppButton";
 
 interface FollowUpReminder {
   waContactId: string;
@@ -31,7 +32,7 @@ function openInBackgroundTab(url: string) {
   window.focus();
 }
 
-export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "templates" | "letters" | "sync" | "none";
+export type AppPage = "dashboard" | "map" | "chat" | "reports" | "scrapes" | "queue" | "templates" | "letters" | "sync" | "none";
 
 interface NavItem {
   page: Exclude<AppPage, "none">;
@@ -46,6 +47,7 @@ const NAV_ITEMS: NavItem[] = [
   { page: "chat", href: "/chat", Icon: ChatIcon },
   { page: "templates", href: "/templates", Icon: TemplateIcon },
   { page: "letters", href: "/letters", Icon: LetterIcon, newTab: true },
+  { page: "queue", href: "/queue", Icon: QueueIcon },
   { page: "reports", href: "/reports/overview", Icon: ReportIcon },
   { page: "sync", href: "/sync/leadinput", Icon: SyncIcon },
   { page: "scrapes", href: "/admin/scrapes", Icon: ScrapeIcon },
@@ -56,9 +58,41 @@ const EXPANDED_WIDTH = 232;
 const COLLAPSED_WIDTH = 68;
 
 export default function AppSidebar({ active }: { active: AppPage }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsedPref, setCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { locale, setLocale, t } = useLanguage();
+
+  // Phones (<768px, matches the CSS breakpoint in globals.css): the sidebar
+  // becomes a slide-in drawer opened from a fixed top bar, always showing
+  // full labels — the desktop "collapsed" preference doesn't apply there.
+  const [isMobile, setIsMobile] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const sync = () => {
+      setIsMobile(mq.matches);
+      if (!mq.matches) setDrawerOpen(false);
+    };
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  const collapsed = collapsedPref && !isMobile;
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setDrawerOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [drawerOpen]);
+
+  async function logout() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      window.location.href = "/login";
+    }
+  }
 
   const [reminders, setReminders] = useState<FollowUpReminder[]>([]);
   const [remindersOpen, setRemindersOpen] = useState(false);
@@ -112,8 +146,72 @@ export default function AppSidebar({ active }: { active: AppPage }) {
     });
   }
 
+  const activeLabel = active === "none" ? "SahAIbat DOK" : NAV_LABELS[locale][active];
+
   return (
+    <>
+    <div className="app-mobile-bar">
+      <button
+        type="button"
+        className="app-mobile-bar__btn"
+        aria-label="Menu"
+        aria-expanded={drawerOpen}
+        onClick={() => setDrawerOpen(true)}
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="#f8fafc" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+      <div className="app-mobile-bar__title">{activeLabel}</div>
+      {active === "queue" ? null : (
+        <Link href="/queue" className="app-mobile-bar__btn" aria-label={NAV_LABELS[locale].queue} title={NAV_LABELS[locale].queue}>
+          <QueueIcon muted={false} />
+        </Link>
+      )}
+      <button
+        type="button"
+        className="app-mobile-bar__btn"
+        aria-label={t.sidebarReminders}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!remindersOpen) {
+            setRemindersPos({ top: 0, left: 0 });
+            loadReminders();
+          }
+          setRemindersOpen((v) => !v);
+        }}
+      >
+        <span style={{ position: "relative", display: "inline-flex" }}>
+          <BellIcon muted={false} />
+          {reminders.length > 0 && (
+            <span
+              style={{
+                position: "absolute",
+                top: -6,
+                right: -8,
+                minWidth: 16,
+                height: 16,
+                padding: "0 4px",
+                borderRadius: 8,
+                background: "#ef4444",
+                color: "#fff",
+                fontSize: 10,
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                lineHeight: 1,
+              }}
+            >
+              {reminders.length}
+            </span>
+          )}
+        </span>
+      </button>
+    </div>
+    {drawerOpen && <div className="app-drawer-backdrop" onClick={() => setDrawerOpen(false)} />}
     <div
+      className={`app-sidebar${drawerOpen ? " app-sidebar--open" : ""}`}
       style={{
         width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
         flexShrink: 0,
@@ -140,7 +238,7 @@ export default function AppSidebar({ active }: { active: AppPage }) {
         )}
       </div>
 
-      <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <nav style={{ display: "flex", flexDirection: "column", gap: 2 }} onClick={() => setDrawerOpen(false)}>
         {NAV_ITEMS.map(({ page, href, Icon, newTab }) => {
           const isActive = page === active;
           const label = NAV_LABELS[locale][page];
@@ -174,7 +272,8 @@ export default function AppSidebar({ active }: { active: AppPage }) {
           e.stopPropagation();
           if (!remindersOpen) {
             const rect = remindersBtnRef.current?.getBoundingClientRect();
-            if (rect) setRemindersPos({ top: rect.top, left: rect.right + 8 });
+            setRemindersPos(rect ? { top: rect.top, left: rect.right + 8 } : { top: 0, left: 0 });
+            if (isMobile) setDrawerOpen(false);
             loadReminders();
           }
           setRemindersOpen((v) => !v);
@@ -252,7 +351,32 @@ export default function AppSidebar({ active }: { active: AppPage }) {
         )}
       </button>
 
+      {!collapsed && <InstallAppButton locale={locale} />}
+
       <button
+        onClick={logout}
+        title={locale === "id" ? "Keluar" : "Log out"}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-start",
+          gap: 10,
+          padding: "9px 12px",
+          borderRadius: 8,
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "#94a3b8",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+          <path d="M9 4H5v16h4M16 8l4 4-4 4M20 12H9" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        {!collapsed && <span style={{ fontSize: 12.5, fontWeight: 500 }}>{locale === "id" ? "Keluar" : "Log out"}</span>}
+      </button>
+
+      <button
+        className="app-desktop-only"
         onClick={toggle}
         title={collapsed ? t.sidebarExpandTitle : t.sidebarCollapseTitle}
         style={{
@@ -280,8 +404,11 @@ export default function AppSidebar({ active }: { active: AppPage }) {
         {!collapsed && <span style={{ fontSize: 12.5, fontWeight: 500 }}>{t.sidebarCollapse}</span>}
       </button>
 
+    </div>
+
       {remindersOpen && remindersPos && (
         <div
+          className="app-reminders-pop"
           onClick={(e) => e.stopPropagation()}
           style={{
             position: "fixed",
@@ -345,7 +472,7 @@ export default function AppSidebar({ active }: { active: AppPage }) {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -684,6 +811,16 @@ function PinIcon({ muted }: { muted: boolean }) {
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
       <path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z" stroke={c} strokeWidth="2" strokeLinejoin="round" />
       <circle cx="12" cy="9.5" r="2.4" stroke={c} strokeWidth="2" />
+    </svg>
+  );
+}
+
+function QueueIcon({ muted }: { muted: boolean }) {
+  const c = muted ? "#94a3b8" : "#f8fafc";
+  return (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+      <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="2" />
+      <path d="M12 7v5l3 2" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

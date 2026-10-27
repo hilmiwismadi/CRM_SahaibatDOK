@@ -80,15 +80,15 @@ export default function TemplatesPage() {
     <div className="flex h-screen overflow-hidden bg-[#f7f8fa] text-slate-900">
       <AppSidebar active="templates" />
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="mb-5 flex items-center justify-between">
-          <div>
+      <div className="flex-1 overflow-y-auto p-3 md:p-6">
+        <div className="mb-4 flex items-start justify-between gap-3 md:mb-5 md:items-center md:gap-0">
+          <div className="min-w-0 md:min-w-auto">
             <h1 className="text-lg font-bold text-slate-900">Message Templates</h1>
             <p className="text-sm text-slate-500">Reusable messages selectable from the chat composer.</p>
           </div>
           <button
             onClick={startCreate}
-            className="flex items-center gap-1.5 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700 active:scale-95"
+            className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-cyan-700 active:scale-95 md:min-h-0 md:shrink"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
               <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
@@ -97,8 +97,13 @@ export default function TemplatesPage() {
           </button>
         </div>
 
+        {/* Phones: the form opens as a bottom sheet (z above the 52px top bar) so
+            "Edit" on a card far down the list doesn't render off-screen at the
+            top. Desktop (md+): the original inline card. */}
+        {showForm && <div onClick={cancelForm} className="fixed inset-0 z-[70] bg-slate-900/40 md:hidden" />}
         {showForm && (
-          <div className="mb-6 max-w-xl rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+          <div className="fixed inset-x-0 bottom-0 z-[71] max-h-[92dvh] overflow-y-auto overscroll-contain rounded-t-2xl border border-slate-100 bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl md:static md:z-auto md:mb-6 md:max-h-none md:max-w-xl md:overflow-visible md:rounded-xl md:p-5 md:shadow-sm">
+            <div className="mx-auto -mt-1 mb-3 h-1 w-10 rounded-full bg-slate-200 md:hidden" />
             <h2 className="mb-3 text-sm font-semibold text-slate-900">{editingId ? "Edit template" : "New template"}</h2>
             <div className="mb-3 flex flex-col gap-1.5">
               <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">Name</label>
@@ -125,18 +130,21 @@ export default function TemplatesPage() {
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 rows={4}
                 placeholder="Permisi kak, apakah benar ini kontak..."
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500"
+                className="min-h-40 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 md:min-h-0"
               />
             </div>
             {error && <p className="mb-3 text-xs text-red-600">{error}</p>}
             <div className="flex justify-end gap-2">
-              <button onClick={cancelForm} className="rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-50">
+              <button
+                onClick={cancelForm}
+                className="min-h-11 rounded-lg px-4 py-1.5 text-sm font-medium text-slate-500 transition hover:bg-slate-50 md:min-h-0 md:px-3 md:text-xs"
+              >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={!form.name.trim() || !form.message.trim()}
-                className="rounded-lg bg-cyan-600 px-4 py-1.5 text-xs font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50"
+                className="min-h-11 flex-1 rounded-lg bg-cyan-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-cyan-700 active:scale-95 disabled:opacity-50 md:min-h-0 md:flex-none md:text-xs"
               >
                 {editingId ? "Save" : "Create"}
               </button>
@@ -158,22 +166,22 @@ export default function TemplatesPage() {
                 className="flex flex-col rounded-xl border border-slate-100 bg-white p-4 shadow-sm transition hover:shadow-md"
               >
                 <div className="mb-1 flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-slate-900">{t.name}</h3>
-                  <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">
+                  <h3 className="min-w-0 break-words text-sm font-semibold text-slate-900">{t.name}</h3>
+                  <span className="max-w-[45%] shrink-0 truncate rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 md:max-w-none md:overflow-visible md:whitespace-normal">
                     {t.category}
                   </span>
                 </div>
-                <p className="mb-3 line-clamp-4 flex-1 whitespace-pre-wrap text-xs text-slate-600">{t.message}</p>
+                <p className="mb-3 line-clamp-4 flex-1 whitespace-pre-wrap break-words text-xs text-slate-600">{t.message}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEdit(t)}
-                    className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                    className="min-h-11 flex-1 rounded-lg border border-slate-200 px-2.5 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-50 md:min-h-0 md:flex-none md:text-xs"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(t.id)}
-                    className="rounded-lg border border-red-100 px-2.5 py-1 text-xs font-medium text-red-500 transition hover:bg-red-50"
+                    className="min-h-11 flex-1 rounded-lg border border-red-100 px-2.5 py-1 text-sm font-medium text-red-500 transition hover:bg-red-50 md:min-h-0 md:flex-none md:text-xs"
                   >
                     Delete
                   </button>
